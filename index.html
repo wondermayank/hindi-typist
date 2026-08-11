@@ -6,7 +6,7 @@
 <title>Remington GAIL Master — Hindi Typing Test &amp; Keyboard Learning Games</title>
 <meta name="description" content="Learn the Remington GAIL Hindi keyboard, take CPCT/SSC-style typing tests with live WPM and accuracy, and master the layout with Falling Letters, Key Match and Matra Order games.">
 <meta name="theme-color" content="#573AFC">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23573AFC'/%3E%3Ctext x='16' y='23' font-size='18' font-family='sans-serif' fill='white' text-anchor='middle'%3Eर%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Remington GAIL Master — Hindi Typing Test & Learning Games">
 <meta property="og:description" content="Practice the Remington GAIL Hindi keyboard layout with a live on-screen guide, exam-style typing tests, and gamified drills.">
@@ -147,6 +147,17 @@ main .view.active{display:block;}
 .kb-key .kb-qwerty{position:absolute; bottom:2px; right:4px; font-size:8px; color:var(--muted-soft); font-family:var(--font-ui);}
 .kb-key.active{background:var(--primary); transform:scale(0.94);}
 .kb-key.active .kb-shift,.kb-key.active .kb-normal{color:#fff;}
+.kb.color-code .kb-normal{color:#dc2626;}
+.kb.color-code .kb-shift{color:#16a34a;}
+[data-theme="dark"] .kb.color-code .kb-normal{color:#ff8a8a;}
+[data-theme="dark"] .kb.color-code .kb-shift{color:#6fe08a;}
+.kb.color-code .kb-key.active{background:#dc2626;}
+.kb.color-code .kb-key.active .kb-shift,.kb.color-code .kb-key.active .kb-normal{color:#fff;}
+.kb-key.hint{background:#facc15; box-shadow:0 0 0 2px #eab308;}
+.kb-key.hint .kb-shift,.kb-key.hint .kb-normal{color:#1a1a1a;}
+.kb-key.hint.hint-shift .kb-shift{font-weight:800; text-decoration:underline;}
+.kb-key.hint:not(.hint-shift) .kb-normal{font-weight:800; text-decoration:underline;}
+.kb.game-kb-hidden{display:none;}
 .kb-key.wide{max-width:none;}
 .kb-key[data-heat]{ }
 .kb.show-normal .kb-shift{opacity:.35;}
@@ -196,6 +207,20 @@ main .view.active{display:block;}
 .notice{background:var(--surface-soft); border:1px solid var(--hairline); border-radius:var(--radius-md); padding:14px 18px; font-size:13px; color:var(--muted); display:flex; gap:10px; align-items:flex-start;}
 .notice svg{flex-shrink:0; color:var(--warning); margin-top:2px;}
 
+/* Settings panel */
+.settings-overlay{position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:800; display:none; align-items:flex-start; justify-content:flex-end; padding:76px 24px 0 0;}
+.settings-overlay.open{display:flex;}
+.settings-panel{background:var(--canvas); border:1px solid var(--hairline); border-radius:var(--radius-lg); padding:22px; width:320px; max-width:calc(100vw - 32px);}
+.settings-panel-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+.settings-panel-head h3{font-size:16px;}
+.settings-desc{font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:16px;}
+.settings-row{display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:14px; font-weight:600; color:var(--ink); cursor:pointer;}
+.toggle-switch{width:44px; height:26px; border-radius:var(--radius-pill); background:var(--hairline-strong); position:relative; flex-shrink:0; transition:background .15s;}
+.toggle-switch.on{background:var(--primary);}
+.toggle-knob{position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:transform .15s;}
+.toggle-switch.on .toggle-knob{transform:translateX(18px);}
+@media(max-width:480px){ .settings-overlay{padding:76px 16px 0;} }
+
 /* Footer */
 footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24px;}
 .footer-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:32px; margin-bottom:32px;}
@@ -230,12 +255,35 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
       <a href="#progress" class="nav-link" data-route="progress"></a>
     </nav>
     <div class="nav-right">
+      <button class="icon-btn" id="settings-toggle" aria-label="Keyboard practice settings"></button>
       <button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode"></button>
       <button class="icon-btn hamburger" id="hamburger-btn" aria-label="Open menu"></button>
     </div>
   </div>
 </header>
 <div class="mobile-nav" id="mobile-nav"></div>
+
+<div class="settings-overlay" id="settings-overlay">
+  <div class="settings-panel">
+    <div class="settings-panel-head">
+      <h3>Keyboard Practice Colours</h3>
+      <button class="icon-btn" id="settings-close-btn" aria-label="Close settings"></button>
+    </div>
+    <p class="settings-desc">Colour-code the on-screen keyboard while you practice: the unshifted (small) value shows in red, the Shift (capital) value shows in green, and the key you press flashes red.</p>
+    <label class="settings-row">
+      <span>Colour-coded practice keys</span>
+      <span class="toggle-switch" id="colorcode-switch"><span class="toggle-knob"></span></span>
+    </label>
+    <label class="settings-row" style="margin-top:16px;">
+      <span>Learner mode — highlight next key in yellow</span>
+      <span class="toggle-switch" id="learner-switch"><span class="toggle-knob"></span></span>
+    </label>
+    <label class="settings-row" style="margin-top:16px;">
+      <span>Show keyboard in games</span>
+      <span class="toggle-switch" id="gamekb-switch"><span class="toggle-knob"></span></span>
+    </label>
+  </div>
+</div>
 
 <main>
 
@@ -247,8 +295,8 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
       <h1 class="hero-display">Master the Hindi keyboard exams are built on</h1>
       <p class="lead">Learn the Remington GAIL layout key-by-key, take CPCT / SSC CHSL / RSSB LDC style typing tests with live WPM and accuracy, and drill your weak keys with four learning games.</p>
       <div class="hero-cta-row">
-        <button class="btn btn-primary" data-goto="try"></button>
-        <button class="btn btn-secondary" data-goto="test"></button>
+        <button class="btn btn-primary" data-goto="try">Try the Keyboard</button>
+        <button class="btn btn-secondary" data-goto="test">Start Typing Test</button>
       </div>
     </div>
   </div>
@@ -353,13 +401,15 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
       <div class="game-view" id="game-falling">
         <div class="falling-hud"><span id="fl-score-label"></span><span id="fl-streak-label"></span></div>
         <div class="falling-field" id="falling-field"></div>
-        <button class="btn btn-primary" id="fl-start-btn"></button>
+        <button class="btn btn-primary" id="fl-start-btn">Start Falling Letters</button>
+        <div class="kb" id="falling-keyboard" style="margin-top:20px;"></div>
       </div>
 
       <div class="game-view" id="game-match">
         <div class="flash-card dev" id="km-target">क</div>
         <div class="feedback-banner hidden" id="km-feedback"></div>
         <p class="center" style="font-size:14px; color:var(--muted);" id="km-progress"></p>
+        <div class="kb" id="km-keyboard" style="margin-top:20px;"></div>
       </div>
 
       <div class="game-view" id="game-rows">
@@ -368,6 +418,7 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
           <div class="flash-card dev" id="rd-target">क</div>
           <div class="feedback-banner hidden" id="rd-feedback"></div>
           <p class="center" style="font-size:14px; color:var(--muted);" id="rd-progress"></p>
+          <div class="kb" id="rd-keyboard" style="margin-top:20px;"></div>
         </div>
       </div>
 
@@ -470,6 +521,7 @@ const ICON = {
   zap:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2L3 14h7l-1 8 11-14h-7l1-6z"/></svg>`,
   share:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-3.9M8.6 13.5l6.8 3.9"/></svg>`,
   check:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`,
+  settings:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.9 2.9l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.9-2.9l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.9-2.9l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.9 2.9l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>`,
 };
 
 /* ============================================================================
@@ -583,7 +635,10 @@ const state = {
   keystats: LS.get('ts_rgm_keystats', {}),    // {code:{hit,miss}}
   xp: LS.get('ts_rgm_xp', 0),
   streak: LS.get('ts_rgm_streak', 0),
-  rowProgress: LS.get('ts_rgm_rows', {number:false, top:false, home:false, bottom:false})
+  rowProgress: LS.get('ts_rgm_rows', {number:false, top:false, home:false, bottom:false}),
+  colorCode: LS.get('ts_rgm_colorcode', false),
+  learnerMode: LS.get('ts_rgm_learner', false),
+  showGameKb: LS.get('ts_rgm_gamekb', true)
 };
 function saveKeystat(code, correct){
   if(!code) return;
@@ -630,6 +685,74 @@ document.getElementById('theme-toggle').addEventListener('click', ()=>{
   applyTheme();
 });
 applyTheme();
+
+/* ============================================================================
+   SETTINGS PANEL — keyboard practice colour coding (per-key normal/shift
+   colour + press flash), toggleable and persisted across sessions.
+============================================================================ */
+document.getElementById('settings-toggle').innerHTML = ICON.settings;
+document.getElementById('settings-close-btn').innerHTML = ICON.close;
+function applyColorCodeSetting(){
+  document.getElementById('colorcode-switch').classList.toggle('on', state.colorCode);
+  document.querySelectorAll('.kb').forEach(kb=>kb.classList.toggle('color-code', state.colorCode));
+}
+function applyLearnerSetting(){
+  document.getElementById('learner-switch').classList.toggle('on', state.learnerMode);
+  if(!state.learnerMode) document.querySelectorAll('.kb-key.hint').forEach(el=>el.classList.remove('hint','hint-shift'));
+}
+function applyGameKbSetting(){
+  document.getElementById('gamekb-switch').classList.toggle('on', state.showGameKb);
+  ['falling-keyboard','km-keyboard','rd-keyboard','matra-keyboard'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('game-kb-hidden', !state.showGameKb);
+  });
+}
+document.getElementById('settings-toggle').addEventListener('click', ()=>{
+  document.getElementById('settings-overlay').classList.add('open');
+});
+document.getElementById('settings-close-btn').addEventListener('click', ()=>{
+  document.getElementById('settings-overlay').classList.remove('open');
+});
+document.getElementById('settings-overlay').addEventListener('click', e=>{
+  if(e.target.id==='settings-overlay') document.getElementById('settings-overlay').classList.remove('open');
+});
+document.querySelectorAll('.settings-row').forEach(row=>{
+  row.addEventListener('click', ()=>{
+    const sw = row.querySelector('.toggle-switch');
+    if(sw.id==='colorcode-switch'){ state.colorCode=!state.colorCode; LS.set('ts_rgm_colorcode', state.colorCode); applyColorCodeSetting(); }
+    if(sw.id==='learner-switch'){ state.learnerMode=!state.learnerMode; LS.set('ts_rgm_learner', state.learnerMode); applyLearnerSetting(); }
+    if(sw.id==='gamekb-switch'){ state.showGameKb=!state.showGameKb; LS.set('ts_rgm_gamekb', state.showGameKb); applyGameKbSetting(); }
+  });
+});
+applyColorCodeSetting();
+applyLearnerSetting();
+applyGameKbSetting();
+
+/** Reverse-lookup: which physical key (and shift state) produces a given
+ * single Devanagari character. Used by learner-mode hints. */
+function findKeyFor(ch){
+  for(const code in KEYMAP){ if(KEYMAP[code].s===ch) return {code, shift:true}; }
+  for(const code in KEYMAP){ if(KEYMAP[code].n===ch) return {code, shift:false}; }
+  return null;
+}
+/** Highlight (or clear) the "press this next" key on a rendered keyboard. */
+function hintKey(container, code, shift){
+  if(!container) return;
+  container.querySelectorAll('.kb-key.hint').forEach(el=>el.classList.remove('hint','hint-shift'));
+  if(!state.learnerMode || !code) return;
+  const el = container.querySelector(`.kb-key[data-code="${code}"]`);
+  if(el){ el.classList.add('hint'); if(shift) el.classList.add('hint-shift'); }
+}
+/** Same, but highlights several keys at once (used by Falling Letters). */
+function hintKeys(container, list){
+  if(!container) return;
+  container.querySelectorAll('.kb-key.hint').forEach(el=>el.classList.remove('hint','hint-shift'));
+  if(!state.learnerMode) return;
+  list.forEach(({code,shift})=>{
+    const el = container.querySelector(`.kb-key[data-code="${code}"]`);
+    if(el){ el.classList.add('hint'); if(shift) el.classList.add('hint-shift'); }
+  });
+}
 
 /* ============================================================================
    NAV / ROUTER
@@ -680,6 +803,7 @@ document.querySelectorAll('[data-route]').forEach(a=>a.addEventListener('click',
 function buildKeyboard(container, opts){
   opts = opts||{};
   container.classList.add('show-normal','show-shift');
+  container.classList.toggle('color-code', state.colorCode);
   container.innerHTML='';
   KB_LAYOUT.forEach(row=>{
     const rowEl = document.createElement('div'); rowEl.className='kb-row';
@@ -757,13 +881,18 @@ function attachTryKeyboard(){
    PASSAGE BANK — original practice text, built only from characters the
    current key-map can actually produce, so every test is fully typeable.
 ============================================================================ */
+// Every word below is built only from characters this build's key-map can
+// actually produce (validated programmatically against KEYMAP) so every
+// test is fully typeable end-to-end. See the in-app notice: common matras
+// (ु ू े ो ौ), anusvara (ं) and a few consonants (ख घ थ भ) aren't mapped
+// yet, which limits natural sentence variety until the table is extended.
 const PASSAGES = {
-  words:['कमल जल फल बल नल चल तन मन धन दस दम', 'राम काम नाम गाना जाना आना', 'बात रात जात सात तार बार कार पार', 'गीत जीत मीत सीता पीला दीवार'],
-  sentences:['राम बाजार जाता है और फल खरीदता है', 'सीता गीत गाती है वह घर पर बैठी है', 'कमल जल में खिलता है यह बहुत सुंदर है', 'हम सब मिलकर काम करते हैं और खुश रहते हैं'],
-  paragraphs:['यह एक साधारण पाठ है जिसमें रोज़मर्रा के शब्द हैं जैसे काम धन बात रात कमल फल और नाम इस अभ्यास से टाइपिंग की गति और सटीकता दोनों बढ़ती है समय के साथ अभ्यास करने से हाथ की गति स्वाभाविक हो जाती है',
-    'टाइपिंग सीखना एक कला है जिसमें धैर्य और निरंतर अभ्यास की आवश्यकता होती है हर दिन थोड़ा थोड़ा अभ्यास करने से गति और सटीकता दोनों में सुधार होता है यह परीक्षा में सफलता पाने का एक अच्छा तरीका है'],
-  exam:['टंकण एक महत्वपूर्ण कौशल है जिसकी आवश्यकता कई सरकारी परीक्षाओं में होती है सटीकता के साथ गति बढ़ाना ही सफलता की कुंजी है नियमित अभ्यास से ही यह कौशल विकसित होता है और परीक्षा में अच्छे अंक मिलते हैं हर अभ्यर्थी को धैर्य रखकर मेहनत करनी चाहिए',
-    'सरकारी परीक्षाओं में टंकण परीक्षा का विशेष महत्व है क्योंकि यह कार्यालय के दैनिक कार्यों में सीधे उपयोगी है अभ्यर्थियों को चाहिए कि वे रोज़ नियत समय तक अभ्यास करें जिससे उनकी गति और सटीकता दोनों में सुधार हो सके']
+  words:['कमल जल फल बल नल चल तन मन धन दस दम पल कल', 'राम काम नाम गाना जाना पानी बाजार', 'बात रात जात सात तार बार कार पार', 'गीत जीत मीत सीता पीला दीवार बगीचा'],
+  sentences:['राम बाजार जाता फिर फल लाता', 'सीता बगीचा जाती फिर गीत गाती', 'पानी नल पर बहता रहता', 'राम सबका काम करता फिर विश्राम करता'],
+  paragraphs:['राम बाजार जाता फिर फल लाता सीता बगीचा जाती फिर गीत गाती पानी नल पर बहता रहता राम सबका काम करता फिर विश्राम करता',
+    'कमल जल फल बल नल चल तन मन धन दस दम पल कल राम काम नाम गाना जाना पानी बाजार बात रात जात सात तार बार कार पार गीत जीत मीत सीता पीला दीवार बगीचा'],
+  exam:['सीता बगीचा जाती फिर गीत गाती राम बाजार जाता फिर फल लाता पानी नल पर बहता रहता राम सबका काम करता फिर विश्राम करता कमल जल पर पानी बहता रहता',
+    'राम सबका काम करता फिर विश्राम करता सीता बगीचा जाती फिर गीत गाती पानी नल पर बहता रहता राम बाजार जाता फिर फल लाता']
 };
 function pickPassage(diff, targetLen){
   const bank = PASSAGES[diff] || PASSAGES.sentences;
@@ -804,8 +933,8 @@ function startTypingTest(){
   document.getElementById('tt-wpm').textContent = '0';
   document.getElementById('tt-acc').textContent = '100%';
   document.getElementById('tt-err').textContent = '0';
-  renderPassage();
   const kbEl = document.getElementById('tt-keyboard'); buildKeyboard(kbEl,{showSpace:true});
+  renderPassage();
   document.addEventListener('keydown', ttKeyHandler);
 }
 function renderPassage(){
@@ -823,6 +952,12 @@ function renderPassage(){
     }
   }
   box.innerHTML = html;
+  // learner-mode hint: while a ि matra is pending, the key that actually
+  // needs pressing next is the consonant one character further along.
+  const targetIdx = tt.engine.pendingI ? typed.length+1 : typed.length;
+  const targetChar = tt.passage[targetIdx];
+  const found = targetChar ? findKeyFor(targetChar) : null;
+  hintKey(document.getElementById('tt-keyboard'), found && found.code, found && found.shift);
 }
 function ttKeyHandler(e){
   if(!document.getElementById('test-active') || document.getElementById('test-active').classList.contains('hidden')) return;
@@ -931,6 +1066,7 @@ function stopFalling(){ fallState.running=false; clearInterval(fallState.spawnId
 document.getElementById('fl-start-btn').addEventListener('click', ()=>{
   fallState={running:true, score:0, streak:0, speed:3200, spawnId:null};
   document.getElementById('falling-field').innerHTML='';
+  const kbEl = document.getElementById('falling-keyboard'); if(!kbEl.children.length) buildKeyboard(kbEl,{showSpace:false});
   updateFallHud();
   spawnFalling();
   fallState.spawnId = setInterval(spawnFalling, fallState.speed);
@@ -940,6 +1076,9 @@ document.getElementById('fl-start-btn').addEventListener('click', ()=>{
 function updateFallHud(){
   document.getElementById('fl-score-label').textContent = 'Score: '+fallState.score;
   document.getElementById('fl-streak-label').textContent = 'Streak: '+fallState.streak;
+  const field = document.getElementById('falling-field');
+  const targets = [...field.children].map(el=>({code:el.dataset.code, shift:el.dataset.shift==='true'}));
+  hintKeys(document.getElementById('falling-keyboard'), targets);
 }
 function spawnFalling(){
   if(!fallState.running) return;
@@ -950,6 +1089,7 @@ function spawnFalling(){
   el.textContent = t.ch; el.dataset.code=t.code; el.dataset.shift=t.shift;
   el.style.left = (10+Math.random()*80)+'%'; el.style.top='-50px';
   field.appendChild(el);
+  updateFallHud();
   const duration = Math.max(3.5, 9000/1000);
   let start=null;
   function step(ts){
@@ -965,6 +1105,7 @@ function fallingKeyHandler(e){
   if(!fallState.running) return;
   if(!KEYMAP[e.code]) return;
   const field = document.getElementById('falling-field');
+  flashKey(document.getElementById('falling-keyboard'), e.code, e.shiftKey, 120);
   const match = [...field.children].find(el=>el.dataset.code===e.code && (el.dataset.shift==='true')===e.shiftKey);
   if(match){
     match.remove(); fallState.score+=10; fallState.streak++;
@@ -985,9 +1126,11 @@ function nextKeyMatch(){
   document.getElementById('km-target').textContent = t.ch;
   document.getElementById('km-feedback').classList.add('hidden');
   document.getElementById('km-progress').textContent = `Score: ${km.correct}/${km.total}`;
+  hintKey(document.getElementById('km-keyboard'), km.code, km.shift);
 }
 function startKeyMatch(){
   km = {code:null, shift:false, correct:0, total:0};
+  const kbEl = document.getElementById('km-keyboard'); if(!kbEl.children.length) buildKeyboard(kbEl,{showSpace:false});
   nextKeyMatch();
   document.removeEventListener('keydown', keyMatchHandler);
   document.addEventListener('keydown', keyMatchHandler);
@@ -996,6 +1139,7 @@ function keyMatchHandler(e){
   if(!document.getElementById('game-match').classList.contains('active')) return;
   if(!KEYMAP[e.code]) return;
   e.preventDefault();
+  flashKey(document.getElementById('km-keyboard'), e.code, e.shiftKey, 120);
   km.total++;
   const correct = e.code===km.code && e.shiftKey===km.shift;
   saveKeystat(e.code, correct);
@@ -1027,6 +1171,7 @@ function startRowDrill(row){
   rd.queue = ROW_CODES[row].flatMap(c=>[{code:c,shift:false},{code:c,shift:true}]);
   rd.idx=0; rd.correct=0;
   document.getElementById('row-drill-active').classList.remove('hidden');
+  const kbEl = document.getElementById('rd-keyboard'); if(!kbEl.children.length) buildKeyboard(kbEl,{showSpace:false});
   showRowDrillItem();
   document.removeEventListener('keydown', rowDrillHandler);
   document.addEventListener('keydown', rowDrillHandler);
@@ -1037,11 +1182,13 @@ function showRowDrillItem(){
   document.getElementById('rd-target').textContent = ch;
   document.getElementById('rd-feedback').classList.add('hidden');
   document.getElementById('rd-progress').textContent = `${rd.idx+1} / ${rd.queue.length} — Row: ${ROW_LABELS[rd.row]}`;
+  hintKey(document.getElementById('rd-keyboard'), item.code, item.shift);
 }
 function rowDrillHandler(e){
   if(document.getElementById('row-drill-active').classList.contains('hidden')) return;
   if(!KEYMAP[e.code]) return;
   e.preventDefault();
+  flashKey(document.getElementById('rd-keyboard'), e.code, e.shiftKey, 120);
   const item = rd.queue[rd.idx];
   const correct = e.code===item.code && e.shiftKey===item.shift;
   saveKeystat(e.code, correct);
@@ -1076,7 +1223,7 @@ const MATRA_WORDS = [
   {word:'गिरी', keys:[['KeyF',true],['KeyX',true],['KeyJ',true],['KeyH',true]]},
   {word:'किताब', keys:[['KeyF',true],['KeyD',true],['KeyR',true],['KeyK',true],['KeyC',true]]},
 ];
-let mc = {idx:0, target:null};
+let mc = {idx:0, target:null, keyIdx:0};
 function startMatraChallenge(){
   document.getElementById('matra-instructions').textContent = 'This drills the short-i matra rule: press Shift+F (ि) BEFORE the consonant, but it must render AFTER it — plus conjunct/halant formation.';
   const kbEl = document.getElementById('matra-keyboard'); if(!kbEl.children.length) buildKeyboard(kbEl,{showSpace:false});
@@ -1086,20 +1233,27 @@ function startMatraChallenge(){
   document.addEventListener('keydown', matraHandler);
 }
 const matraEngine = new RemingtonEngine();
+function matraUpdateHint(){
+  const next = mc.target.keys[mc.keyIdx];
+  hintKey(document.getElementById('matra-keyboard'), next && next[0], next && next[1]);
+}
 function nextMatraTarget(){
   matraEngine.reset();
   mc.target = MATRA_WORDS[mc.idx];
+  mc.keyIdx = 0;
   document.getElementById('matra-target').textContent = mc.target.word;
   document.getElementById('matra-textarea').value='';
   document.getElementById('matra-feedback').classList.add('hidden');
+  matraUpdateHint();
 }
 function matraHandler(e){
   if(!document.getElementById('game-matra').classList.contains('active')) return;
-  if(e.code==='Backspace'){ e.preventDefault(); matraEngine.backspace(); document.getElementById('matra-textarea').value=matraEngine.buffer; return; }
+  if(e.code==='Backspace'){ e.preventDefault(); matraEngine.backspace(); mc.keyIdx=Math.max(0,mc.keyIdx-1); document.getElementById('matra-textarea').value=matraEngine.buffer; matraUpdateHint(); return; }
   if(!KEYMAP[e.code]) return;
   e.preventDefault();
   flashKey(document.getElementById('matra-keyboard'), e.code, e.shiftKey, 120);
   matraEngine.press(e.code, e.shiftKey);
+  mc.keyIdx++;
   document.getElementById('matra-textarea').value = matraEngine.buffer;
   if(matraEngine.buffer === mc.target.word){
     const fb = document.getElementById('matra-feedback');
@@ -1108,6 +1262,8 @@ function matraHandler(e){
     addXP(5);
     mc.idx = (mc.idx+1) % MATRA_WORDS.length;
     setTimeout(nextMatraTarget, 900);
+  } else {
+    matraUpdateHint();
   }
 }
 
