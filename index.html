@@ -6,7 +6,7 @@
 <title>Remington GAIL Master — Hindi Typing Test &amp; Keyboard Learning Games</title>
 <meta name="description" content="Learn the Remington GAIL Hindi keyboard, take CPCT/SSC-style typing tests with live WPM and accuracy, and master the layout with Falling Letters, Key Match and Matra Order games.">
 <meta name="theme-color" content="#573AFC">
-<link rel="icon" href="wondermayank.github.io/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Remington GAIL Master — Hindi Typing Test & Learning Games">
 <meta property="og:description" content="Practice the Remington GAIL Hindi keyboard layout with a live on-screen guide, exam-style typing tests, and gamified drills.">
@@ -542,29 +542,29 @@ const ICON = {
    this for real exam practice — the in-app notice below says the same.
 ============================================================================ */
 const KEYMAP = {
-  Backquote:{n:'ब',s:'ॐ'}, Digit1:{n:'ी',s:'1'}, Digit2:{n:'/',s:'2'}, Digit3:{n:'ः',s:'3'},
-  Digit4:{n:'÷',s:'4'}, Digit5:{n:'–',s:'5'}, Digit6:{n:"'",s:'6'}, Digit7:{n:"'",s:'7'},
-  Digit8:{n:'द्ध',s:'8'}, Digit9:{n:'त्र',s:'9'}, Digit0:{n:'ऋ',s:'0'}, Minus:{n:'.',s:';'}, Equal:{n:'्',s:'्'},
-  KeyQ:{n:'फ',s:'ृ'}, KeyW:{n:'ॅ',s:'ॉ'}, KeyE:{n:'म्',s:'म'}, KeyR:{n:'त्',s:'त'}, KeyT:{n:'ज्',s:'ज'},
-  KeyY:{n:'ल्',s:'ल'}, KeyU:{n:'न्',s:'न'}, KeyI:{n:'प्',s:'प'}, KeyO:{n:'व्',s:'व'}, KeyP:{n:'च्',s:'च'},
-  BracketLeft:{n:'छ्',s:'छ'}, BracketRight:{n:'ध',s:'–'},
-  KeyA:{n:'ऑ',s:'ॊ'}, KeyS:{n:'ऍ',s:'ॆ'}, KeyD:{n:'क्',s:'क'}, KeyF:{n:'ऐ',s:'ि'}, KeyG:{n:'ळ',s:'ह'},
-  KeyH:{n:'श्',s:'ी'}, KeyJ:{n:'र्',s:'र'}, KeyK:{n:'ज्ञ',s:'ा'}, KeyL:{n:'स्',s:'स'}, Semicolon:{n:'य्',s:'य'},
-  KeyZ:{n:'ॄ',s:'ऱ'}, KeyX:{n:'ग्',s:'ग'}, KeyC:{n:'ब्',s:'ब'}, KeyV:{n:'ट',s:'अ'}, KeyB:{n:'ठ',s:'इ'},
-  KeyN:{n:'छ',s:'द'}, KeyM:{n:'ड',s:'उ'}, Comma:{n:'ढ',s:'य'}, Period:{n:'झ',s:'ण'}, Slash:{n:'ह',s:'ः'},
+  Backquote:{n:'़',s:'द्य'}, Digit1:{n:'१',s:'।'}, Digit2:{n:'२',s:'/'}, Digit3:{n:'३',s:':'},
+  Digit4:{n:'४',s:'?'}, Digit5:{n:'५',s:'-'}, Digit6:{n:'६',s:'‘'}, Digit7:{n:'७',s:'’'},
+  Digit8:{n:'८',s:'द्व'}, Digit9:{n:'९',s:'त्र'}, Digit0:{n:'०',s:'ऋ'}, Minus:{n:'ॄ',s:'्'}, Equal:{n:'ृ',s:'़'},
+  KeyQ:{n:'ु',s:'फ'}, KeyW:{n:'ू',s:'ॅ'}, KeyE:{n:'म',s:'म्'}, KeyR:{n:'त',s:'त्'}, KeyT:{n:'ज',s:'ज्'},
+  KeyY:{n:'ल',s:'ल्'}, KeyU:{n:'न',s:'न्'}, KeyI:{n:'प',s:'प्'}, KeyO:{n:'व',s:'व्'}, KeyP:{n:'च',s:'च्'},
+  BracketLeft:{n:'ख',s:'क्ष'}, BracketRight:{n:',',s:'द्व'},
+  KeyA:{n:'ं',s:'ॉ'}, KeyS:{n:'ो',s:'ौ'}, KeyD:{n:'क',s:'क्'}, KeyF:{n:'ि',s:'थ'}, KeyG:{n:'ह',s:'ळ'},
+  KeyH:{n:'ी',s:'भ'}, KeyJ:{n:'र',s:'श्र'}, KeyK:{n:'ा',s:'ज्ञ'}, KeyL:{n:'स',s:'स्'}, Semicolon:{n:'य',s:'रू'}, Quote:{n:'ष',s:'ष्ठ'},
+  KeyZ:{n:'ॆ',s:'र्'}, KeyX:{n:'ग',s:'ग्'}, KeyC:{n:'ब',s:'ब्'}, KeyV:{n:'अ',s:'ट'}, KeyB:{n:'इ',s:'ठ'},
+  KeyN:{n:'द',s:'छ'}, KeyM:{n:'उ',s:'ड'}, Comma:{n:'ए',s:'ढ'}, Period:{n:'ण',s:'झ'}, Slash:{n:'ध',s:'घ'},
   Space:{n:' ',s:' '}
 };
 // half-consonant -> full-consonant, used to auto-upgrade a half form to its
 // full form when a vowel sign (matra) or visarga immediately follows it.
 const HALF_TO_FULL = {'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य'};
-const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः']);
+const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ']);
 const I_MATRA = 'ि';
 
 const ROW_LABELS = {number:'Number Row', top:'Top Row (QWERTY)', home:'Home Row (ASDF...)', bottom:'Bottom Row (ZXCV...)'};
 const ROW_CODES = {
   number:['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],
   top:['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight'],
-  home:['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon'],
+  home:['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'],
   bottom:['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']
 };
 function codeToRow(code){ for(const r in ROW_CODES){ if(ROW_CODES[r].includes(code)) return r; } return null; }
@@ -572,12 +572,12 @@ function codeToRow(code){ for(const r in ROW_CODES){ if(ROW_CODES[r].includes(co
 const KB_LAYOUT = [
   ['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],
   ['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight'],
-  ['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon'],
+  ['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'],
   ['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']
 ];
 const QWERTY_LABEL = {Backquote:'`',Digit1:'1',Digit2:'2',Digit3:'3',Digit4:'4',Digit5:'5',Digit6:'6',Digit7:'7',Digit8:'8',Digit9:'9',Digit0:'0',Minus:'-',Equal:'=',
   KeyQ:'Q',KeyW:'W',KeyE:'E',KeyR:'R',KeyT:'T',KeyY:'Y',KeyU:'U',KeyI:'I',KeyO:'O',KeyP:'P',BracketLeft:'[',BracketRight:']',
-  KeyA:'A',KeyS:'S',KeyD:'D',KeyF:'F',KeyG:'G',KeyH:'H',KeyJ:'J',KeyK:'K',KeyL:'L',Semicolon:';',
+  KeyA:'A',KeyS:'S',KeyD:'D',KeyF:'F',KeyG:'G',KeyH:'H',KeyJ:'J',KeyK:'K',KeyL:'L',Semicolon:';',Quote:"'",
   KeyZ:'Z',KeyX:'X',KeyC:'C',KeyV:'V',KeyB:'B',KeyN:'N',KeyM:'M',Comma:',',Period:'.',Slash:'/'};
 
 /** Stateful engine: call .press(code, shift) per keydown, .backspace() per backspace. */
@@ -1357,4 +1357,4 @@ else window.addEventListener('load', dismissLoader);
 setTimeout(dismissLoader, 1500);
 </script>
 </body>
-</html>
+</html>        
