@@ -6,15 +6,15 @@
 <title>Remington GAIL Master — Hindi Typing Test &amp; Keyboard Learning Games</title>
 <meta name="description" content="Learn the Remington GAIL Hindi keyboard, take CPCT/SSC-style typing tests with live WPM and accuracy, and master the layout with Falling Letters, Key Match and Matra Order games.">
 <meta name="theme-color" content="#573AFC">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Remington GAIL Master — Hindi Typing Test & Learning Games">
 <meta property="og:description" content="Practice the Remington GAIL Hindi keyboard layout with a live on-screen guide, exam-style typing tests, and gamified drills.">
-<meta property="og:image" content="/og-image.png">
+<meta property="og:image" content="og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Remington GAIL Master">
 <meta name="twitter:description" content="Hindi Remington GAIL typing test and keyboard learning games for CPCT, SSC and RSSB exam prep.">
-<meta name="twitter:image" content="/og-image.png">
+<meta name="twitter:image" content="og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -185,6 +185,10 @@ main .view.active{display:block;}
 .falling-field{position:relative; height:360px; background:var(--surface-dark); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:16px;}
 .falling-target{position:absolute; font-family:var(--font-dev); font-size:26px; color:#fff; background:var(--primary); width:44px; height:44px; border-radius:var(--radius-pill); display:flex; align-items:center; justify-content:center;}
 .falling-hud{display:flex; justify-content:space-between; font-size:14px; color:var(--muted); margin-bottom:10px;}
+.falling-gameover{position:absolute; inset:0; z-index:5; display:none; flex-direction:column; align-items:center; justify-content:center; gap:8px; background:rgba(0,0,0,0.6); backdrop-filter:blur(2px);}
+.falling-gameover.show{display:flex;}
+.falling-gameover-title{font-size:28px; font-weight:700; color:#fff;}
+.falling-gameover-stat{font-size:15px; color:var(--on-dark-soft, #bbbbbb);}
 .flash-card{background:var(--surface-card); border:1px solid var(--hairline); border-radius:var(--radius-lg); padding:48px; text-align:center; font-family:var(--font-dev); font-size:64px; margin-bottom:20px; color:var(--ink);}
 .row-list{display:flex; flex-direction:column; gap:10px;}
 .row-item{display:flex; align-items:center; justify-content:space-between; background:var(--canvas); border:1px solid var(--hairline); border-radius:var(--radius-lg); padding:16px 20px;}
@@ -399,8 +403,13 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
       <div class="game-tabs" id="game-tabs"></div>
 
       <div class="game-view" id="game-falling">
-        <div class="falling-hud"><span id="fl-score-label"></span><span id="fl-streak-label"></span></div>
-        <div class="falling-field" id="falling-field"></div>
+        <div class="falling-hud"><span id="fl-score-label"></span><span id="fl-streak-label"></span><span id="fl-lives-label"></span></div>
+        <div class="falling-field" id="falling-field">
+          <div class="falling-gameover hidden" id="falling-gameover">
+            <div class="falling-gameover-title">Game Over</div>
+            <div class="falling-gameover-stat" id="falling-gameover-stat"></div>
+          </div>
+        </div>
         <button class="btn btn-primary" id="fl-start-btn">Start Falling Letters</button>
         <div class="kb" id="falling-keyboard" style="margin-top:20px;"></div>
       </div>
@@ -887,12 +896,89 @@ function attachTryKeyboard(){
 // (ु ू े ो ौ), anusvara (ं) and a few consonants (ख घ थ भ) aren't mapped
 // yet, which limits natural sentence variety until the table is extended.
 const PASSAGES = {
-  words:['कमल जल फल बल नल चल तन मन धन दस दम पल कल', 'राम काम नाम गाना जाना पानी बाजार', 'बात रात जात सात तार बार कार पार', 'गीत जीत मीत सीता पीला दीवार बगीचा'],
-  sentences:['राम बाजार जाता फिर फल लाता', 'सीता बगीचा जाती फिर गीत गाती', 'पानी नल पर बहता रहता', 'राम सबका काम करता फिर विश्राम करता'],
+  // 668 individually-typeable words (validated against KEYMAP) for the Words difficulty.
+  // pickPassage() below joins random entries until it reaches the target test length.
+  words:[
+    'अंजन','अक्षर','अगर','अगली','अचल','अच्चा','अजय','अटक','अटल','अटूट','अद्यतन','अनंत',
+    'अनय','अनल','अनुकरण','अनुगमन','अनुबंध','अनुरूप','अनुरूपता','अनुशासन','अनुसरण','अपना','अपमान','अब',
+    'अमर','असल','अस्त्र','अस्त्रधारी','इधर','उठाव','उत्तर','उधर','उपन्यास','उपवन','उपासना','उल्लास',
+    'ऋषि','कंकाल','कंचन','कक्षा','कच्चा','कठिन','कतार','कन','कब','कमरा','कमल','कमला',
+    'कमाल','करण','करना','करम','कर्ज','कर्तन','कर्तव्य','कर्तव्यपरायण','कर्म','कर्मठ','कल','कलम',
+    'कला','कली','कल्याण','कवच','कवि','कविता','कसम','कहर','कहां','कहानी','कहीं','काका',
+    'काकी','काना','कानून','काम','काया','कार','कारण','काल','काला','किताब','किधर','किया',
+    'कृति','कृपण','कृपा','कैद','कैसा','क्रंदन','क्रम','क्रमण','क्रय','क्षमता','खाना','खिला',
+    'खुशी','गंगल','गंगा','गंभीर','गगन','गजब','गजल','गठन','गणक','गणतंत्र','गति','गन',
+    'गम','गमन','गमला','गया','गरम','गर्जन','गर्वित','गल','गलत','गली','गल्याण','गहन',
+    'गहरा','गांव','गाना','गाया','गाल','गिनती','गिनना','गिरी','गीत','गीता','गीतिका','गुंजन',
+    'गुल','गुलजार','गुलाब','गुलाल','गृह','गृहणी','गैस','ग्रसित','ग्रस्त','ग्रह','ग्रहण','ग्राम',
+    'ग्रामवासी','ग्रामीण','ग्राहक','ग्रीवा','घमघम','घर','घी','चटक','चतुर','चमक','चमन','चरण',
+    'चरित्र','चर्चा','चल','चहक','चाचा','चालक','चालीस','चित्र','चूर्ण','छपना','छवि','छात्र',
+    'छात्रा','छाया','जंगल','जगत','जगन','जगर','जगह','जगा','जटिलता','जन','जनक','जनता',
+    'जनन','जनम','जपना','जब','जमघट','जमाल','जमाव','जय','जयन','जल','जलचल','जलज',
+    'जलजल','जलद','जलधर','जलन','जलपान','जला','जवानी','जवाब','जहर','जहां','जहाज','जागरण',
+    'जात','जानना','जाना','जाल','जिधर','जीत','जीवन','जैसा','झूठ','टमटम','टर','ढंग',
+    'ढंगत','तंडल','तंत्र','तंत्रिका','तकान','तक्त','तन','तनय','तपना','तब','तर','तरबतर',
+    'तरल','तरा','तरुण','तर्क','तर्कशील','तर्जनी','तर्पण','तल','तसला','तार','ताल','तीस',
+    'तीसरा','तृण','तैसा','त्रयम','त्रसित','त्रिकाल','त्रिवेणी','त्रिशूल','दक्षिण','दन','दम','दमक',
+    'दमन','दया','दर','दर्पण','दल','दलदल','दशा','दस','दहन','दही','दादा','दादी',
+    'दानव','दाना','दार','दिखाया','दिया','दिवाली','दिशा','दीक्षा','दीवार','दुकान','दुजन','दूध',
+    'दूसरा','दृश्य','द्रवण','द्रव्य','द्रुत','धन','धमक','धमधम','धमाल','धर','धरण','धरना',
+    'धरम','धरातल','धर्म','धर्मरत','धर्मशाला','धाम','धार','धारण','नकल','नकाब','नगर','नमन',
+    'नय','नयन','नरम','नल','नहर','नहाना','नहीं','नागर','नाटक','नाना','नानी','नाम',
+    'नार','निबंध','नियम','निर्णय','निर्माण','निशा','नीत','नेत्र','पंगत','पंडित','पका','पक्ष',
+    'पगन','पगली','पचास','पतला','पति','पत्र','पर','परिहास','परीक्षा','पल','पलपल','पवन',
+    'पवित्रता','पहचान','पहनाव','पहर','पहला','पाठशाला','पाना','पानी','पार','पाल','पालक','पीना',
+    'पुनर','पूर्ण','पैला','पैसा','प्रकंप','प्रकट','प्रकरण','प्रकार','प्रगति','प्रचंड','प्रचलन','प्रचार',
+    'प्रजनन','प्रजा','प्रताप','प्रति','प्रदान','प्रपात','प्रबंध','प्रबल','प्रभात','प्रभाव','प्रमाण','प्रयास',
+    'प्रलय','प्रलाप','प्रवचन','प्रवण','प्रवास','प्रवाह','प्रशासन','प्रश्न','प्रसन्नता','प्रस्ताव','फरा','फल',
+    'बंधन','बकरा','बकान','बगीचा','बजाना','बटन','बताया','बन','बनना','बनाना','बनाया','बर',
+    'बल','बहाव','बाजार','बात','बातचीत','बार','बाल','बीस','बुरा','बेटी','बैर','भारत',
+    'भारी','भाषा','भिक्षा','भीत','भैया','भ्रम','भ्रमण','भ्रांत','मंगल','मंडप','मंडल','मंत्र',
+    'मंत्रणा','मकान','मक्त','मगन','मगर','मति','मधुर','मधुरता','मन','ममता','ममला','मर',
+    'मरण','मर्जी','मर्यादा','मल','मला','मस्ता','महत्व','मात्रा','मानना','मानव','मानी','मामा',
+    'मामी','माया','मार','माल','मित्र','मित्रता','मिला','मीत','मुक्त','मुक्ति','मृगया','मृदल',
+    'मृदुल','मेहमानी','मैला','यंत्र','यंत्रवत','यति','यमन','यहां','यहीं','यात्रा','यादव','यार',
+    'युक्त','युक्ति','रंग','रंगत','रकाब','रक्षक','रक्षा','रतन','रति','रन','रमन','रवण',
+    'रवानी','रवि','रहन','राजा','राणी','रात','राम','रामनवमी','रीत','रुका','लगन','लगाया',
+    'लगाव','लहर','लार','लाल','लिया','लीत','वंदन','वकालत','वक्तता','वचन','वन','वनज',
+    'वर','वर्ग','वर्जित','वर्तन','वर्षा','वस्ता','वहन','वहां','वहीं','वाणी','वार','वार्ता',
+    'वाल','विकल','विकल्प','विकास','विगत','विचल','विजय','विद्यार्थी','विद्यालय','विधवा','विधान','विनती',
+    'विनय','विफल','विभा','विमल','विमला','विरल','वृक्ष','वृद्ध','वैर','वैसा','व्यवस्था','शासक',
+    'शासन','शास्त्रकार','शिक्षक','शिक्षा','शिर','शिला','शिव','संकट','संकल','संकल्प','संगठन','संगणक',
+    'संगत','संगल','संगीत','संचय','संचार','संबल','संयमन','संयुक्त','संवाद','संविधान','संसद','संस्था',
+    'संहार','संहित','सका','सक्षम','सगन','सगर','सच','सचल','सच्चा','सजन','सजल','सति',
+    'सत्ता','सत्र','सत्व','सदन','सनक','सपना','सफर','सफल','सफलता','सब','समझ','समझना',
+    'समझा','समझाया','समता','समय','समर्पण','समवाय','समाज','सम्पन्न','सम्बन्ध','सम्मत','सम्मान','सम्मिलन',
+    'सर','सरकार','सरगम','सरन','सरल','सरलता','सरला','सरस','सरा','सर्जन','सर्दन','सर्वत्र',
+    'सर्वदा','सर्वर','सवाल','सहन','सहर','सागर','सात','साधन','साधना','सार','साल','सिर',
+    'सिल','सीत','सीता','सुंदर','सुंदरता','सुगठन','सुगण','सुगम','सुगमता','सुगर','सुजन','सुजान',
+    'सुधा','सुनाया','सुनार','सुनीता','सुमन','सुरक्षा','सुरभि','सुलगन','सूत्र','सूत्रधार','सृजन','सेना',
+    'सैर','स्वत्व','स्वर्ण','हंसना','हंसाया','हंसी','हरा','हल','हलचल','हल्का','हल्दी','हवन',
+    'हवि','हार','हाल','हास','हिजाब','हिसाब','हीत','हृदय'
+  ],
+  sentences:['राम बाजार जाता फिर फल लाता', 'सीता बगीचा जाती फिर गीत गाती', 'पानी नल पर बहता रहता', 'राम सबका काम करता फिर विश्राम करता',
+    'राम सुबह पानी पीता फिर काम पर जाता',
+    'सीता हर दिन बगीचे में गीत गाती फिर फूल चुनती',
+    'गली में बच्चे शाम खेलते फिर हंसते रहते',
+    'मीत अपना काम खुद करता कभी हार नहीं मानता',
+    'गुरु ने कहा मेहनत करता वही सफलता पाता',
+    'सुमन सुबह उठती फिर बगीचे में फूल चुनती',
+    'बाजार में सब तरफ रंग बिरंगे वस्त्र मिलते',
+    'हवा हल्की चलती वृक्ष के पत्ते हिलते रहते',
+    'नदी का पानी गांव के हर घर तक जाता',
+    'विनय हर सुबह जल्दी उठता फिर काम में लगता'
+  ],
   paragraphs:['राम बाजार जाता फिर फल लाता सीता बगीचा जाती फिर गीत गाती पानी नल पर बहता रहता राम सबका काम करता फिर विश्राम करता',
-    'कमल जल फल बल नल चल तन मन धन दस दम पल कल राम काम नाम गाना जाना पानी बाजार बात रात जात सात तार बार कार पार गीत जीत मीत सीता पीला दीवार बगीचा'],
+    'कमल जल फल बल नल चल तन मन धन दस दम पल कल राम काम नाम गाना जाना पानी बाजार बात रात जात सात तार बार कार पार गीत जीत मीत सीता पीला दीवार बगीचा',
+    'राम सुबह उठता पानी पीता फिर काम पर जाता शाम घर वापस जाता सबसे मिलता फिर विश्राम करता',
+    'सीता हर दिन बगीचे में जाती वहां फूल चुनती गीत गाती फिर घर वापस जाती',
+    'गांव में सुबह जल्दी उठने का रिवाज है हर घर से सब खेत जाते शाम घर वापस जाते'
+  ],
   exam:['सीता बगीचा जाती फिर गीत गाती राम बाजार जाता फिर फल लाता पानी नल पर बहता रहता राम सबका काम करता फिर विश्राम करता कमल जल पर पानी बहता रहता',
-    'राम सबका काम करता फिर विश्राम करता सीता बगीचा जाती फिर गीत गाती पानी नल पर बहता रहता राम बाजार जाता फिर फल लाता']
+    'राम सबका काम करता फिर विश्राम करता सीता बगीचा जाती फिर गीत गाती पानी नल पर बहता रहता राम बाजार जाता फिर फल लाता',
+    'मेहनत करने वाला कभी हार नहीं मानता वह हर मुश्किल का सामना करता फिर सफलता उसके कदम चूमती',
+    'गुरु का सम्मान करना हर विद्यार्थी का कर्तव्य है गुरु ही सही राह दिखाता फिर जीवन सफल बनाता'
+  ]
 };
 function pickPassage(diff, targetLen){
   const bank = PASSAGES[diff] || PASSAGES.sentences;
@@ -1076,11 +1162,18 @@ function weightedPick(entries){
   for(let i=0;i<entries.length;i++){ r-=weights[i]; if(r<=0) return entries[i]; }
   return entries[entries.length-1];
 }
-let fallState = {running:false, score:0, streak:0, speed:3200, spawnId:null};
-function stopFalling(){ fallState.running=false; clearInterval(fallState.spawnId); document.getElementById('falling-field').innerHTML=''; document.removeEventListener('keydown', fallingKeyHandler); }
+const FALL_START_LIVES = 5;
+let fallState = {running:false, score:0, streak:0, lives:FALL_START_LIVES, speed:3200, spawnId:null};
+function stopFalling(){
+  fallState.running=false; clearInterval(fallState.spawnId);
+  document.querySelectorAll('#falling-field .falling-target').forEach(el=>el.remove());
+  document.getElementById('falling-gameover').classList.remove('show'); document.getElementById('falling-gameover').classList.add('hidden');
+  document.removeEventListener('keydown', fallingKeyHandler);
+}
 document.getElementById('fl-start-btn').addEventListener('click', ()=>{
-  fallState={running:true, score:0, streak:0, speed:3200, spawnId:null};
-  document.getElementById('falling-field').innerHTML='';
+  fallState={running:true, score:0, streak:0, lives:FALL_START_LIVES, speed:3200, spawnId:null};
+  document.querySelectorAll('#falling-field .falling-target').forEach(el=>el.remove());
+  document.getElementById('falling-gameover').classList.remove('show'); document.getElementById('falling-gameover').classList.add('hidden');
   const kbEl = document.getElementById('falling-keyboard'); if(!kbEl.children.length) buildKeyboard(kbEl,{showSpace:false});
   updateFallHud();
   spawnFalling();
@@ -1091,26 +1184,43 @@ document.getElementById('fl-start-btn').addEventListener('click', ()=>{
 function updateFallHud(){
   document.getElementById('fl-score-label').textContent = 'Score: '+fallState.score;
   document.getElementById('fl-streak-label').textContent = 'Streak: '+fallState.streak;
+  document.getElementById('fl-lives-label').textContent = 'Lives: '+'●'.repeat(Math.max(0,fallState.lives))+'○'.repeat(Math.max(0,FALL_START_LIVES-fallState.lives));
   const field = document.getElementById('falling-field');
-  const targets = [...field.children].map(el=>({code:el.dataset.code, shift:el.dataset.shift==='true'}));
+  const targets = [...field.querySelectorAll('.falling-target')].map(el=>({code:el.dataset.code, shift:el.dataset.shift==='true'}));
   hintKeys(document.getElementById('falling-keyboard'), targets);
+}
+function endFalling(){
+  fallState.running=false;
+  clearInterval(fallState.spawnId);
+  document.querySelectorAll('#falling-field .falling-target').forEach(el=>el.remove());
+  document.removeEventListener('keydown', fallingKeyHandler);
+  document.getElementById('falling-gameover-stat').textContent = `Final score: ${fallState.score} \u00b7 Best streak reached this run: ${fallState.streak}`;
+  const overlay = document.getElementById('falling-gameover');
+  overlay.classList.remove('hidden'); overlay.classList.add('show');
+  document.getElementById('fl-start-btn').textContent = 'Play Again';
+  addXP(Math.round(fallState.score/10));
 }
 function spawnFalling(){
   if(!fallState.running) return;
   const field = document.getElementById('falling-field');
-  if(field.children.length>4) return;
+  if(field.querySelectorAll('.falling-target').length>4) return;
   const t = weightedPick(TARGET_ENTRIES);
+  const el = document.createElement('div');
+  el.className = 'falling-target';
   el.textContent = t.ch; el.dataset.code=t.code; el.dataset.shift=t.shift;
   el.style.left = (10+Math.random()*80)+'%'; el.style.top='-50px';
   field.appendChild(el);
   updateFallHud();
-  const duration = Math.max(3.5, 9000/1000);
   let start=null;
   function step(ts){
     if(!start) start=ts;
     const p = (ts-start)/ (fallState.speed+2500);
     el.style.top = (p*340)+'px';
-    if(p>=1){ el.remove(); fallState.streak=0; updateFallHud(); return; }
+    if(p>=1){
+      el.remove(); fallState.streak=0; fallState.lives--;
+      if(fallState.lives<=0){ endFalling(); return; }
+      updateFallHud(); return;
+    }
     if(el.isConnected && fallState.running) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
@@ -1232,10 +1342,10 @@ function rowDrillHandler(e){
 // (Shift+F) matra key is pressed first, then the consonant it visually
 // precedes but logically follows — see RemingtonEngine.pendingI.
 const MATRA_WORDS = [
-  {word:'दिन', keys:[['KeyF',true],['KeyN',true],['KeyU',true]]},
-  {word:'मित्र', keys:[['KeyF',true],['KeyE',true],['Digit9',false]]},
-  {word:'गिरी', keys:[['KeyF',true],['KeyX',true],['KeyJ',true],['KeyH',true]]},
-  {word:'किताब', keys:[['KeyF',true],['KeyD',true],['KeyR',true],['KeyK',true],['KeyC',true]]},
+  {word:'दिन', keys:[['KeyF',false],['KeyN',false],['KeyU',false]]},
+  {word:'मित्र', keys:[['KeyF',false],['KeyE',false],['Digit9',true]]},
+  {word:'गिरी', keys:[['KeyF',false],['KeyX',false],['KeyJ',false],['KeyH',false]]},
+  {word:'किताब', keys:[['KeyF',false],['KeyD',false],['KeyR',false],['KeyK',false],['KeyC',false]]},
 ];
 let mc = {idx:0, target:null, keyIdx:0};
 function startMatraChallenge(){
