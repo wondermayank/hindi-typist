@@ -149,6 +149,33 @@ textarea#doc::placeholder{color:var(--muted-soft); font-family:var(--font-ui); f
 .foot.open .foot-btn{display:none;}
 .foot.open .foot-expanded{display:inline-flex;}
 
+/* ---------- Mini on-screen keyboard ---------- */
+.icon-btn.active{background:var(--primary); color:#fff;}
+.mini-kb{
+  position:fixed; left:50%; bottom:14px; transform:translateX(-50%);
+  z-index:210; background:rgba(255,255,255,0.97); backdrop-filter:blur(10px);
+  border:1px solid var(--hairline); border-radius:var(--radius-lg);
+  padding:10px 12px 12px; box-shadow:rgba(0,0,0,0.10) 0 2px 18px;
+  display:flex; flex-direction:column; gap:5px; align-items:center;
+}
+.kb-row{display:flex; gap:5px;}
+.kb-key{
+  position:relative; width:38px; height:40px; border-radius:var(--radius-sm);
+  background:var(--surface-soft); border:1px solid var(--hairline);
+  display:flex; align-items:flex-end; justify-content:center; padding-bottom:3px;
+  transition:background .12s, border-color .12s, transform .12s;
+}
+.kb-key .kb-main{font-family:var(--font-dev); font-size:15px; color:var(--ink); line-height:1;}
+.kb-key .kb-shift{position:absolute; top:3px; left:0; right:0; text-align:center; font-family:var(--font-dev); font-size:10px; color:var(--muted-soft); line-height:1;}
+.kb-key.wide{width:64px;}
+.kb-key.space{width:220px;}
+.kb-key.active{background:var(--primary); border-color:var(--primary); transform:translateY(-2px);}
+.kb-key.active .kb-main{color:#fff;}
+.kb-key.active .kb-shift{color:rgba(255,255,255,0.75);}
+.kb-key.shift-active{background:var(--primary-focus); border-color:var(--primary-focus);}
+.kb-key.shift-active .kb-main{color:#fff;}
+.kb-hint-row{font-size:11px; color:var(--muted-soft); text-align:center;}
+
 @media(max-width:640px){
   textarea#doc{font-size:19px; line-height:1.9;}
   .doc-pad{padding:64px 16px 76px;}
@@ -156,6 +183,8 @@ textarea#doc::placeholder{color:var(--muted-soft); font-family:var(--font-ui); f
   .target-word{font-size:38px;}
   .dash-pad{padding:90px 16px 70px;}
   .lesson-topbar{top:56px; flex-direction:column; align-items:center; gap:4px;}
+  .mini-kb{display:none;}
+  #keyboard-toggle{display:none;}
 }
 </style>
 </head>
@@ -200,8 +229,16 @@ textarea#doc::placeholder{color:var(--muted-soft); font-family:var(--font-ui); f
 <!-- DASHBOARD -->
 <main class="view" id="view-dashboard">
   <div class="dash-pad">
-    <h1 class="dash-title">8-Day Typing Course</h1>
-    <p class="dash-sub">Remington GAIL, real Hindi words, one row at a time. Clear the Normal or Shift round to unlock the next lesson — Day 7, Day 8 and the Final Test also need at least 15 WPM to pass.</p>
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <div>
+        <h1 class="dash-title">8-Day Typing Course</h1>
+        <p class="dash-sub">Remington GAIL, real Hindi words, one row at a time. Clear the Normal or Shift round to unlock the next lesson — Day 7, Day 8 and the Final Test also gate on speed, rising from 15 to 25 WPM as the course gets harder.</p>
+      </div>
+      <div style="display:flex; gap:8px; flex-shrink:0;">
+        <button class="pill-btn" id="export-progress-btn">Export progress</button>
+        <button class="pill-btn" id="reset-progress-btn">Reset progress</button>
+      </div>
+    </div>
     <div class="day-grid" id="day-grid"></div>
   </div>
 </main>
@@ -354,10 +391,6 @@ function genWordList(seedKey, codes, shiftProb, minUnits, maxUnits, count, alter
     const engine = new RemingtonEngine();
     const units = minUnits + Math.floor(rng() * (maxUnits - minUnits + 1));
     for(let u=0; u<units; u++){
-      let pool = codes;
-      if(alternateHands && lastHand){
-        const filtered = codes.filter(c => LEFT_HAND.has(c) !== (lastHand === 'L' ? true : false) ? false : true);
-      }
       let pickPool = codes;
       if(alternateHands){
         const opposite = codes.filter(c => (LEFT_HAND.has(c) ? 'L' : 'R') !== lastHand);
@@ -397,7 +430,14 @@ const FINAL_PARAGRAPHS = [
 ============================================================================ */
 const REPS_PER_WORD = 5;
 const WORDS_PER_PART = 50;
+/* PASS_WPM is now a floor per stage rather than one flat number — Day 7 is
+   the first speed-gated stage so it stays beginner-friendly, Day 8 asks a
+   bit more since it forces both hands across every row, and the Final
+   Test (real CPCT/SSC-style paragraphs) asks for the highest average,
+   closer to actual exam cutoffs. Override with day.passWpm; falls back
+   to this default if a speed-gated day doesn't set one. */
 const PASS_WPM = 15;
+const FINAL_PASS_WPM = 25;
 
 /* ============================================================================
    CURATED WORD LISTS — real Hindi words, hand-picked and checked so every
@@ -417,6 +457,14 @@ const W_DAY2_BOTH   = ['जल','मन','वतन','पवन','चलन','�
 const W_DAY3_NORMAL = ['अब','अदब','गए','गण','बद'];
 const W_DAY3_SHIFT  = ['घट','ठग','डग','ढब','झट','उठ','टब'];
 const W_DAY3_BOTH   = ['अब','अदब','गए','गण','बद','घट','ठग','डग','ढब','झट','उठ','टब'];
+/* This row's keys produce no vowel matras and no bare र/न/त/क/स — so the
+   pool of genuine single-word Hindi vocabulary typable from ONLY these
+   10 keys is small (verified above, every candidate outside this list was
+   checked and rejected). Rather than pad with invented non-words, this
+   short "Phrases" round adds real, meaningful multi-word phrases built
+   from the same verified vocabulary, giving more typing volume without
+   sacrificing the "real Hindi text" rule the rest of the course follows. */
+const W_DAY3_PHRASES = ['उठ गए','अब उठ','झट उठ','गण उठ गए'];
 
 const W_ADD_1_2 = ['कमल','समय','कमरा','सचमुच','समाचार','कहानी','जवान','सजाना','समाज','समस्या','यात्रा','सहायता','समाप्त','सामान','समान','जवानी','कमाल','सवाल','सफलता','सम्मान','कल्पना'];
 const W_ADD_2_3 = ['उपज','बटन','जुगत','गुण','गुम','जन्तु','मजबूत','बदल','बदन','चटपट','पटल','तट','जगत','बुत','बजट','जगमग','जमघट'];
@@ -435,11 +483,12 @@ const DAYS = [
       {key:'shift', label:'Shift', shiftProb:1, words:W_DAY2_SHIFT},
       {key:'both', label:'Both', shiftProb:0.5, words:W_DAY2_BOTH}
     ], minUnits:1, maxUnits:2, requiresSpeed:false },
-  { id:3, title:'Day 3', name:'Lower Row', desc:'z x c v b n m , . / — real words, normal, shift, then both.', codes:ROW_KEYS.lower,
+  { id:3, title:'Day 3', name:'Lower Row', desc:'z x c v b n m , . / — real words and phrases, normal, shift, both, then phrases.', codes:ROW_KEYS.lower,
     parts:[
       {key:'normal', label:'Normal', shiftProb:0, words:W_DAY3_NORMAL},
       {key:'shift', label:'Shift', shiftProb:1, words:W_DAY3_SHIFT},
-      {key:'both', label:'Both', shiftProb:0.5, words:W_DAY3_BOTH}
+      {key:'both', label:'Both', shiftProb:0.5, words:W_DAY3_BOTH},
+      {key:'phrases', label:'Phrases', shiftProb:0.5, words:W_DAY3_PHRASES}
     ], minUnits:1, maxUnits:2, requiresSpeed:false },
   { id:4, title:'Day 4', name:'Home + Upper', desc:'a s d f g h j k l ; \' plus q w e r t y u i o p [ ] \\ combined into real words.', codes:[...ROW_KEYS.home, ...ROW_KEYS.upper],
     parts:[ {key:'mix', label:'Combined', shiftProb:0.3, words:W_ADD_1_2} ], minUnits:1, maxUnits:2, requiresSpeed:false },
@@ -448,9 +497,9 @@ const DAYS = [
   { id:6, title:'Day 6', name:'All Three Rows', desc:'Home, upper and lower rows together — full real words across the whole hand span.', codes:ROW_KEYS.all,
     parts:[ {key:'mix', label:'Combined', shiftProb:0.3, words:W_ADD_1_3} ], minUnits:1, maxUnits:2, requiresSpeed:false },
   { id:7, title:'Day 7', name:'All Keys — Easy', desc:'Every key together, short easy words. Needs 15+ WPM to pass.', codes:ROW_KEYS.all,
-    parts:[ {key:'mix', label:'All keys', shiftProb:0.2} ], minUnits:1, maxUnits:2, requiresSpeed:true },
-  { id:8, title:'Day 8', name:'Both Hands — Hard', desc:'Longer words that force both hands across every row. Needs 15+ WPM.', codes:ROW_KEYS.all,
-    parts:[ {key:'mix', label:'Both hands', shiftProb:0.5} ], minUnits:2, maxUnits:3, requiresSpeed:true, alternateHands:true }
+    parts:[ {key:'mix', label:'All keys', shiftProb:0.2} ], minUnits:1, maxUnits:2, requiresSpeed:true, passWpm:15 },
+  { id:8, title:'Day 8', name:'Both Hands — Hard', desc:'Longer words that force both hands across every row. Needs 20+ WPM.', codes:ROW_KEYS.all,
+    parts:[ {key:'mix', label:'Both hands', shiftProb:0.5} ], minUnits:2, maxUnits:3, requiresSpeed:true, alternateHands:true, passWpm:20 }
 ];
 
 /* A day with both a 'normal' and a 'shift' part is a row-teaching day —
@@ -472,17 +521,20 @@ function getWords(day, part){
    PROGRESS (localStorage)
 ============================================================================ */
 const STORE_KEY = 'thunderTypingProgress_v2';
-function loadProgress(){
-  try{
-    const raw = localStorage.getItem(STORE_KEY);
-    if(raw) return JSON.parse(raw);
-  }catch(e){}
+function blankProgress(){
   const p = { days:{}, final:{ unlocked:false, passed:false, paras:{} } };
   DAYS.forEach(d=>{
     p.days[d.id] = { unlocked: d.id===1, passed:false, parts:{} };
     d.parts.forEach(pt=>{ p.days[d.id].parts[pt.key] = { reps:{}, done:false, wpm:0 }; });
   });
   return p;
+}
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return blankProgress();
 }
 let progress = loadProgress();
 function saveProgress(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(progress)); }catch(e){} }
@@ -523,9 +575,29 @@ function showView(name){
     document.getElementById('view-'+v).classList.toggle('hidden', v!==name);
   });
   document.getElementById('free-typing-toggle').classList.toggle('hidden', name==='doc');
+  if(name==='dashboard' || name==='result') updateMiniKeyboard(null, null);
 }
 document.getElementById('brand-home-btn').addEventListener('click', ()=>{ renderDashboard(); showView('dashboard'); });
 document.getElementById('free-typing-toggle').addEventListener('click', ()=>{ showView('doc'); doc.focus(); });
+document.getElementById('reset-progress-btn').addEventListener('click', ()=>{
+  if(!confirm('Reset all progress? This clears every day\'s reps and the Final Test — it cannot be undone.')) return;
+  progress = blankProgress();
+  saveProgress();
+  renderDashboard();
+});
+document.getElementById('export-progress-btn').addEventListener('click', ()=>{
+  const payload = { exportedAt: new Date().toISOString(), storeKey: STORE_KEY, progress };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = 'thunder-typing-progress-'+stamp+'.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
 
 /* ============================================================================
    DASHBOARD
@@ -547,7 +619,7 @@ function renderDashboard(){
       '<div class="name">'+day.name+'</div>'+
       '<div class="desc">'+day.desc+'</div>'+
       '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>'+
-      '<div class="desc">'+done+' / '+total+' reps'+(day.requiresSpeed ? ' &middot; needs 15+ WPM' : '')+'</div>';
+      '<div class="desc">'+done+' / '+total+' reps'+(day.requiresSpeed ? ' &middot; needs '+(day.passWpm||PASS_WPM)+'+ WPM' : '')+'</div>';
     card.addEventListener('click', ()=>{ if(st.unlocked) openDay(day); });
     grid.appendChild(card);
   });
@@ -561,7 +633,7 @@ function renderDashboard(){
     (fst.passed ? '<span class="badge">Passed</span>' : (!fst.unlocked ? '<span class="badge locked">Locked</span>' : '')) +
     '</div>'+
     '<div class="name">5 Paragraphs</div>'+
-    '<div class="desc">Full-keyboard paragraphs. Average 15+ WPM across all 5 to pass.</div>'+
+    '<div class="desc">Full-keyboard paragraphs. Average '+FINAL_PASS_WPM+'+ WPM across all 5 to pass.</div>'+
     '<div class="progress-bar"><div class="progress-fill" style="width:'+Math.round((paraDone/5)*100)+'%"></div></div>'+
     '<div class="desc">'+paraDone+' / 5 paragraphs</div>';
   fcard.addEventListener('click', ()=>{ if(fst.unlocked) openFinalTest(); });
@@ -628,6 +700,7 @@ function updateLessonUI(){
   for(let i=0;i<session.words.length;i++){ if((reps[i]||0) >= REPS_PER_WORD) wordsDone++; }
   document.getElementById('stat-progress').textContent = wordsDone+'/'+session.words.length;
   session.lastWpm = wpm;
+  updateMiniKeyboard(session.trial, target);
 }
 function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -702,19 +775,24 @@ function finishPart(){
     startPart(); renderPartTabs();
     return;
   }
-  const passed = day.requiresSpeed ? (session.lastWpm||0) >= PASS_WPM : true;
+  const reqWpm = day.passWpm || PASS_WPM;
+  const passed = day.requiresSpeed ? (session.lastWpm||0) >= reqWpm : true;
+  const speedStats = day.requiresSpeed ? [
+    {label:'Your speed', value:(session.lastWpm||0)+' WPM'},
+    {label:'Minimum needed', value:reqWpm+' WPM'}
+  ] : null;
   if(passed){
     progress.days[day.id].passed = true;
     saveProgress();
     unlockNext(day);
     showResult(true, day.title+' complete', 'All '+ dayTotalReps(day).total +' reps done'+(day.requiresSpeed ? ' at '+session.lastWpm+' WPM.' : '.'), [
       {label:'Continue', action:()=>{ renderDashboard(); showView('dashboard'); }, primary:true}
-    ]);
+    ], speedStats);
   } else {
-    showResult(false, 'Reps complete, speed too low', 'You finished every rep but typed at '+session.lastWpm+' WPM — Day '+day.id+' needs '+PASS_WPM+'+ WPM to pass. Retry to build speed.', [
+    showResult(false, 'Reps complete, speed too low', 'You finished every rep but typed at '+session.lastWpm+' WPM — Day '+day.id+' needs '+reqWpm+'+ WPM to pass. Retry to build speed.', [
       {label:'Retry '+day.title, action:()=>{ retryDay(day); }, primary:true},
       {label:'Back to course', action:()=>{ renderDashboard(); showView('dashboard'); }}
-    ]);
+    ], speedStats);
   }
 }
 function retryDay(day){
@@ -722,14 +800,24 @@ function retryDay(day){
   saveProgress();
   openDay(day);
 }
-function showResult(pass, title, sub, actions){
+function showResult(pass, title, sub, actions, stats){
   document.getElementById('result-icon').className = 'result-icon '+(pass?'pass':'fail');
   document.getElementById('result-icon').innerHTML = pass
     ? '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
     : '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   document.getElementById('result-title').textContent = title;
   document.getElementById('result-sub').textContent = sub;
-  document.getElementById('result-stats').innerHTML = '';
+  const statsWrap = document.getElementById('result-stats');
+  statsWrap.innerHTML = '';
+  statsWrap.classList.toggle('stat-row', !!(stats && stats.length));
+  if(stats && stats.length){
+    stats.forEach(s=>{
+      const d = document.createElement('div');
+      d.className = 'stat';
+      d.innerHTML = '<b>'+s.value+'</b>'+s.label;
+      statsWrap.appendChild(d);
+    });
+  }
   const actWrap = document.getElementById('result-actions');
   actWrap.innerHTML = '';
   actions.forEach(a=>{
@@ -766,6 +854,7 @@ function updateParaUI(){
   document.getElementById('para-acc').textContent = acc+'%';
   document.getElementById('para-num').textContent = (paraSession.idx+1)+'/5';
   paraSession.lastWpm = wpm;
+  updateMiniKeyboard(paraSession.trial, target);
 }
 function paraKeydown(e){
   if(document.getElementById('view-paragraph').classList.contains('hidden')) return;
@@ -801,17 +890,21 @@ function completePara(){
   }
   const wpms = Object.values(progress.final.paras).map(p=>p.wpm);
   const avg = Math.round(wpms.reduce((a,b)=>a+b,0)/wpms.length);
-  const passed = avg >= PASS_WPM;
+  const passed = avg >= FINAL_PASS_WPM;
+  const speedStats = [
+    {label:'Your average', value:avg+' WPM'},
+    {label:'Minimum needed', value:FINAL_PASS_WPM+' WPM'}
+  ];
   if(passed){
     progress.final.passed = true; saveProgress();
     showResult(true, 'Final Test passed', 'Average speed across all 5 paragraphs: '+avg+' WPM. You have completed the 8-Day Thunder Typing course.', [
       {label:'Back to course', action:()=>{ renderDashboard(); showView('dashboard'); }, primary:true}
-    ]);
+    ], speedStats);
   } else {
-    showResult(false, 'Almost there', 'Average speed was '+avg+' WPM — the Final Test needs '+PASS_WPM+'+ WPM average. Retry the paragraphs to build speed.', [
+    showResult(false, 'Almost there', 'Average speed was '+avg+' WPM — the Final Test needs '+FINAL_PASS_WPM+'+ WPM average. Retry the paragraphs to build speed.', [
       {label:'Retry Final Test', action:()=>{ progress.final.paras={}; saveProgress(); openFinalTest(); }, primary:true},
       {label:'Back to course', action:()=>{ renderDashboard(); showView('dashboard'); }}
-    ]);
+    ], speedStats);
   }
 }
 
@@ -832,10 +925,10 @@ function scrollToCaret(){
 doc.addEventListener('keydown', (e)=>{
   if(e.metaKey || e.ctrlKey || e.altKey) return;
   if(e.code === 'Backspace'){
-    e.preventDefault(); engine.backspace(); doc.value = engine.buffer; autoGrow(); scrollToCaret(); return;
+    e.preventDefault(); engine.backspace(); doc.value = engine.buffer; autoGrow(); scrollToCaret(); updateMiniKeyboard(engine, null); return;
   }
   if(e.code === 'Enter'){
-    e.preventDefault(); engine.newline(); doc.value = engine.buffer; autoGrow(); scrollToCaret(); return;
+    e.preventDefault(); engine.newline(); doc.value = engine.buffer; autoGrow(); scrollToCaret(); updateMiniKeyboard(engine, null); return;
   }
   if(!KEYMAP[e.code]) return;
   e.preventDefault();
@@ -843,6 +936,7 @@ doc.addEventListener('keydown', (e)=>{
   doc.value = engine.buffer;
   doc.setSelectionRange(doc.value.length, doc.value.length);
   autoGrow(); scrollToCaret();
+  updateMiniKeyboard(engine, null);
 });
 doc.addEventListener('click', ()=> doc.setSelectionRange(doc.value.length, doc.value.length));
 window.addEventListener('resize', autoGrow);
@@ -853,6 +947,178 @@ window.addEventListener('resize', autoGrow);
 document.addEventListener('keydown', (e)=>{
   if(!document.getElementById('view-lesson').classList.contains('hidden')) lessonKeydown(e);
   else if(!document.getElementById('view-paragraph').classList.contains('hidden')) paraKeydown(e);
+});
+
+/* ---------------------------------------------------------------------------
+   Mini on-screen keyboard — shows the Remington GAIL layout and highlights
+   the exact physical key (and Shift, if needed) for whatever character
+   comes next in the current lesson word / paragraph. Works by brute-force
+   simulating every key against a clone of the live RemingtonEngine and
+   checking which one advances the buffer toward the target — this reuses
+   the engine's own composition rules (incl. the ि pending-matra reorder)
+   instead of trying to duplicate that logic separately.
+--------------------------------------------------------------------------- */
+const KB_ROWS = [
+  ['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],
+  ['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash'],
+  ['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'],
+  ['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']
+];
+let kbBuilt = false;
+let kbVisible = false;
+let lastKbState = null;
+
+function buildMiniKeyboard(){
+  if(kbBuilt) return;
+  const kb = document.getElementById('mini-kb');
+  kb.innerHTML = '';
+  KB_ROWS.forEach((row, ri)=>{
+    const rowEl = document.createElement('div');
+    rowEl.className = 'kb-row';
+    if(ri===3){
+      const shL = document.createElement('div');
+      shL.className = 'kb-key wide'; shL.id = 'kb-shift-left';
+      shL.innerHTML = '<span class="kb-main" style="font-family:var(--font-ui); font-size:11px;">Shift</span>';
+      rowEl.appendChild(shL);
+    }
+    row.forEach(code=>{
+      const map = KEYMAP[code];
+      const k = document.createElement('div');
+      k.className = 'kb-key';
+      k.dataset.code = code;
+      k.innerHTML = '<span class="kb-shift">'+map.s+'</span><span class="kb-main">'+map.n+'</span>';
+      rowEl.appendChild(k);
+    });
+    if(ri===3){
+      const shR = document.createElement('div');
+      shR.className = 'kb-key wide'; shR.id = 'kb-shift-right';
+      shR.innerHTML = '<span class="kb-main" style="font-family:var(--font-ui); font-size:11px;">Shift</span>';
+      rowEl.appendChild(shR);
+    }
+    kb.appendChild(rowEl);
+  });
+  const spaceRow = document.createElement('div');
+  spaceRow.className = 'kb-row';
+  const spaceKey = document.createElement('div');
+  spaceKey.className = 'kb-key space';
+  spaceKey.dataset.code = 'Space';
+  spaceKey.innerHTML = '<span class="kb-main" style="font-family:var(--font-ui); font-size:11px;">Space</span>';
+  spaceRow.appendChild(spaceKey);
+  kb.appendChild(spaceRow);
+  kbBuilt = true;
+}
+
+/* Reverse lookup: output character -> the key that produces it. First
+   occurrence wins for the rare chars mapped from two different keys. */
+const CHAR_TO_KEY = {};
+Object.keys(KEYMAP).forEach(code=>{
+  const map = KEYMAP[code];
+  if(map.n && !(map.n in CHAR_TO_KEY)) CHAR_TO_KEY[map.n] = {code, shift:false};
+  if(map.s && !(map.s in CHAR_TO_KEY)) CHAR_TO_KEY[map.s] = {code, shift:true};
+});
+
+/* Builds the exact key-press sequence that reproduces `target`, respecting
+   the one Remington quirk that reorders input: the ि matra is pressed
+   BEFORE the consonant it visually precedes, so whenever the string has
+   [consonant][ि] back to back, those two output characters come from a
+   two-key unit typed in the opposite order (ि-key first, then the
+   consonant key, which is what actually appends both chars at once). */
+const FULL_TO_HALF = {};
+Object.keys(HALF_TO_FULL).forEach(half=>{ FULL_TO_HALF[HALF_TO_FULL[half]] = half; });
+
+function buildKeySequence(target){
+  const seq = [], beforeBuf = [];
+  const probe = new RemingtonEngine(); // reused so buffer states come from the real engine, not hand math
+  let i = 0;
+  while(i < target.length){
+    if(target[i+1] === I_MATRA){
+      const kI = CHAR_TO_KEY[I_MATRA], kBase = CHAR_TO_KEY[target[i]];
+      if(!kI || !kBase) return null;
+      beforeBuf.push(probe.buffer); seq.push(kI); probe.press(kI.code, kI.shift);
+      beforeBuf.push(probe.buffer); seq.push(kBase); probe.press(kBase.code, kBase.shift);
+      i += 2; continue;
+    }
+    /* Greedy longest literal match against every KEYMAP output (these can
+       be multi-codepoint clusters, e.g. ख् = ख+्) — tried BEFORE the
+       substitution fallback below, since most consonants are directly
+       typable and only some conjuncts genuinely have no direct key. */
+    let matchedLen = 0;
+    for(let len=4; len>=1; len--){
+      const piece = target.slice(i, i+len);
+      if(piece.length===len && CHAR_TO_KEY[piece]){ matchedLen = len; break; }
+    }
+    if(matchedLen){
+      const k = CHAR_TO_KEY[target.slice(i, i+matchedLen)];
+      beforeBuf.push(probe.buffer); seq.push(k); probe.press(k.code, k.shift);
+      i += matchedLen; continue;
+    }
+    /* No direct key produces this literal substring — conjunct (क्ष, ष,
+       भ, etc.) immediately followed by a matra: typed as the half-form
+       key, then the matra key, and the engine substitutes half->full. */
+    let subMatched = false;
+    for(const full in FULL_TO_HALF){
+      if(!target.startsWith(full, i)) continue;
+      const after = target[i+full.length];
+      if(!after || !(MATRA_SET.has(after) || after===':')) continue;
+      const half = FULL_TO_HALF[full];
+      const kHalf = CHAR_TO_KEY[half], kMatra = CHAR_TO_KEY[after];
+      if(!kHalf || !kMatra) continue;
+      beforeBuf.push(probe.buffer); seq.push(kHalf); probe.press(kHalf.code, kHalf.shift);
+      beforeBuf.push(probe.buffer); seq.push(kMatra); probe.press(kMatra.code, kMatra.shift);
+      i += full.length + 1; subMatched = true; break;
+    }
+    if(subMatched) continue;
+    return null;
+  }
+  if(probe.buffer !== target) return null; // don't show a highlight unless the plan is verified correct
+  return {seq, beforeBuf};
+}
+const keySequenceCache = new Map();
+function getKeySequence(target){
+  if(!keySequenceCache.has(target)) keySequenceCache.set(target, buildKeySequence(target));
+  return keySequenceCache.get(target);
+}
+/* Matches by the exact intermediate buffer snapshot (not a startsWith
+   prefix check) — a half-form conjunct mid-composition, e.g. "कभ्"
+   on the way to "कभी", is a valid live state but is NOT itself a
+   prefix of the final word, so prefix matching would wrongly reject it. */
+function findNextKey(baseEngine, target){
+  if(!target) return null;
+  const built = getKeySequence(target);
+  if(!built) return null;
+  const buf = baseEngine.buffer;
+  const candidates = [];
+  for(let k=0;k<built.seq.length;k++){ if(built.beforeBuf[k]===buf) candidates.push(k); }
+  if(!candidates.length) return null;
+  const idx = baseEngine.pendingI ? candidates[candidates.length-1] : candidates[0];
+  return built.seq[idx];
+}
+
+function refreshMiniKeyboardHighlight(){
+  if(!kbVisible || !kbBuilt) return;
+  document.querySelectorAll('.kb-key.active').forEach(el=>el.classList.remove('active'));
+  const shL = document.getElementById('kb-shift-left'), shR = document.getElementById('kb-shift-right');
+  shL.classList.remove('shift-active'); shR.classList.remove('shift-active');
+  if(!lastKbState || !lastKbState.engine || !lastKbState.target) return;
+  const next = findNextKey(lastKbState.engine, lastKbState.target);
+  if(!next) return;
+  const keyEl = document.querySelector('.kb-key[data-code="'+next.code+'"]');
+  if(keyEl) keyEl.classList.add('active');
+  if(next.shift){ shL.classList.add('shift-active'); shR.classList.add('shift-active'); }
+}
+/* Call with (engine, target) whenever a lesson/paragraph/doc buffer changes.
+   Pass target=null (e.g. free typing) to just show the layout with no highlight. */
+function updateMiniKeyboard(engine, target){
+  lastKbState = { engine, target };
+  refreshMiniKeyboardHighlight();
+}
+
+document.getElementById('keyboard-toggle').addEventListener('click', ()=>{
+  kbVisible = !kbVisible;
+  buildMiniKeyboard();
+  document.getElementById('mini-kb').classList.toggle('hidden', !kbVisible);
+  document.getElementById('keyboard-toggle').classList.toggle('active', kbVisible);
+  refreshMiniKeyboardHighlight();
 });
 
 /* ---------------------------------------------------------------------------
