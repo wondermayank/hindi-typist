@@ -1060,7 +1060,22 @@ function buildGameTabs(){
 // -- Falling Letters --------------------------------------------------------
 const TARGET_ENTRIES = Object.entries(KEYMAP).filter(([c])=>c!=='Space').flatMap(([c,m])=>[
   {code:c, shift:false, ch:m.n}, {code:c, shift:true, ch:m.s}
-]).filter(t=>t.ch.length===1 && /[\u0900-\u097F]/.test(t.ch));
+]).filter(t=>/[\u0900-\u097F]/.test(t.ch));
+/** Picks a random target, but weights toward keys the user has a low
+ * accuracy on (per state.keystats) so weak keys show up more often.
+ * Keys with little/no data get a mild boost too, for even exposure. */
+function weightedPick(entries){
+  const weights = entries.map(t=>{
+    const s = state.keystats[t.code];
+    if(!s || (s.hit+s.miss)<3) return 1.5;
+    const acc = s.hit/(s.hit+s.miss);
+    return 1 + (1-acc)*4;
+  });
+  const total = weights.reduce((a,b)=>a+b,0);
+  let r = Math.random()*total;
+  for(let i=0;i<entries.length;i++){ r-=weights[i]; if(r<=0) return entries[i]; }
+  return entries[entries.length-1];
+}
 let fallState = {running:false, score:0, streak:0, speed:3200, spawnId:null};
 function stopFalling(){ fallState.running=false; clearInterval(fallState.spawnId); document.getElementById('falling-field').innerHTML=''; document.removeEventListener('keydown', fallingKeyHandler); }
 document.getElementById('fl-start-btn').addEventListener('click', ()=>{
@@ -1084,8 +1099,7 @@ function spawnFalling(){
   if(!fallState.running) return;
   const field = document.getElementById('falling-field');
   if(field.children.length>4) return;
-  const t = TARGET_ENTRIES[Math.floor(Math.random()*TARGET_ENTRIES.length)];
-  const el = document.createElement('div'); el.className='falling-target dev';
+  const t = weightedPick(TARGET_ENTRIES);
   el.textContent = t.ch; el.dataset.code=t.code; el.dataset.shift=t.shift;
   el.style.left = (10+Math.random()*80)+'%'; el.style.top='-50px';
   field.appendChild(el);
