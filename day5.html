@@ -220,7 +220,7 @@ textarea#doc::placeholder{color:var(--muted-soft); font-family:var(--font-ui); f
 <div class="mini-kb hidden" id="mini-kb" aria-hidden="true"></div>
 
 <!-- FREE TYPING DOCUMENT -->
-<main class="view hidden" id="view-doc">
+<main class="view hidden" id="view-doc" data-anchor="free-typing">
   <div class="doc-pad">
     <textarea id="doc" placeholder="टाइप करना शुरू करें — इस्तेमाल करें अपना सामान्य कीबोर्ड, Remington GAIL लेआउट पर…" autofocus spellcheck="false"></textarea>
   </div>
@@ -311,10 +311,10 @@ const KEYMAP = {
   KeyA:{n:'ं',s:'ॉ'}, KeyS:{n:'े',s:'ै'}, KeyD:{n:'क',s:'क्'}, KeyF:{n:'ि',s:'थ्'}, KeyG:{n:'ह',s:'ळ'},
   KeyH:{n:'ी',s:'भ्'}, KeyJ:{n:'र',s:'श्र'}, KeyK:{n:'ा',s:'ज्ञ'}, KeyL:{n:'स',s:'स्'}, Semicolon:{n:'य',s:'रू'}, Quote:{n:'श्',s:'ष्'},
   KeyZ:{n:'्र',s:'र्'}, KeyX:{n:'ग',s:'ग्'}, KeyC:{n:'ब',s:'ब्'}, KeyV:{n:'अ',s:'ट'}, KeyB:{n:'इ',s:'ठ'},
-  KeyN:{n:'द',s:'छ'}, KeyM:{n:'उ',s:'ड'}, Comma:{n:'ए',s:'ढ'}, Period:{n:'ण',s:'झ'}, Slash:{n:'ध',s:'घ'},
+  KeyN:{n:'द',s:'छ'}, KeyM:{n:'उ',s:'ड'}, Comma:{n:'ए',s:'ढ'}, Period:{n:'ण्',s:'झ'}, Slash:{n:'ध्',s:'घ'},
   Space:{n:' ',s:' '}
 };
-const HALF_TO_FULL = {'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य','ष्':'ष','श्':'श','भ्':'भ','थ्':'थ','ख्':'ख','क्ष्':'क्ष'};
+const HALF_TO_FULL = {'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य','ष्':'ष','श्':'श','भ्':'भ','थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'};
 const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ','े','ै']);
 const I_MATRA = 'ि';
 
@@ -578,6 +578,11 @@ function showView(name){
   if(name==='dashboard' || name==='result') updateMiniKeyboard(null, null);
 }
 document.getElementById('brand-home-btn').addEventListener('click', ()=>{ renderDashboard(); showView('dashboard'); });
+// Deep link: day5.html#free-typing opens the free Hindi typing pad.
+if(location.hash === '#free-typing'){
+  window.addEventListener('load', ()=>{ showView('doc'); document.getElementById('doc').focus(); });
+}
+
 document.getElementById('free-typing-toggle').addEventListener('click', ()=>{ showView('doc'); doc.focus(); });
 document.getElementById('reset-progress-btn').addEventListener('click', ()=>{
   if(!confirm('Reset all progress? This clears every day\'s reps and the Final Test — it cannot be undone.')) return;
