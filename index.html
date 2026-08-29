@@ -547,17 +547,17 @@ const KEYMAP = {
   Digit8:{n:'८',s:'द्व'}, Digit9:{n:'९',s:'त्र'}, Digit0:{n:'०',s:'ऋ'}, Minus:{n:'·',s:'्'}, Equal:{n:'ृ',s:'ॄ'},
   KeyQ:{n:'ु',s:'फ'}, KeyW:{n:'ू',s:'ॅ'}, KeyE:{n:'म',s:'म्'}, KeyR:{n:'त',s:'त्'}, KeyT:{n:'ज',s:'ज्'},
   KeyY:{n:'ल',s:'ल्'}, KeyU:{n:'न',s:'न्'}, KeyI:{n:'प',s:'प्'}, KeyO:{n:'व',s:'व्'}, KeyP:{n:'च',s:'च्'},
-  BracketLeft:{n:'ख',s:'क्ष'}, BracketRight:{n:',',s:'द्व'}, Backslash:{n:'द्ब',s:'द्ध'},
-  KeyA:{n:'ं',s:'ॉ'}, KeyS:{n:'ो',s:'ौ'}, KeyD:{n:'क',s:'क्'}, KeyF:{n:'ि',s:'थ'}, KeyG:{n:'ह',s:'ळ'},
-  KeyH:{n:'ी',s:'भ'}, KeyJ:{n:'र',s:'श्र'}, KeyK:{n:'ा',s:'ज्ञ'}, KeyL:{n:'स',s:'स्'}, Semicolon:{n:'य',s:'रू'}, Quote:{n:'ष',s:'ष्ठ'},
-  KeyZ:{n:'ॆ',s:'र्'}, KeyX:{n:'ग',s:'ग्'}, KeyC:{n:'ब',s:'ब्'}, KeyV:{n:'अ',s:'ट'}, KeyB:{n:'इ',s:'ठ'},
+  BracketLeft:{n:'ख्',s:'क्ष्'}, BracketRight:{n:',',s:'द्व'}, Backslash:{n:'द्ब',s:'द्ध'},
+  KeyA:{n:'ं',s:'ॉ'}, KeyS:{n:'े',s:'ै'}, KeyD:{n:'क',s:'क्'}, KeyF:{n:'ि',s:'थ्'}, KeyG:{n:'ह',s:'ळ'},
+  KeyH:{n:'ी',s:'भ्'}, KeyJ:{n:'र',s:'श्र'}, KeyK:{n:'ा',s:'ज्ञ'}, KeyL:{n:'स',s:'स्'}, Semicolon:{n:'य',s:'रू'}, Quote:{n:'ष्',s:'श्'},
+  KeyZ:{n:'्र',s:'र्'}, KeyX:{n:'ग',s:'ग्'}, KeyC:{n:'ब',s:'ब्'}, KeyV:{n:'अ',s:'ट'}, KeyB:{n:'इ',s:'ठ'},
   KeyN:{n:'द',s:'छ'}, KeyM:{n:'उ',s:'ड'}, Comma:{n:'ए',s:'ढ'}, Period:{n:'ण',s:'झ'}, Slash:{n:'ध',s:'घ'},
   Space:{n:' ',s:' '}
 };
 // half-consonant -> full-consonant, used to auto-upgrade a half form to its
 // full form when a vowel sign (matra) or visarga immediately follows it.
-const HALF_TO_FULL = {'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य'};
-const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ']);
+const HALF_TO_FULL = {'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य','ष्':'ष','श्':'श','भ्':'भ','थ्':'थ','ख्':'ख','क्ष्':'क्ष'};
+const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ','े','ै']);
 const I_MATRA = 'ि';
 
 const ROW_LABELS = {number:'Number Row', top:'Top Row (QWERTY)', home:'Home Row (ASDF...)', bottom:'Bottom Row (ZXCV...)'};
