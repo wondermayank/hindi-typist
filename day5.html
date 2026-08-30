@@ -193,6 +193,9 @@ textarea#doc::placeholder{color:var(--muted-soft); font-family:var(--font-ui); f
   .mini-kb{display:none;}
   #keyboard-toggle{display:none;}
 }
+
+/* Free typing / passage practice */
+.doc-toolbar{position:fixed;top:62px;left:24px;right:24px;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:12px}.doc-toolbar>div{display:flex;gap:8px;align-items:center}.doc-toolbar b{font-size:14px}.doc-toolbar span{font-size:13px;color:var(--muted);font-weight:700}.passage-practice{position:fixed;inset:112px 24px 34px;display:grid;gap:14px;min-height:0}.passage-practice.layout-left,.passage-practice.layout-right{grid-template-columns:1fr 1fr}.passage-practice.layout-right .passage-pane{order:2}.passage-practice.layout-top,.passage-practice.layout-bottom{grid-template-rows:1fr 1fr}.passage-practice.layout-bottom .passage-pane{order:2}.passage-pane,.type-pane{border:1px solid var(--hairline);border-radius:18px;padding:18px;overflow:auto;background:#fff}.pane-label{font-size:11px;letter-spacing:.12em;color:var(--muted);font-weight:800;margin-bottom:12px}.passage-text{font-family:var(--font-dev);font-size:22px;line-height:2;color:var(--ink);white-space:pre-wrap}.type-pane textarea{width:100%;height:calc(100% - 30px);min-height:220px;border:0;outline:0;resize:none;font-family:var(--font-dev);font-size:22px;line-height:2;color:var(--ink);background:transparent}.typing-settings{position:fixed;top:58px;right:16px;width:280px;padding:16px;border:1px solid var(--hairline);border-radius:16px;background:#fff;z-index:300;box-shadow:0 18px 45px rgba(0,0,0,.12);display:none}.typing-settings.open{display:block}.typing-settings label{display:block;font-size:12px;font-weight:700;margin:12px 0}.typing-settings select{width:100%;margin-top:6px;padding:10px;border:1px solid var(--hairline);border-radius:10px;background:#fff}.typing-settings .check{display:flex;gap:8px;align-items:center}.setting-head{display:flex;justify-content:space-between;align-items:center}.setting-head .icon-btn{width:28px;height:28px;font-size:20px}.passage-practice.free .passage-pane{display:none}.passage-practice.free{display:block}.passage-practice.free .type-pane{height:100%}@media(max-width:700px){.passage-practice.layout-left,.passage-practice.layout-right{grid-template-columns:1fr}.passage-practice{inset:108px 12px 20px}.passage-text,.type-pane textarea{font-size:19px}.doc-toolbar{left:12px;right:12px}.passage-practice.layout-left .passage-pane{display:block}.passage-practice.layout-left{grid-template-rows:1fr 1fr}.passage-practice.layout-left .passage-pane{order:1}.passage-practice.layout-left .type-pane{order:2}}
 </style>
 </head>
 <body>
@@ -226,10 +229,18 @@ textarea#doc::placeholder{color:var(--muted-soft); font-family:var(--font-ui); f
 <!-- MINI ON-SCREEN KEYBOARD — highlights the next key (and Shift) to press -->
 <div class="mini-kb hidden" id="mini-kb" aria-hidden="true"></div>
 
-<!-- FREE TYPING DOCUMENT -->
+<!-- FREE TYPING + PASSAGE PRACTICE -->
 <main class="view hidden" id="view-doc" data-anchor="free-typing">
-  <div class="doc-pad">
-    <textarea id="doc" placeholder="टाइप करना शुरू करें — इस्तेमाल करें अपना सामान्य कीबोर्ड, Remington GAIL लेआउट पर…" autofocus spellcheck="false"></textarea>
+  <div class="typing-settings" id="typing-settings">
+    <div class="setting-head"><b>Practice settings</b><button id="settings-close" class="icon-btn">×</button></div>
+    <label>Passage mode<select id="passage-mode"><option value="free">Free typing</option><option value="normal-easy">No Shift · Easy</option><option value="normal-hard">No Shift · Hard</option><option value="shift-easy">Shift + Normal · Easy</option><option value="shift-hard">Shift + Normal · Hard</option></select></label>
+    <label>Layout<select id="typing-layout"><option value="left">Passage left, typing right</option><option value="right">Typing left, passage right</option><option value="top">Passage top, typing bottom</option><option value="bottom">Typing top, passage bottom</option></select></label>
+    <label class="check"><input type="checkbox" id="doc-kb-enabled"> Open keyboard helper</label>
+  </div>
+  <div class="doc-toolbar"><div><b id="practice-title">Free Typing</b><span id="doc-wpm">0 WPM</span></div><div><button class="pill-btn" id="settings-toggle">Settings</button><button class="pill-btn" id="clear-doc">Clear</button></div></div>
+  <div class="passage-practice layout-left" id="passage-practice">
+    <section class="passage-pane" id="passage-pane"><div class="pane-label">PASSAGE</div><div id="passage-text" class="passage-text"></div></section>
+    <section class="type-pane" id="type-pane"><div class="pane-label">YOUR TYPING</div><textarea id="doc" placeholder="Free typing — start typing here…" autofocus spellcheck="false"></textarea></section>
   </div>
 </main>
 
@@ -326,7 +337,8 @@ const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः'
 const I_MATRA = 'ि';
 // independent vowel (अ/इ/उ) immediately followed by its own matra merges into
 // the single independent-vowel character, e.g. अ + ा -> आ, not अा.
-const VOWEL_MATRA_TO_FULL = {'अा':'आ','इी':'ई','उू':'ऊ','अो':'ओ','अौ':'औ'};
+const VOWEL_MATRA_TO_FULL = {'अा':'आ','अि':'इ','अी':'ई','अु':'उ','अू':'ऊ','अे':'ए','अै':'ऐ','अो':'ओ','अौ':'औ'};
+const INDEPENDENT_VOWELS = new Set(['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ','ऋ']);
 
 class RemingtonEngine{
   constructor(){ this.buffer=''; this.pendingI=false; }
@@ -348,6 +360,9 @@ class RemingtonEngine{
         this.buffer = this.buffer.slice(0, -1);
         added = VOWEL_MATRA_TO_FULL[vowelCombo];
       } else {
+        // A matra cannot be attached to an already-complete independent vowel.
+        // Ignore it instead of producing broken combinations such as "आै".
+        if(INDEPENDENT_VOWELS.has(this.buffer.slice(-1))) return '';
         for(const half in HALF_TO_FULL){
           if(this.buffer.endsWith(half)){
             this.buffer = this.buffer.slice(0, -half.length) + HALF_TO_FULL[half];
@@ -931,37 +946,28 @@ function completePara(){
 }
 
 /* ============================================================================
-   FREE TYPING DOCUMENT (original engine, unchanged behaviour)
+   FREE TYPING + CURATED PASSAGE PRACTICE
 ============================================================================ */
 const engine = new RemingtonEngine();
 const doc = document.getElementById('doc');
 const docWrap = document.getElementById('view-doc');
-
-function autoGrow(){
-  doc.style.height = 'auto';
-  doc.style.height = doc.scrollHeight + 'px';
-}
-function scrollToCaret(){
-  docWrap.scrollTop = docWrap.scrollHeight;
-}
-doc.addEventListener('keydown', (e)=>{
-  if(e.metaKey || e.ctrlKey || e.altKey) return;
-  if(e.code === 'Backspace'){
-    e.preventDefault(); engine.backspace(); doc.value = engine.buffer; autoGrow(); scrollToCaret(); updateMiniKeyboard(engine, null); return;
-  }
-  if(e.code === 'Enter'){
-    e.preventDefault(); engine.newline(); doc.value = engine.buffer; autoGrow(); scrollToCaret(); updateMiniKeyboard(engine, null); return;
-  }
-  if(!KEYMAP[e.code]) return;
-  e.preventDefault();
-  engine.press(e.code, e.shiftKey);
-  doc.value = engine.buffer;
-  doc.setSelectionRange(doc.value.length, doc.value.length);
-  autoGrow(); scrollToCaret();
-  updateMiniKeyboard(engine, null);
-});
-doc.addEventListener('click', ()=> doc.setSelectionRange(doc.value.length, doc.value.length));
-window.addEventListener('resize', autoGrow);
+const PASSAGES = {
+ 'normal-easy':'आज का दिन नया है। कमल, रतन, कविता और सीमा मिलकर घर, स्कूल, बाजार तथा काम की बात करते हैं। समय पर पढ़ना, लिखना और सही तरह से चलना अच्छी आदत है।',
+ 'normal-hard':'कठिन समय में धैर्य, संयम और निरंतर अभ्यास मन को मजबूत बनाते हैं। ज्ञान, विचार, अनुभव और समझ के साथ व्यक्ति अपने लक्ष्य की दिशा में लगातार आगे बढ़ता रहता है।',
+ 'shift-easy':'आज नई कक्षा में प्रश्न, उत्तर और अभ्यास का छोटा परीक्षण हुआ। शिक्षक ने कहा: सही गति, शुद्ध शब्द और नियमित अभ्यास—तीनों मिलकर बेहतर टाइपिंग बनाते हैं।',
+ 'shift-hard':'प्रशिक्षण के दौरान “गति बनाम शुद्धता” पर चर्चा हुई। १२३, ४५६ और ७८९ जैसे अंक, प्रश्नचिह्न, कोष्ठक, विराम और विशेष चिह्नों का संतुलित अभ्यास कठिन अनुच्छेदों को सरल बनाता है।'
+};
+let docStart=null;
+function autoGrow(){}
+function scrollToCaret(){ doc.scrollTop=doc.scrollHeight; }
+function updateDocWpm(){ if(!docStart){document.getElementById('doc-wpm').textContent='0 WPM';return;} const mins=(performance.now()-docStart)/60000; const words=engine.buffer.trim().split(/\s+/).filter(Boolean).length; document.getElementById('doc-wpm').textContent=(mins>0?Math.round(words/mins):0)+' WPM'; }
+function renderPassage(){const mode=document.getElementById('passage-mode').value;const box=document.getElementById('passage-practice');box.className='passage-practice layout-'+document.getElementById('typing-layout').value+(mode==='free'?' free':'');document.getElementById('practice-title').textContent=mode==='free'?'Free Typing':document.querySelector('#passage-mode option:checked').textContent;document.getElementById('passage-text').textContent=PASSAGES[mode]||'';doc.placeholder=mode==='free'?'Free typing — start typing here…':'Type the passage using your normal keyboard…';}
+function setKeyboardSetting(){const on=document.getElementById('doc-kb-enabled').checked;if(on&&!kbVisible)document.getElementById('keyboard-toggle').click();if(!on&&kbVisible)document.getElementById('keyboard-toggle').click();}
+['passage-mode','typing-layout'].forEach(id=>document.getElementById(id).addEventListener('change',renderPassage));document.getElementById('doc-kb-enabled').addEventListener('change',setKeyboardSetting);
+document.getElementById('settings-toggle').addEventListener('click',()=>document.getElementById('typing-settings').classList.toggle('open'));document.getElementById('settings-close').addEventListener('click',()=>document.getElementById('typing-settings').classList.remove('open'));document.getElementById('clear-doc').addEventListener('click',()=>{engine.buffer='';engine.pendingI=false;doc.value='';docStart=null;updateDocWpm();doc.focus();});
+doc.addEventListener('keydown',(e)=>{if(e.metaKey||e.ctrlKey||e.altKey)return;if(e.code==='Backspace'){e.preventDefault();engine.backspace();doc.value=engine.buffer;scrollToCaret();updateMiniKeyboard(engine,null);updateDocWpm();return;}if(e.code==='Enter'){e.preventDefault();engine.newline();doc.value=engine.buffer;scrollToCaret();updateMiniKeyboard(engine,null);updateDocWpm();return;}if(!KEYMAP[e.code])return;e.preventDefault();if(!docStart)docStart=performance.now();engine.press(e.code,e.shiftKey);doc.value=engine.buffer;doc.setSelectionRange(doc.value.length,doc.value.length);scrollToCaret();updateMiniKeyboard(engine,null);updateDocWpm();});
+doc.addEventListener('click',()=>doc.setSelectionRange(doc.value.length,doc.value.length));
+setInterval(updateDocWpm,1000);renderPassage();
 
 /* ---------------------------------------------------------------------------
    Global keydown router — sends keys to whichever view is active.
