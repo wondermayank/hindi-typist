@@ -153,10 +153,18 @@ main .view.active{display:block;}
 [data-theme="dark"] .kb.color-code .kb-shift{color:#6fe08a;}
 .kb.color-code .kb-key.active{background:#dc2626;}
 .kb.color-code .kb-key.active .kb-shift,.kb.color-code .kb-key.active .kb-normal{color:#fff;}
+/* Home-row index-finger anchor keys (F and J) — always tinted blue so the
+   fingers can find home position at a glance. Matches the day5 lesson keyboard. */
+.kb-key.kb-index{background:#2563eb; border-color:#2563eb;}
+.kb-key.kb-index .kb-shift,.kb-key.kb-index .kb-normal{color:#fff;}
+.kb-key.kb-index .kb-qwerty{color:rgba(255,255,255,0.7);}
+/* Next key to type: yellow when typed as-is, red when it needs Shift.
+   Matches the day5 lesson keyboard. */
 .kb-key.hint{background:#facc15; box-shadow:0 0 0 2px #eab308;}
 .kb-key.hint .kb-shift,.kb-key.hint .kb-normal{color:#1a1a1a;}
-.kb-key.hint.hint-shift .kb-shift{font-weight:800; text-decoration:underline;}
 .kb-key.hint:not(.hint-shift) .kb-normal{font-weight:800; text-decoration:underline;}
+.kb-key.hint.hint-shift{background:#dc2626; box-shadow:0 0 0 2px #b91c1c;}
+.kb-key.hint.hint-shift .kb-shift,.kb-key.hint.hint-shift .kb-normal{color:#fff; font-weight:800; text-decoration:underline;}
 .kb.game-kb-hidden{display:none;}
 .kb-key.wide{max-width:none;}
 .kb-key[data-heat]{ }
@@ -849,7 +857,7 @@ function buildKeyboard(container, opts){
     row.forEach(code=>{
       const map = KEYMAP[code];
       const key = document.createElement('div');
-      key.className='kb-key'; key.dataset.code=code;
+      key.className='kb-key' + ((code==='KeyF'||code==='KeyJ') ? ' kb-index' : ''); key.dataset.code=code;
       key.innerHTML = `<span class="kb-shift dev">${map.s}</span><span class="kb-normal dev">${map.n}</span><span class="kb-qwerty">${QWERTY_LABEL[code]}</span>`;
       rowEl.appendChild(key);
     });
