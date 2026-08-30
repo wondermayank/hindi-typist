@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem('masterTheme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Master Learning — Hindi Typing in 5 Days</title>
-<meta name="description" content="Thunder Typing is a distraction-free Hindi typing course on the Remington GAIL layout — a structured 5-day lesson plan of real curated Hindi words plus a free-typing document, built for CPCT and SSC practice.">
+<title>Master Learning — Hindi Typing in 8 Days</title>
+<meta name="description" content="Thunder Typing is a distraction-free Hindi typing course on the Remington GAIL layout — a structured 8-day lesson plan of real curated Hindi words, built for CPCT and SSC practice.">
 <meta name="theme-color" content="#573AFC">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Thunder Typing — 5-Day Hindi Typing Course">
-<meta property="og:description" content="A structured 5-day Hindi typing course on the Remington GAIL layout for CPCT and SSC practice.">
+<meta property="og:title" content="Thunder Typing — 8-Day Hindi Typing Course">
+<meta property="og:description" content="A structured 8-day Hindi typing course on the Remington GAIL layout for CPCT and SSC practice.">
 <meta property="og:image" content="og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Thunder Typing">
-<meta name="twitter:description" content="5-day Hindi typing course — CPCT and SSC practice.">
+<meta name="twitter:description" content="8-day Hindi typing course — CPCT and SSC practice.">
 <meta name="twitter:image" content="og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,8 +23,8 @@
 {
   "@context": "https://schema.org",
   "@type": "Course",
-  "name": "Master Learning — Hindi Typing in 5 Days",
-  "description": "A structured 5-day Hindi typing course on the Remington GAIL layout for CPCT and SSC practice.",
+  "name": "Master Learning — Hindi Typing in 8 Days",
+  "description": "A structured 8-day Hindi typing course on the Remington GAIL layout for CPCT and SSC practice.",
   "provider": { "@type": "Organization", "name": "ThunderStudy", "url": "https://commercesehoga.github.io" }
 }
 </script>
@@ -309,7 +309,7 @@ body{background:var(--canvas-parchment);}
 </header>
 
 <div class="top-controls">
-  <button class="pill-btn" id="free-typing-toggle">Free Typing</button>
+  <a class="pill-btn" id="free-typing-link" href="free-typing.html">Free Typing</a>
   <button class="icon-btn" id="keyboard-toggle" aria-label="Toggle on-screen keyboard" title="On-screen keyboard">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h12"/></svg>
   </button>
@@ -325,19 +325,12 @@ body{background:var(--canvas-parchment);}
 <!-- MINI ON-SCREEN KEYBOARD — highlights the next key (and Shift) to press -->
 <div class="mini-kb hidden" id="mini-kb" aria-hidden="true"></div>
 
-<!-- FREE TYPING DOCUMENT -->
-<main class="view hidden" id="view-doc" data-anchor="free-typing">
-  <div class="doc-pad">
-    <textarea id="doc" placeholder="टाइप करना शुरू करें — इस्तेमाल करें अपना सामान्य कीबोर्ड, Remington GAIL लेआउट पर…" autofocus spellcheck="false"></textarea>
-  </div>
-</main>
-
 <!-- DASHBOARD -->
 <main class="view" id="view-dashboard">
   <div class="dash-pad master-dash">
     <section class="hero-master">
-      <div><span class="eyebrow">MASTER LEARNING • 5 DAYS • 20 HOURS</span><h1>Learn Hindi Typing in <em>5 serious days.</em></h1><p>Not a casual lesson plan. Give at least <b>4 hours every day</b>, follow the finger coach, complete guided drills, timed practice and tests. The target is confident full-keyboard Hindi typing.</p><div class="hero-actions"><button class="pill-btn primary" id="hero-continue">Continue learning</button><button class="pill-btn" id="hero-guide">How it works</button></div></div>
-      <div class="master-meter"><div class="ring">5<br><small>DAYS</small></div><div><b>15 WPM</b><span>minimum speed target</span><b>90%</b><span>minimum accuracy goal</span></div></div>
+      <div><span class="eyebrow">MASTER LEARNING • 8 DAYS • 32 HOURS</span><h1>Learn Hindi Typing in <em>8 serious days.</em></h1><p>Not a casual lesson plan. Give at least <b>4 hours every day</b>, follow the finger coach, complete guided drills, timed practice and tests. The target is confident full-keyboard Hindi typing.</p><div class="hero-actions"><button class="pill-btn primary" id="hero-continue">Continue learning</button><button class="pill-btn" id="hero-guide">How it works</button></div></div>
+      <div class="master-meter"><div class="ring">8<br><small>DAYS</small></div><div><b>15 WPM</b><span>minimum speed target</span><b>90%</b><span>minimum accuracy goal</span></div></div>
     </section>
     <section class="today-card"><div><span class="eyebrow">YOUR ROUTE</span><h2>Learn → Guided Practice → Timed Test → Results</h2><p>Each day builds muscle memory before speed.</p></div><button class="pill-btn primary" id="today-start">Start today</button></section>
     <div class="day-grid" id="day-grid"></div>
@@ -370,7 +363,7 @@ body{background:var(--canvas-parchment);}
 </main>
 
 <!-- GUIDE -->
-<main class="view hidden" id="view-guide"><div class="guide-pad"><button class="pill-btn" id="guide-back">← Back</button><span class="eyebrow">MASTER GUIDE</span><h1>How to train for 5 days</h1><div class="guide-grid"><article><b>01</b><h3>Position</h3><p>Sit straight. Keep both hands on the home position. The coloured keyboard and hand coach show the exact hand and finger.</p></article><article><b>02</b><h3>Learn slowly</h3><p>Accuracy first. Do not chase speed while learning a new row. Return every finger to its home position.</p></article><article><b>03</b><h3>Practice deeply</h3><p>Give each day at least 4 hours. Split it into focused sessions if needed: learning, repetition, speed and review.</p></article><article><b>04</b><h3>Pass the test</h3><p>Reach at least 15 WPM with strong accuracy. Results are saved on this device so you can see your progress.</p></article></div><div class="day-plan"><h2>Recommended 4-hour day</h2><div><span>45 min</span> Finger placement & guide</div><div><span>90 min</span> Controlled repetition</div><div><span>60 min</span> Mixed practice</div><div><span>45 min</span> Timed test & correction</div></div></div></main>
+<main class="view hidden" id="view-guide"><div class="guide-pad"><button class="pill-btn" id="guide-back">← Back</button><span class="eyebrow">MASTER GUIDE</span><h1>How to train for 8 days</h1><div class="guide-grid"><article><b>01</b><h3>Position</h3><p>Sit straight. Keep both hands on the home position. The coloured keyboard and hand coach show the exact hand and finger.</p></article><article><b>02</b><h3>Learn slowly</h3><p>Accuracy first. Do not chase speed while learning a new row. Return every finger to its home position.</p></article><article><b>03</b><h3>Practice deeply</h3><p>Give each day at least 4 hours. Split it into focused sessions if needed: learning, repetition, speed and review.</p></article><article><b>04</b><h3>Pass the test</h3><p>Reach at least 15 WPM with strong accuracy. Results are saved on this device so you can see your progress.</p></article></div><div class="day-plan"><h2>Recommended 4-hour day</h2><div><span>45 min</span> Finger placement & guide</div><div><span>90 min</span> Controlled repetition</div><div><span>60 min</span> Mixed practice</div><div><span>45 min</span> Timed test & correction</div></div></div></main>
 
 <!-- RESULTS -->
 <main class="view hidden" id="view-results"><div class="results-pad"><span class="eyebrow">YOUR RESULTS</span><h1>Training scoreboard</h1>
@@ -550,12 +543,16 @@ const W2=['जल','तन','मन','पल','चल','वन','जन','नम
 const W3=['अब','अदब','गए','गण','बद','घट','ठग','डग','उठ','टब','उठ गए','झट उठ'];
 const W4=['१','१२','१२३','१२३४','१२३४५','६','६७','६७८','६७८९','०','१२ ३४','५६ ७८'];
 const W5=['कमल','समय','कमरा','समाचार','कहानी','जवान','समाज','समस्या','सहायता','सफलता','सम्मान','कल्पना','जनता','विचार','मित्रता','जीवन','समाधान','सुविधा','सपना','अपना','करना'];
+const W6=['जनता','समझना','विचार','मित्रता','रात','दिन','जीवन','समाधान','सुविधा','सपना','अपना','अपनी','जगह','रहना','कहना','सुनना','करना','समझ','तरह','बहार'];
 const DAYS=[
 {id:1,title:'Day 1',name:'Home Key Mastery',desc:'Learn the home row with finger placement, normal, shift and mixed drills.',codes:ROW_KEYS.home,parts:[{key:'normal',label:'Home Keys',shiftProb:0,words:W1},{key:'shift',label:'Shift Practice',shiftProb:1,words:['है','हैं','कैसा','सैर','हास्य']},{key:'both',label:'Mixed Home',shiftProb:.5,words:W1}],minUnits:1,maxUnits:2,requiresSpeed:false},
 {id:2,title:'Day 2',name:'Top Key Mastery',desc:'Reach the top row without moving your hands away from home position.',codes:ROW_KEYS.upper,parts:[{key:'normal',label:'Top Keys',shiftProb:0,words:W2},{key:'shift',label:'Shift Practice',shiftProb:1,words:['फल','फूल','जन्म','तत्व']},{key:'both',label:'Mixed Top',shiftProb:.5,words:W2}],minUnits:1,maxUnits:2,requiresSpeed:false},
 {id:3,title:'Day 3',name:'Bottom Key Mastery',desc:'Train the lower row and return every finger to the home position.',codes:ROW_KEYS.lower,parts:[{key:'normal',label:'Bottom Keys',shiftProb:0,words:W3},{key:'shift',label:'Shift Practice',shiftProb:1,words:['घट','ठग','डग','उठ']},{key:'both',label:'Mixed Bottom',shiftProb:.5,words:W3}],minUnits:1,maxUnits:2,requiresSpeed:false},
 {id:4,title:'Day 4',name:'Number Key Mastery',desc:'Learn Hindi digits and the number row with the correct finger reaches.',codes:ROW_KEYS.numbers,parts:[{key:'numbers',label:'Numbers',shiftProb:0,words:W4},{key:'mixed',label:'Number Speed',shiftProb:.2}],minUnits:2,maxUnits:4,requiresSpeed:true,passWpm:15},
-{id:5,title:'Day 5',name:'Full Keyboard Master',desc:'Home + top + bottom + numbers, then Master Practice and marks.',codes:ROW_KEYS.all,parts:[{key:'homeTop',label:'Home + Top',shiftProb:.25,words:W5},{key:'homeBottom',label:'Home + Bottom',shiftProb:.25,words:W5},{key:'allRows',label:'All Three Rows',shiftProb:.3,words:W5},{key:'master',label:'Master Practice',shiftProb:.35}],minUnits:2,maxUnits:4,requiresSpeed:true,alternateHands:true,passWpm:15}
+{id:5,title:'Day 5',name:'Full Keyboard Master',desc:'Home + top + bottom + numbers, then Master Practice and marks.',codes:ROW_KEYS.all,parts:[{key:'homeTop',label:'Home + Top',shiftProb:.25,words:W5},{key:'homeBottom',label:'Home + Bottom',shiftProb:.25,words:W5},{key:'allRows',label:'All Three Rows',shiftProb:.3,words:W5},{key:'master',label:'Master Practice',shiftProb:.35}],minUnits:2,maxUnits:4,requiresSpeed:true,alternateHands:true,passWpm:15},
+{id:6,title:'Day 6',name:'All Three Rows',desc:'Home, top and bottom rows together — full real words across the whole hand span.',codes:ROW_KEYS.all,parts:[{key:'mix',label:'Combined',shiftProb:.3,words:W6}],minUnits:1,maxUnits:2,requiresSpeed:false},
+{id:7,title:'Day 7',name:'All Keys — Easy',desc:'Every key together, short easy words. Needs 15+ WPM to pass.',codes:ROW_KEYS.all,parts:[{key:'mix',label:'All keys',shiftProb:.2}],minUnits:1,maxUnits:2,requiresSpeed:true,passWpm:15},
+{id:8,title:'Day 8',name:'Both Hands — Hard',desc:'Longer words that force both hands across every row. Needs 20+ WPM.',codes:ROW_KEYS.all,parts:[{key:'mix',label:'Both hands',shiftProb:.5}],minUnits:2,maxUnits:3,requiresSpeed:true,alternateHands:true,passWpm:20}
 ];
 /* A day with both a 'normal' and a 'shift' part is a row-teaching day —
    for these, finishing EITHER one (not necessarily 'both' too) is enough
@@ -656,21 +653,19 @@ function checkDay5Unlock(){
 /* ============================================================================
    VIEW SWITCHING
 ============================================================================ */
-const views = ['doc','dashboard','guide','results','lesson','paragraph','result'];
+const views = ['dashboard','guide','results','lesson','paragraph','result'];
 function showView(name){
   views.forEach(v=>{
     document.getElementById('view-'+v).classList.toggle('hidden', v!==name);
   });
-  document.getElementById('free-typing-toggle').classList.toggle('hidden', name==='doc');
   if(name==='dashboard' || name==='result') updateMiniKeyboard(null, null);
 }
 document.getElementById('brand-home-btn').addEventListener('click', ()=>{ renderDashboard(); showView('dashboard'); });
-// Deep link: day5.html#free-typing opens the free Hindi typing pad.
+// Legacy deep link: redirect old in-page #free-typing hash to the new standalone page.
 if(location.hash === '#free-typing'){
-  window.addEventListener('load', ()=>{ showView('doc'); document.getElementById('doc').focus(); });
+  window.location.replace('free-typing.html');
 }
 
-document.getElementById('free-typing-toggle').addEventListener('click', ()=>{ showView('doc'); doc.focus(); });
 document.getElementById('reset-progress-btn').addEventListener('click', ()=>{
   if(!confirm('Reset all progress? This clears every day\'s reps and the Final Test — it cannot be undone.')) return;
   progress = blankProgress();
@@ -890,9 +885,10 @@ function finishPart(){
   saveProgress();
 
   /* Completing every rep always opens the next stage, even on a failed
-     speed check — Day 5 is the one exception, gated separately below. */
-  if(day.id === 5) progress.final.unlocked = true;
-  else if(day.id !== 4) unlockNext(day);
+     speed check — Day 4 is the one exception: Day 5 stays gated behind
+     checkDay5Unlock() below instead of opening automatically. unlockNext
+     itself sets progress.final.unlocked once the last day (Day 8) passes. */
+  if(day.id !== 4) unlockNext(day);
   checkDay5Unlock();
   saveProgress();
 
@@ -1020,39 +1016,6 @@ function completePara(){
     ], speedStats);
   }
 }
-
-/* ============================================================================
-   FREE TYPING DOCUMENT (original engine, unchanged behaviour)
-============================================================================ */
-const engine = new RemingtonEngine();
-const doc = document.getElementById('doc');
-const docWrap = document.getElementById('view-doc');
-
-function autoGrow(){
-  doc.style.height = 'auto';
-  doc.style.height = doc.scrollHeight + 'px';
-}
-function scrollToCaret(){
-  docWrap.scrollTop = docWrap.scrollHeight;
-}
-doc.addEventListener('keydown', (e)=>{
-  if(e.metaKey || e.ctrlKey || e.altKey) return;
-  if(e.code === 'Backspace'){
-    e.preventDefault(); engine.backspace(); doc.value = engine.buffer; autoGrow(); scrollToCaret(); updateMiniKeyboard(engine, null); return;
-  }
-  if(e.code === 'Enter'){
-    e.preventDefault(); engine.newline(); doc.value = engine.buffer; autoGrow(); scrollToCaret(); updateMiniKeyboard(engine, null); return;
-  }
-  if(!KEYMAP[e.code]) return;
-  e.preventDefault();
-  engine.press(e.code, e.shiftKey);
-  doc.value = engine.buffer;
-  doc.setSelectionRange(doc.value.length, doc.value.length);
-  autoGrow(); scrollToCaret();
-  updateMiniKeyboard(engine, null);
-});
-doc.addEventListener('click', ()=> doc.setSelectionRange(doc.value.length, doc.value.length));
-window.addEventListener('resize', autoGrow);
 
 /* ---------------------------------------------------------------------------
    Global keydown router — sends keys to whichever view is active.
