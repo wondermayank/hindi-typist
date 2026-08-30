@@ -466,6 +466,9 @@ const KEYMAP = {
 const HALF_TO_FULL = {'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य','ष्':'ष','श्':'श','भ्':'भ','थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'};
 const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ','े','ै']);
 const I_MATRA = 'ि';
+// independent vowel (अ/इ/उ) immediately followed by its own matra merges into
+// the single independent-vowel character, e.g. अ + ा -> आ, not अा.
+const VOWEL_MATRA_TO_FULL = {'अा':'आ','इी':'ई','उू':'ऊ','अो':'ओ','अौ':'औ'};
 
 class RemingtonEngine{
   constructor(){ this.buffer=''; this.pendingI=false; }
@@ -481,13 +484,20 @@ class RemingtonEngine{
       added = base + I_MATRA;
       this.pendingI = false;
     } else if(MATRA_SET.has(ch) || ch===':'){
-      for(const half in HALF_TO_FULL){
-        if(this.buffer.endsWith(half)){
-          this.buffer = this.buffer.slice(0, -half.length) + HALF_TO_FULL[half];
-          break;
+      const vowelCombo = this.buffer.slice(-1) + ch;
+      if(VOWEL_MATRA_TO_FULL[vowelCombo]){
+        // अ/इ/उ immediately followed by its own matra -> single independent vowel
+        this.buffer = this.buffer.slice(0, -1);
+        added = VOWEL_MATRA_TO_FULL[vowelCombo];
+      } else {
+        for(const half in HALF_TO_FULL){
+          if(this.buffer.endsWith(half)){
+            this.buffer = this.buffer.slice(0, -half.length) + HALF_TO_FULL[half];
+            break;
+          }
         }
+        added = ch;
       }
-      added = ch;
     } else {
       added = ch;
     }
@@ -805,7 +815,7 @@ function lessonKeydown(e){
   const before = { buffer:session.trial.buffer, pendingI:session.trial.pendingI };
   session.trial.press(e.code, e.shiftKey);
   const nb = session.trial.buffer;
-  if(target.startsWith(nb)){
+  if(isValidTypedState(target, nb)){
     if(nb.length > before.buffer.length) session.correctChars++;
     updateLessonUI();
     if(nb === target){
@@ -970,7 +980,7 @@ function paraKeydown(e){
   const before = { buffer:paraSession.trial.buffer, pendingI:paraSession.trial.pendingI };
   paraSession.trial.press(e.code, e.shiftKey);
   const nb = paraSession.trial.buffer;
-  if(target.startsWith(nb)){
+  if(isValidTypedState(target, nb)){
     if(nb.length > before.buffer.length) paraSession.correctChars++;
     updateParaUI();
     if(nb === target){ setTimeout(()=>completePara(), 150); }
@@ -1180,6 +1190,20 @@ const keySequenceCache = new Map();
 function getKeySequence(target){
   if(!keySequenceCache.has(target)) keySequenceCache.set(target, buildKeySequence(target));
   return keySequenceCache.get(target);
+}
+/* A live typed buffer `nb` can be "on track" for `target` without being a
+   literal string prefix of it: composing a letter like श/ष/भ/थ/ख/ण/ध/क्ष
+   (which have no direct full-form key) always passes through a half-form
+   state (e.g. "श्") that only resolves to the target's plain "श" once the
+   following matra key is pressed. A naive target.startsWith(nb) rejects
+   that in-progress half-form as a mistake before the user can finish the
+   letter. Fall back to the verified keystroke plan (same one the on-screen
+   keyboard hint uses) to recognise those valid intermediate states too. */
+function isValidTypedState(target, nb){
+  if(target.startsWith(nb)) return true;
+  if(nb === target) return true;
+  const built = getKeySequence(target);
+  return !!built && built.beforeBuf.includes(nb);
 }
 /* Matches by the exact intermediate buffer snapshot (not a startsWith
    prefix check) — a half-form conjunct mid-composition, e.g. "कभ्"

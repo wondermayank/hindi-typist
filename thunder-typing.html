@@ -146,6 +146,9 @@ const KEYMAP = {
 const HALF_TO_FULL = {'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य','ष्':'ष','श्':'श','भ्':'भ','थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'};
 const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ','े','ै']);
 const I_MATRA = 'ि';
+// independent vowel (अ/इ/उ) immediately followed by its own matra merges into
+// the single independent-vowel character, e.g. अ + ा -> आ, not अा.
+const VOWEL_MATRA_TO_FULL = {'अा':'आ','इी':'ई','उू':'ऊ','अो':'ओ','अौ':'औ'};
 
 class RemingtonEngine{
   constructor(){ this.buffer=''; this.pendingI=false; }
@@ -161,13 +164,20 @@ class RemingtonEngine{
       added = base + I_MATRA;
       this.pendingI = false;
     } else if(MATRA_SET.has(ch) || ch===':'){
-      for(const half in HALF_TO_FULL){
-        if(this.buffer.endsWith(half)){
-          this.buffer = this.buffer.slice(0, -half.length) + HALF_TO_FULL[half];
-          break;
+      const vowelCombo = this.buffer.slice(-1) + ch;
+      if(VOWEL_MATRA_TO_FULL[vowelCombo]){
+        // अ/इ/उ immediately followed by its own matra -> single independent vowel
+        this.buffer = this.buffer.slice(0, -1);
+        added = VOWEL_MATRA_TO_FULL[vowelCombo];
+      } else {
+        for(const half in HALF_TO_FULL){
+          if(this.buffer.endsWith(half)){
+            this.buffer = this.buffer.slice(0, -half.length) + HALF_TO_FULL[half];
+            break;
+          }
         }
+        added = ch;
       }
-      added = ch;
     } else {
       added = ch;
     }
