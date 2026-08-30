@@ -1,11 +1,24 @@
 <!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thunder Typing</title><style>
 :root{--p:#6699fb;--ink:#182033;--muted:#687087;--line:#e5e9f2}*{box-sizing:border-box}body{margin:0;background:#f7f9fd;color:var(--ink);font-family:Inter,system-ui,sans-serif}.top{height:62px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:5}.brand{font-weight:800}.brand i{font-style:normal;color:var(--p)}button,select{font:inherit}.controls{display:flex;gap:8px;align-items:center}.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}.btn:hover{border-color:var(--p);color:var(--p)}#wpm{font-weight:800;color:var(--p);padding:8px 10px}.settings{position:fixed;right:20px;top:70px;width:300px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 18px 50px #0002;display:none;z-index:10}.settings.open{display:block}.settings label{display:block;font-size:12px;font-weight:700;margin:12px 0 5px}.settings select{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff}.settings .check{display:flex;gap:8px;align-items:center;margin-top:16px}.practice{height:calc(100vh - 62px);padding:18px;display:grid;gap:14px}.left,.right{min-width:0}.layout-left,.layout-right{grid-template-columns:1fr 1fr}.layout-right .passage{order:2}.layout-top,.layout-bottom{grid-template-rows:1fr 1fr}.layout-bottom .passage{order:2}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;overflow:auto}.label{font-size:11px;font-weight:900;letter-spacing:.13em;color:var(--muted);margin-bottom:12px}.passage-text{font-family:'Noto Sans Devanagari','Nirmala UI',sans-serif;font-size:23px;line-height:2;white-space:pre-wrap}.typebox textarea{width:100%;height:calc(100% - 30px);border:0;outline:0;resize:none;background:transparent;font-family:'Noto Sans Devanagari','Nirmala UI',sans-serif;font-size:23px;line-height:2}.free .passage{display:none}.free{display:block}.free .typebox{height:100%}.kb{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;display:none;max-width:95vw;z-index:4}.kb.open{display:block}.row{display:flex;gap:3px;margin:3px}.key{min-width:30px;padding:6px;text-align:center;border:1px solid var(--line);border-radius:5px;font-size:12px}.key b{display:block;color:var(--p)}@media(max-width:700px){.layout-left,.layout-right{grid-template-columns:1fr;grid-template-rows:1fr 1fr}.practice{padding:10px}.passage-text,.typebox textarea{font-size:19px}.top{padding:0 10px}.settings{right:10px;width:calc(100% - 20px)}}
-.controls{flex-wrap:wrap}.stat{font-size:12px;font-weight:700;color:var(--muted);padding:6px 8px;white-space:nowrap}#wpm{font-size:15px}.btn.primary{background:var(--p);border-color:var(--p);color:#fff;width:100%;margin-top:14px;font-weight:700;padding:11px 12px}.passage-text span.ok{color:#16a34a}.passage-text span.bad{color:#dc2626;background:#fee2e2;border-radius:3px}.passage-text span.cur{background:var(--p);color:#fff;border-radius:2px}.passage-text span.pending{color:var(--muted)}.err-backdrop{display:none;position:fixed;inset:0;background:rgba(10,14,24,.45);z-index:19}.err-backdrop.open{display:block}.errpanel{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;max-width:92vw;max-height:76vh;overflow:auto;z-index:20;right:auto}.errpanel.open{display:block}.errsummary{font-size:14px;color:var(--muted);margin:0 0 14px;line-height:1.5}.errlist{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.echip{background:#fee2e2;color:#b42318;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;font-family:'Noto Sans Devanagari','Nirmala UI',sans-serif;line-height:1.4}.echip b{color:#b42318;margin-right:3px}.muted2{color:var(--muted);font-size:13px}.passage-text span.cur-word-char{color:#2563eb;font-weight:600}.passage-text span.next-word-char{color:#dc2626}.key{position:relative;transition:background .12s,color .12s}.key.active{background:#dc2626;border-color:#dc2626;color:#fff}.key.active b{color:#fff}.key.active-shift{background:#dc2626;border-color:#dc2626;color:#fff;box-shadow:0 0 0 2px #fecaca}.key.active-shift b{color:#fff}.key.active-shift::after{content:'⇧';position:absolute;top:-9px;right:-4px;background:#b42318;color:#fff;font-size:9px;border-radius:50%;width:14px;height:14px;line-height:14px;text-align:center}</style></head><body><header class="top"><div class="brand">Thunder Typing <i>हिंदी</i></div><div class="controls"><span id="time" class="stat">00:00</span><span id="wpm">0 WPM</span><span id="acc" class="stat">100% acc</span><span id="err" class="stat">0 err</span><button class="btn" id="pauseBtn">Pause</button><button class="btn" id="settingsBtn">Settings</button><button class="btn" id="clearBtn">Clear</button></div></header>
+.controls{flex-wrap:wrap}.stat{font-size:12px;font-weight:700;color:var(--muted);padding:6px 8px;white-space:nowrap}#wpm{font-size:15px}.btn.primary{background:var(--p);border-color:var(--p);color:#fff;width:100%;margin-top:14px;font-weight:700;padding:11px 12px}.passage-text span.ok{color:#16a34a}.passage-text span.bad{color:#dc2626;background:#fee2e2;border-radius:3px}.passage-text span.cur{background:var(--p);color:#fff;border-radius:2px}.passage-text span.pending{color:var(--muted)}.err-backdrop{display:none;position:fixed;inset:0;background:rgba(10,14,24,.45);z-index:19}.err-backdrop.open{display:block}.errpanel{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;max-width:92vw;max-height:76vh;overflow:auto;z-index:20;right:auto}.errpanel.open{display:block}.errsummary{font-size:14px;color:var(--muted);margin:0 0 14px;line-height:1.5}.errlist{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.echip{background:#fee2e2;color:#b42318;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;font-family:'Noto Sans Devanagari','Nirmala UI',sans-serif;line-height:1.4}.echip b{color:#b42318;margin-right:3px}.muted2{color:var(--muted);font-size:13px}.passage-text span.cur-word-char{color:#2563eb;font-weight:600}.passage-text span.next-word-char{color:#dc2626}.key{position:relative;transition:background .12s,color .12s}.key.active{background:#dc2626;border-color:#dc2626;color:#fff}.key.active b{color:#fff}.key.active-shift{background:#dc2626;border-color:#dc2626;color:#fff;box-shadow:0 0 0 2px #fecaca}.key.active-shift b{color:#fff}.key.active-shift::after{content:'⇧';position:absolute;top:-9px;right:-4px;background:#b42318;color:#fff;font-size:9px;border-radius:50%;width:14px;height:14px;line-height:14px;text-align:center}.statbox{background:#f7f9fd;border:1px solid var(--line);border-radius:12px;padding:10px 12px}.statbox .v{font-size:20px;font-weight:900;color:var(--ink)}.statbox .l{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em}#resultBtns.show,#resultStats.show{display:flex}#resultStats.show{display:grid}</style></head><body><header class="top"><div class="brand">Thunder Typing <i>हिंदी</i></div><div class="controls"><span id="time" class="stat">00:00</span><span id="wpm">0 WPM</span><span id="acc" class="stat">100% acc</span><span id="err" class="stat">0 err</span><button class="btn" id="pauseBtn">Pause</button><button class="btn" id="settingsBtn">Settings</button><button class="btn" id="clearBtn">Clear</button></div></header>
 <div class="settings" id="settings"><label>Passage</label><select id="mode"><option value="free">Free typing</option><option value="normal-easy">No Shift · Easy</option><option value="normal-hard">No Shift · Hard</option><option value="shift-easy">Shift + Normal · Easy</option><option value="shift-hard">Shift + Normal · Hard</option><option value="word-normal">Word Practice · No Shift</option><option value="word-shift">Word Practice · With Shift</option></select><div class="wordrow" id="wordRow" style="display:none"><label>Word Count</label><div style="display:flex;align-items:center;gap:10px"><input type="range" id="wordCount" min="5" max="50" step="1" value="15" style="flex:1"><span id="wordCountVal" style="font-weight:800;color:var(--p);min-width:28px;text-align:right">15</span></div><button class="btn" id="shuffleBtn" style="width:100%;margin-top:10px">🔀 New Words</button></div><label>Position</label><select id="layout"><option value="left">Passage left / typing right</option><option value="right">Typing left / passage right</option><option value="top">Passage top / typing bottom</option><option value="bottom">Typing top / passage bottom</option></select><label class="check"><input type="checkbox" id="kbOn"> Open keyboard helper</label></div>
-<main class="practice layout-left" id="practice"><section class="card passage"><div class="label">PASSAGE</div><div class="passage-text" id="passage"></div></section><section class="card typebox"><div class="label">YOUR TYPING</div><textarea id="doc" autofocus spellcheck="false" placeholder="Free typing — start here…"></textarea></section></main><div class="kb" id="kb"></div><div class="err-backdrop" id="errBackdrop"></div><div class="settings errpanel" id="errPanel"><div class="label">MISTAKE REVIEW</div><p id="errSummary" class="errsummary"></p><div id="errList" class="errlist"></div><button class="btn primary" id="resumeBtn">Resume Typing</button></div>
+<main class="practice layout-left" id="practice"><section class="card passage"><div class="label">PASSAGE</div><div class="passage-text" id="passage"></div></section><section class="card typebox"><div class="label">YOUR TYPING</div><textarea id="doc" autofocus spellcheck="false" placeholder="Free typing — start here…"></textarea></section></main><div class="kb" id="kb"></div><div class="err-backdrop" id="errBackdrop"></div><div class="settings errpanel" id="errPanel"><div class="label" id="errTitle">MISTAKE REVIEW</div><div id="resultStats" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px"></div><p id="errSummary" class="errsummary"></p><div id="errList" class="errlist"></div><button class="btn primary" id="resumeBtn">Resume Typing</button><div id="resultBtns" style="display:none;gap:8px;margin-top:14px"><button class="btn primary" id="retryBtn" style="flex:1;margin-top:0">↺ Retry Same</button><button class="btn primary" id="newWordsBtn" style="flex:1;margin-top:0">🔀 New Words</button></div></div>
 <script>
 const KEYMAP={Backquote:{n:'़',s:'द्य'},Digit1:{n:'१',s:'।'},Digit2:{n:'२',s:'/'},Digit3:{n:'३',s:':'},Digit4:{n:'४',s:'?'},Digit5:{n:'५',s:'-'},Digit6:{n:'६',s:'‘'},Digit7:{n:'७',s:'’'},Digit8:{n:'८',s:'द्व'},Digit9:{n:'९',s:'त्र'},Digit0:{n:'०',s:'ऋ'},Minus:{n:'·',s:'्'},Equal:{n:'ृ',s:'ॄ'},KeyQ:{n:'ु',s:'फ'},KeyW:{n:'ू',s:'ॅ'},KeyE:{n:'म',s:'म्'},KeyR:{n:'त',s:'त्'},KeyT:{n:'ज',s:'ज्'},KeyY:{n:'ल',s:'ल्'},KeyU:{n:'न',s:'न्'},KeyI:{n:'प',s:'प्'},KeyO:{n:'व',s:'व्'},KeyP:{n:'च',s:'च्'},BracketLeft:{n:'ख्',s:'क्ष्'},BracketRight:{n:',',s:'ौ'},Backslash:{n:'ो',s:'द्ध'},KeyA:{n:'ं',s:'ॉ'},KeyS:{n:'े',s:'ै'},KeyD:{n:'क',s:'क्'},KeyF:{n:'ि',s:'थ्'},KeyG:{n:'ह',s:'ळ'},KeyH:{n:'ी',s:'भ्'},KeyJ:{n:'र',s:'श्र'},KeyK:{n:'ा',s:'ज्ञ'},KeyL:{n:'स',s:'स्'},Semicolon:{n:'य',s:'रू'},Quote:{n:'श्',s:'ष्'},KeyZ:{n:'्र',s:'र्'},KeyX:{n:'ग',s:'ग्'},KeyC:{n:'ब',s:'ब्'},KeyV:{n:'अ',s:'ट'},KeyB:{n:'इ',s:'ठ'},KeyN:{n:'द',s:'छ'},KeyM:{n:'उ',s:'ड'},Comma:{n:'ए',s:'ढ'},Period:{n:'ण्',s:'झ'},Slash:{n:'ध्',s:'घ'},Space:{n:' ',s:' '}};
 const HALF={'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','श्':'श','ष्':'ष','भ्':'भ','थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'};const MAT=new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ','े','ै','ु','ू']);const FULL={'अा':'आ','अि':'इ','अी':'ई','अु':'उ','अू':'ऊ','अे':'ए','अै':'ऐ','अो':'ओ','अौ':'औ'};const IV=new Set(['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ','ऋ']);let buffer='',pendingI=false,start=0;
+function graphemes(str){
+  if(!str)return[];
+  try{if(typeof Intl!=='undefined'&&Intl.Segmenter){return[...new Intl.Segmenter('hi',{granularity:'grapheme'}).segment(str)].map(s=>s.segment)}}catch(e){}
+  const combining=/[\u0900-\u0903\u093a-\u094f\u0951-\u0957\u0962\u0963]/;
+  const out=[];let i=0;
+  while(i<str.length){let g=str[i];i++;while(i<str.length&&combining.test(str[i])){g+=str[i];i++}out.push(g)}
+  return out;
+}
+function clusterize(word){
+  const g=graphemes(word);let idx=0;const out=[];
+  for(const seg of g){out.push({text:seg,start:idx,end:idx+seg.length});idx+=seg.length}
+  return out;
+}
 function press(code,shift){let ch=(KEYMAP[code]||{})[shift?'s':'n'];if(ch===undefined)return;if(ch==='ि'){pendingI=true;return}if(pendingI){buffer+=(HALF[ch]||ch)+'ि';pendingI=false;return}if(MAT.has(ch)||ch===':'){let prev=buffer.slice(-1),combo=prev+ch;if(FULL[combo]){buffer=buffer.slice(0,-1)+FULL[combo];return}for(const h in HALF)if(buffer.endsWith(h)){buffer=buffer.slice(0,-h.length)+HALF[h];break}buffer+=ch;return}buffer+=ch}
 const PASS={"normal-easy": "एक नगर में राजा रहा। राजा बहुत दयालु एवं वीर था। एक समय शत्रु ने नगर पर वार किया। राजा ने अपनी सेना बुलाई। सब जन युद्ध पर गए। राजा ने साहस से वार किया और शत्रु दल को हरा दिया। युद्ध के बाद नगर में शांति आई। सब लोग बहुत खुश हुए। राजा ने सब जन को मान दिया। नदी के तट पर मेला लगा। लोग उपवन में गए। वहाँ कमल के फूल खिले। पवन शीतल बही। सब जन ने मिलकर राजा का जयकार किया। राजा ने भी सबको अपना आशीष दिया। इस तरह पूरा नगर सुख और चैन से रहने लगा।", "normal-hard": "प्राचीन समय में एक प्रतापी नृप रहा। उसका नाम जयपाल था। वह परम वीर, दयालु एवं नीति-निपुण नरपति था। एक दिन दुष्ट शत्रु दल ने अचानक नगर सीमा पर भीषण वार किया। तब प्रतापी राजा ने अपनी विशाल चतुरंगिणी सेना को रणभूमि में उतरने की आज्ञा दी। शूरवीर सैनिक शस्त्र लेकर युद्ध में कूद पड़े। भीषण रण हुआ। बाणों की वर्षा हुई। राजा ने अद्भुत पराक्रम दिखाया और शत्रु दल का मान मर्दन कर दिया। अंत में राजा ने पूर्ण विजय पायी। विजय के उपरांत नगर में अपार हर्ष छा गया। सब जन ने राजा का जयघोष किया। पावन नदी के तट पर स्थित उपवन में विशाल उत्सव रखा गया। वहाँ रंग-बिरंगे कमल खिले थे और सुगंधित शीतल पवन बह रही थी। विद्वानों ने प्रभु का ध्यान किया। जन-जन के प्राण में नया उल्लास और नया जोश भर गया। राजा ने समस्त प्रजा को अभयदान दिया। इस प्रकार धर्म और न्याय की स्थापना से सम्पूर्ण राज्य में सुख, शांति और समृद्धि का विस्तार हुआ।", "shift-easy": "ऋषि-मुनियों द्वारा प्रतिपादित ज्ञान तथा अध्यात्म की श्रेष्ठ परंपरा हमारे समाज को सदैव सही दिशा देती रही है। इस पावन भूमि पर अनेक शूरवीरों, विद्वानों और तपस्वियों ने त्याग, निष्ठा तथा सत्य की रक्षा हेतु अपना सर्वस्व समर्पित किया। मानव जीवन में विद्या, धैर्य और क्षमा का अद्भुत महत्व है। कठिन परिस्थितियों के बीच भी दृढ़ संकल्प और अदम्य साहस से व्यक्ति बड़े से बड़े लक्ष्य को प्राप्त कर सकता है। समय का सदुपयोग, निरंतर परिश्रम तथा कर्तव्यपरायणता ही प्रत्येक कार्य में सफलता के मूलमंत्र हैं। समाज में परस्पर प्रेम, बंधुत्व, दया तथा सहयोग की भावना ही देश को उन्नति के उच्च शिखर तक पहुंचाती है।", "shift-hard": "प्राचीन काल से ही हमारे राष्ट्र में ज्ञान-विज्ञान, कला, साहित्य और दर्शन का अद्वितीय विकास हुआ है। ऋग्वेद जैसे प्राचीन ग्रंथों से लेकर आधुनिक युग तक भारतीय मेधा ने संपूर्ण विश्व को ज्ञान का नया आलोक प्रदान किया। किसी भी सभ्य समाज की आधारशिला उसके नागरिकों के नैतिक आचरण, दृढ़ चरित्र, श्रम और सत्यनिष्ठा पर निर्भर करती है। आज के तकनीकी युग में भी प्राचीन संस्कारों, शुद्ध चिंतन और मानवीय दृष्टिकोण का महत्व कम नहीं हुआ है। मनुष्य जब कठिन मार्ग पर चलते हुए धैर्य खोए बिना निरंतर अभ्यास करता है, तब असंभव प्रतीत होने वाले कार्य भी सहज बन जाते हैं। शिक्षा का वास्तविक उद्देश्य केवल पुस्तकीय ज्ञान अर्जित करना नहीं, अपितु व्यक्ति के विवेक, संयम और बौद्धिक क्षमता का सर्वांगीण विकास करना है। समाज के सभी वर्गों के उत्थान, पर्यावरण के संरक्षण, जल संचयन तथा सामाजिक समरसता की स्थापना में प्रत्येक नागरिक की सक्रिय सहभागिता अनिवार्य है। जब हम अपने अधिकारों के साथ-साथ राष्ट्रीय कर्तव्यों का निष्ठापूर्वक पालन करेंगे, तभी राष्ट्र सशक्त, समृद्ध और आत्मनिर्भर बन सकेगा।"};
 const WORDS_NORMAL=["कमल","जल","राजा","सूरज","पुस्तक","देश","भारत","गगन","पवन","चमन","नगर","जीवन","सुंदर","संगीत","मंत्र","यंत्र","एकता","इतिहास","उदय","अमर","कलम","हंस","रंग","गुलाब","चोर","योग","दवा","सुख","दुख","नाम","काम","रात","दिन","पानी","घर","समय","बात","लोग","फल","मन","रूप","कृपा","कौशल","पैसा","मित्र"];
@@ -20,33 +33,62 @@ function generateWordPassage(){
 const doc=document.getElementById('doc'),mode=document.getElementById('mode'),layout=document.getElementById('layout'),practice=document.getElementById('practice'),wordRow=document.getElementById('wordRow'),wordCount=document.getElementById('wordCount'),wordCountVal=document.getElementById('wordCountVal'),shuffleBtn=document.getElementById('shuffleBtn');
 const wpmEl=document.getElementById('wpm'),accEl=document.getElementById('acc'),errEl=document.getElementById('err'),timeEl=document.getElementById('time'),pauseBtn=document.getElementById('pauseBtn'),errPanel=document.getElementById('errPanel'),errBackdrop=document.getElementById('errBackdrop'),errList=document.getElementById('errList'),errSummary=document.getElementById('errSummary'),resumeBtn=document.getElementById('resumeBtn'),passageEl=document.getElementById('passage');
 let paused=false,pausedTotal=0,pauseStart=0,idleTimer=null,finished=false;
+let wordIndex=0,completedWords=[];
 const IDLE_MS=6000;
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function passageText(){return(mode.value==='word-normal'||mode.value==='word-shift')?currentWordPassage:(PASS[mode.value]||'')}
-function wordSpanAt(p,idx){
-  let n=p.length,i=idx;
-  while(i<n&&p[i]===' ')i++;
-  if(i>=n)return null;
-  let s=i;while(s>0&&p[s-1]!==' ')s--;
-  let e=i;while(e<n&&p[e]!==' ')e++;
-  return[s,e];
-}
+function passageWords(){const p=passageText();return p?p.split(' '):[]}
 function renderPassage(){
   const p=passageText();
-  if(mode.value==='free'){passageEl.textContent='';updateKbHighlight(p);return}
-  const curWord=wordSpanAt(p,buffer.length);
-  const nextWord=curWord?wordSpanAt(p,curWord[1]):null;
+  if(mode.value==='free'){passageEl.textContent='';updateKbHighlight('');return}
+  const words=passageWords();
   let out='';
-  for(let i=0;i<p.length;i++){
-    const ch=p[i];let cls='pending';
-    if(i<buffer.length)cls=buffer[i]===ch?'ok':'bad';
-    else if(i===buffer.length)cls='cur';
-    else if(curWord&&i>=curWord[0]&&i<curWord[1])cls='cur-word-char';
-    else if(nextWord&&i>=nextWord[0]&&i<nextWord[1])cls='next-word-char';
-    out+='<span class="'+cls+'">'+esc(ch)+'</span>';
+  for(let w=0;w<words.length;w++){
+    const word=words[w];
+    if(w<wordIndex){
+      const rec=completedWords[w];
+      out+='<span class="'+(rec&&rec.correct?'ok':'bad')+'">'+esc(word)+'</span>';
+    }else if(w===wordIndex){
+      const clusters=clusterize(word);
+      let wOut='';
+      for(const c of clusters){
+        let cls;
+        if(c.end<=buffer.length)cls=buffer.slice(c.start,c.end)===c.text?'ok':'bad';
+        else if(c.start<=buffer.length)cls='cur';
+        else cls='pending';
+        wOut+='<span class="'+cls+'">'+esc(c.text)+'</span>';
+      }
+      if(buffer.length>word.length){
+        clusterize(buffer.slice(word.length)).forEach(c=>{wOut+='<span class="bad">'+esc(c.text)+'</span>'});
+      }
+      out+=wOut;
+    }else if(w===wordIndex+1){
+      out+='<span class="next-word-char">'+esc(word)+'</span>';
+    }else{
+      out+='<span class="pending">'+esc(word)+'</span>';
+    }
+    if(w<words.length-1)out+=' ';
   }
   passageEl.innerHTML=out;
-  updateKbHighlight(p);
+  updateKbHighlight(words[wordIndex]||'');
+}
+function finalizeWord(){
+  const words=passageWords();
+  if(wordIndex>=words.length)return;
+  const target=words[wordIndex];
+  completedWords.push({target:target,typed:buffer,correct:buffer===target});
+  buffer='';pendingI=false;wordIndex++;
+}
+function checkFinish(){
+  const words=passageWords();
+  if(mode.value!=='free'&&words.length&&wordIndex>=words.length&&!finished){
+    finished=true;paused=true;clearTimeout(idleTimer);
+    const st=computeStats(),elapsed=performance.now()-start-pausedTotal,mins=elapsed/60000;
+    const wpm=Math.round((st.correct/5)/Math.max(mins,0.001)),acc=st.total?Math.round(st.correct/st.total*100):100;
+    wpmEl.textContent=wpm+' WPM';accEl.textContent=acc+'% acc';errEl.textContent=st.incorrect+' err';
+    pauseBtn.textContent='Pause';
+    showResults(wpm,acc,st.incorrect,fmtTime(elapsed));
+  }
 }
 function mark(code,cls){const el=document.querySelector('#kb .key[data-code="'+code+'"]');if(el)el.classList.add(cls)}
 function findDirect(ch){
@@ -85,13 +127,27 @@ function render(){
   renderPassage();
 }
 function computeStats(){
-  const p=passageText(),isFree=mode.value==='free';
+  const isFree=mode.value==='free';
+  if(isFree)return{correct:0,incorrect:0,errors:[],isFree:true,total:0};
   let correct=0,incorrect=0,errors=[];
-  if(!isFree&&p){
-    const len=Math.min(buffer.length,p.length);
-    for(let i=0;i<len;i++){if(buffer[i]===p[i])correct++;else{incorrect++;errors.push({idx:i,expected:p[i],typed:buffer[i]})}}
+  completedWords.forEach((w,idx)=>{
+    const tG=graphemes(w.target),yG=graphemes(w.typed);
+    if(w.correct){correct+=tG.length;return}
+    let c=0;const len=Math.min(tG.length,yG.length);
+    for(let i=0;i<len;i++)if(tG[i]===yG[i])c++;
+    correct+=c;incorrect+=Math.max(tG.length,yG.length)-c;
+    errors.push({idx:idx,expected:w.target,typed:w.typed});
+  });
+  // Include the word currently being typed (not yet submitted with Space) so WPM/accuracy
+  // update live instead of only jumping once a word is finished.
+  const curTarget=passageWords()[wordIndex];
+  if(curTarget!==undefined&&buffer.length>0){
+    const tG=graphemes(curTarget),yG=graphemes(buffer);
+    const len=Math.min(tG.length,yG.length);let c=0;
+    for(let i=0;i<len;i++)if(tG[i]===yG[i])c++;
+    correct+=c;incorrect+=Math.max(tG.length,yG.length)-c;
   }
-  return{correct:correct,incorrect:incorrect,errors:errors,isFree:isFree,total:correct+incorrect}
+  return{correct:correct,incorrect:incorrect,errors:errors,isFree:false,total:correct+incorrect,wordsTotal:completedWords.length,wordsCorrect:completedWords.filter(w=>w.correct).length}
 }
 function fmtTime(ms){const s=Math.max(0,Math.floor(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
 function tick(){
@@ -114,6 +170,7 @@ function tick(){
 }
 function resetTest(){
   buffer='';pendingI=false;start=0;pausedTotal=0;paused=false;finished=false;
+  wordIndex=0;completedWords=[];
   clearTimeout(idleTimer);
   doc.value='';wpmEl.textContent='0 WPM';accEl.textContent='100% acc';errEl.textContent='0 err';timeEl.textContent='00:00';
   pauseBtn.textContent='Pause';
@@ -123,15 +180,41 @@ function resetTest(){
 function resetIdle(){
   clearTimeout(idleTimer);
   if(mode.value==='free')return;
-  idleTimer=setTimeout(()=>{if(start&&!paused&&!finished&&buffer.length>0)pauseTest()},IDLE_MS);
+  idleTimer=setTimeout(()=>{if(start&&!paused&&!finished&&(buffer.length>0||wordIndex>0))pauseTest()},IDLE_MS);
 }
+const errTitle=document.getElementById('errTitle'),resultStats=document.getElementById('resultStats'),resultBtns=document.getElementById('resultBtns'),retryBtn=document.getElementById('retryBtn'),newWordsBtn=document.getElementById('newWordsBtn');
 function showErrorPanel(customMsg){
   const st=computeStats();
-  errSummary.textContent=customMsg||(st.errors.length?st.errors.length+' mistake(s) found — review below, then resume.':'No mistakes so far — nice going!');
+  errTitle.textContent='MISTAKE REVIEW';
+  resultStats.classList.remove('show');resultStats.style.display='none';
+  resultBtns.classList.remove('show');resultBtns.style.display='none';
+  resumeBtn.style.display='block';
+  errSummary.textContent=customMsg||(st.errors.length?st.errors.length+' word(s) with mistakes — review below, then resume.':'No mistakes so far — nice going!');
   errList.innerHTML=st.errors.length?st.errors.map(e=>'<span class="echip" data-i="'+e.idx+'"><b>'+esc(e.expected)+'</b>→'+esc(e.typed||'—')+'</span>').join(''):'<span class="muted2">Nothing to fix yet.</span>';
   errPanel.classList.add('open');errBackdrop.classList.add('open');
 }
-function hideErrorPanel(){errPanel.classList.remove('open');errBackdrop.classList.remove('open')}
+function showResults(wpm,acc,errCount,timeStr){
+  const st=computeStats(),isWord=mode.value==='word-normal'||mode.value==='word-shift';
+  errTitle.textContent=isWord?'WORD PRACTICE — RESULTS':'PASSAGE COMPLETE';
+  errSummary.textContent=isWord?'You finished '+(st.wordsTotal||0)+' word(s) — '+(st.wordsCorrect||0)+' correct.':'Great job finishing the passage!';
+  resultStats.style.display='grid';resultStats.classList.add('show');
+  resultStats.innerHTML=[
+    ['⏱ '+timeStr,'TIME'],
+    ['⚡ '+wpm,'WPM'],
+    ['✅ '+acc+'%','ACCURACY'],
+    ['❌ '+errCount,'ERRORS']
+  ].map(s=>'<div class="statbox"><div class="v">'+s[0]+'</div><div class="l">'+s[1]+'</div></div>').join('');
+  errList.innerHTML=st.errors.length?st.errors.map(e=>'<span class="echip"><b>'+esc(e.expected)+'</b>→'+esc(e.typed||'—')+'</span>').join(''):'<span class="muted2">No mistakes — perfect run!</span>';
+  if(isWord){
+    resumeBtn.style.display='none';
+    resultBtns.style.display='flex';resultBtns.classList.add('show');
+  }else{
+    resumeBtn.style.display='block';resumeBtn.textContent='Close';
+    resultBtns.classList.remove('show');resultBtns.style.display='none';
+  }
+  errPanel.classList.add('open');errBackdrop.classList.add('open');
+}
+function hideErrorPanel(){errPanel.classList.remove('open');errBackdrop.classList.remove('open');resumeBtn.textContent='Resume Typing'}
 function pauseTest(){
   if(paused||!start||finished)return;
   paused=true;pauseStart=performance.now();
@@ -140,6 +223,7 @@ function pauseTest(){
   showErrorPanel();
 }
 function resumeTest(){
+  if(finished){hideErrorPanel();return}
   if(!paused)return;
   pausedTotal+=performance.now()-pauseStart;
   paused=false;pauseBtn.textContent='Pause';
@@ -150,31 +234,32 @@ layout.onchange=render;
 wordCount.oninput=()=>{wordCountVal.textContent=wordCount.value};
 wordCount.onchange=()=>{generateWordPassage();resetTest();render()};
 shuffleBtn.onclick=()=>{generateWordPassage();resetTest();render();doc.focus()};
+retryBtn.onclick=()=>{resetTest();render();doc.focus()};
+newWordsBtn.onclick=()=>{generateWordPassage();resetTest();render();doc.focus()};
 generateWordPassage();render();resetTest();
 document.getElementById('settingsBtn').onclick=()=>document.getElementById('settings').classList.toggle('open');
 document.getElementById('clearBtn').onclick=()=>{resetTest();doc.focus()};
 pauseBtn.onclick=()=>{if(finished)return;paused?resumeTest():pauseTest()};
 resumeBtn.onclick=resumeTest;
 errBackdrop.onclick=resumeTest;
-errList.addEventListener('click',e=>{const c=e.target.closest('.echip');if(!c)return;resumeTest();const i=+c.dataset.i;doc.focus();doc.setSelectionRange(i,i)});
+errList.addEventListener('click',e=>{const c=e.target.closest('.echip');if(!c)return;if(!finished)resumeTest();doc.focus()});
 doc.addEventListener('keydown',e=>{
   if(paused)return;
   if(e.ctrlKey||e.metaKey||e.altKey)return;
+  const nonFree=mode.value!=='free';
   if(e.code==='Backspace'){e.preventDefault();if(pendingI)pendingI=false;else buffer=buffer.slice(0,-1)}
+  else if(nonFree&&(e.code==='Space'||e.code==='Enter')){e.preventDefault();if(!start)start=performance.now();finalizeWord()}
   else if(e.code==='Enter'){e.preventDefault();pendingI=false;buffer+='\n'}
   else if(KEYMAP[e.code]){e.preventDefault();if(!start)start=performance.now();press(e.code,e.shiftKey)}
   else return;
-  doc.value=buffer;doc.setSelectionRange(buffer.length,buffer.length);
-  renderPassage();resetIdle();
-  const p=passageText();
-  if(mode.value!=='free'&&p&&buffer.length>=p.length&&!finished){
-    finished=true;paused=true;clearTimeout(idleTimer);
-    const st=computeStats(),elapsed=performance.now()-start-pausedTotal,mins=elapsed/60000;
-    const wpm=Math.round((st.correct/5)/Math.max(mins,0.001)),acc=st.total?Math.round(st.correct/st.total*100):100;
-    wpmEl.textContent=wpm+' WPM';accEl.textContent=acc+'% acc';errEl.textContent=st.incorrect+' err';
-    pauseBtn.textContent='Pause';
-    showErrorPanel('Passage complete — '+wpm+' WPM, '+acc+'% accuracy.');
+  if(nonFree){
+    const shown=completedWords.map(w=>w.typed).join(' ')+(completedWords.length?' ':'')+buffer;
+    doc.value=shown;doc.setSelectionRange(shown.length,shown.length);
+  }else{
+    doc.value=buffer;doc.setSelectionRange(buffer.length,buffer.length);
   }
+  renderPassage();resetIdle();
+  checkFinish();
 });
 setInterval(tick,1000);
 const rows=[['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash'],['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'],['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']];document.getElementById('kb').innerHTML=rows.map(r=>'<div class=row>'+r.map(c=>'<span class="key" data-code="'+c+'">'+KEYMAP[c].n+'<b>'+KEYMAP[c].s+'</b></span>').join('')+'</div>').join('');document.getElementById('kbOn').onchange=e=>document.getElementById('kb').classList.toggle('open',e.target.checked);
