@@ -1,6 +1,6 @@
 <!doctype html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thunder Typing</title><style>
 :root{--p:#6699fb;--ink:#182033;--muted:#687087;--line:#e5e9f2}*{box-sizing:border-box}body{margin:0;background:#f7f9fd;color:var(--ink);font-family:Inter,system-ui,sans-serif}.top{height:62px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:5}.brand{font-weight:800}.brand i{font-style:normal;color:var(--p)}button,select{font:inherit}.controls{display:flex;gap:8px;align-items:center}.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}.btn:hover{border-color:var(--p);color:var(--p)}#wpm{font-weight:800;color:var(--p);padding:8px 10px}.settings{position:fixed;right:20px;top:70px;width:300px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 18px 50px #0002;display:none;z-index:10}.settings.open{display:block}.settings label{display:block;font-size:12px;font-weight:700;margin:12px 0 5px}.settings select{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff}.settings .check{display:flex;gap:8px;align-items:center;margin-top:16px}.practice{height:calc(100vh - 62px);padding:18px;display:grid;gap:14px}.left,.right{min-width:0}.layout-left,.layout-right{grid-template-columns:1fr 1fr}.layout-right .passage{order:2}.layout-top,.layout-bottom{grid-template-rows:1fr 1fr}.layout-bottom .passage{order:2}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;overflow:auto}.label{font-size:11px;font-weight:900;letter-spacing:.13em;color:var(--muted);margin-bottom:12px}.passage-text{font-family:'Noto Sans Devanagari','Nirmala UI',sans-serif;font-size:23px;line-height:2;white-space:pre-wrap}.typebox textarea{width:100%;height:calc(100% - 30px);border:0;outline:0;resize:none;background:transparent;font-family:'Noto Sans Devanagari','Nirmala UI',sans-serif;font-size:23px;line-height:2}.free .passage{display:none}.free{display:block}.free .typebox{height:100%}.kb{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px;display:none;max-width:95vw;z-index:4}.kb.open{display:block}.row{display:flex;gap:3px;margin:3px}.key{min-width:30px;padding:6px;text-align:center;border:1px solid var(--line);border-radius:5px;font-size:12px}.key b{display:block;color:var(--p)}@media(max-width:700px){.layout-left,.layout-right{grid-template-columns:1fr;grid-template-rows:1fr 1fr}.practice{padding:10px}.passage-text,.typebox textarea{font-size:19px}.top{padding:0 10px}.settings{right:10px;width:calc(100% - 20px)}}
-.controls{flex-wrap:wrap}.stat{font-size:12px;font-weight:700;color:var(--muted);padding:6px 8px;white-space:nowrap}#wpm{font-size:15px}.btn.primary{background:var(--p);border-color:var(--p);color:#fff;width:100%;margin-top:14px;font-weight:700;padding:11px 12px}.passage-text span.ok{color:#16a34a}.passage-text span.bad{color:#dc2626;background:#fee2e2;border-radius:3px}.passage-text span.cur{background:var(--p);color:#fff;border-radius:2px}.passage-text span.pending{color:var(--muted)}.err-backdrop{display:none;position:fixed;inset:0;background:rgba(10,14,24,.45);z-index:19}.err-backdrop.open{display:block}.errpanel{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;max-width:92vw;max-height:76vh;overflow:auto;z-index:20;right:auto}.errpanel.open{display:block}.errsummary{font-size:14px;color:var(--muted);margin:0 0 14px;line-height:1.5}.errlist{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.echip{background:#fee2e2;color:#b42318;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;font-family:'Noto Sans Devanagari','Nirmala UI',sans-serif;line-height:1.4}.echip b{color:#b42318;margin-right:3px}.muted2{color:var(--muted);font-size:13px}</style></head><body><header class="top"><div class="brand">Thunder Typing <i>हिंदी</i></div><div class="controls"><span id="time" class="stat">00:00</span><span id="wpm">0 WPM</span><span id="acc" class="stat">100% acc</span><span id="err" class="stat">0 err</span><button class="btn" id="pauseBtn">Pause</button><button class="btn" id="settingsBtn">Settings</button><button class="btn" id="clearBtn">Clear</button></div></header>
+.controls{flex-wrap:wrap}.stat{font-size:12px;font-weight:700;color:var(--muted);padding:6px 8px;white-space:nowrap}#wpm{font-size:15px}.btn.primary{background:var(--p);border-color:var(--p);color:#fff;width:100%;margin-top:14px;font-weight:700;padding:11px 12px}.passage-text span.ok{color:#16a34a}.passage-text span.bad{color:#dc2626;background:#fee2e2;border-radius:3px}.passage-text span.cur{background:var(--p);color:#fff;border-radius:2px}.passage-text span.pending{color:var(--muted)}.err-backdrop{display:none;position:fixed;inset:0;background:rgba(10,14,24,.45);z-index:19}.err-backdrop.open{display:block}.errpanel{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;max-width:92vw;max-height:76vh;overflow:auto;z-index:20;right:auto}.errpanel.open{display:block}.errsummary{font-size:14px;color:var(--muted);margin:0 0 14px;line-height:1.5}.errlist{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}.echip{background:#fee2e2;color:#b42318;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;font-family:'Noto Sans Devanagari','Nirmala UI',sans-serif;line-height:1.4}.echip b{color:#b42318;margin-right:3px}.muted2{color:var(--muted);font-size:13px}.passage-text span.cur-word-char{color:#2563eb;font-weight:600}.passage-text span.next-word-char{color:#dc2626}.key{position:relative;transition:background .12s,color .12s}.key.active{background:#dc2626;border-color:#dc2626;color:#fff}.key.active b{color:#fff}.key.active-shift{background:#dc2626;border-color:#dc2626;color:#fff;box-shadow:0 0 0 2px #fecaca}.key.active-shift b{color:#fff}.key.active-shift::after{content:'⇧';position:absolute;top:-9px;right:-4px;background:#b42318;color:#fff;font-size:9px;border-radius:50%;width:14px;height:14px;line-height:14px;text-align:center}</style></head><body><header class="top"><div class="brand">Thunder Typing <i>हिंदी</i></div><div class="controls"><span id="time" class="stat">00:00</span><span id="wpm">0 WPM</span><span id="acc" class="stat">100% acc</span><span id="err" class="stat">0 err</span><button class="btn" id="pauseBtn">Pause</button><button class="btn" id="settingsBtn">Settings</button><button class="btn" id="clearBtn">Clear</button></div></header>
 <div class="settings" id="settings"><label>Passage</label><select id="mode"><option value="free">Free typing</option><option value="normal-easy">No Shift · Easy</option><option value="normal-hard">No Shift · Hard</option><option value="shift-easy">Shift + Normal · Easy</option><option value="shift-hard">Shift + Normal · Hard</option></select><label>Position</label><select id="layout"><option value="left">Passage left / typing right</option><option value="right">Typing left / passage right</option><option value="top">Passage top / typing bottom</option><option value="bottom">Typing top / passage bottom</option></select><label class="check"><input type="checkbox" id="kbOn"> Open keyboard helper</label></div>
 <main class="practice layout-left" id="practice"><section class="card passage"><div class="label">PASSAGE</div><div class="passage-text" id="passage"></div></section><section class="card typebox"><div class="label">YOUR TYPING</div><textarea id="doc" autofocus spellcheck="false" placeholder="Free typing — start here…"></textarea></section></main><div class="kb" id="kb"></div><div class="err-backdrop" id="errBackdrop"></div><div class="settings errpanel" id="errPanel"><div class="label">MISTAKE REVIEW</div><p id="errSummary" class="errsummary"></p><div id="errList" class="errlist"></div><button class="btn primary" id="resumeBtn">Resume Typing</button></div>
 <script>
@@ -14,17 +14,42 @@ let paused=false,pausedTotal=0,pauseStart=0,idleTimer=null,finished=false;
 const IDLE_MS=6000;
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function passageText(){return PASS[mode.value]||''}
+function wordSpanAt(p,idx){
+  let n=p.length,i=idx;
+  while(i<n&&p[i]===' ')i++;
+  if(i>=n)return null;
+  let s=i;while(s>0&&p[s-1]!==' ')s--;
+  let e=i;while(e<n&&p[e]!==' ')e++;
+  return[s,e];
+}
 function renderPassage(){
   const p=passageText();
-  if(mode.value==='free'){passageEl.textContent='';return}
+  if(mode.value==='free'){passageEl.textContent='';updateKbHighlight(p);return}
+  const curWord=wordSpanAt(p,buffer.length);
+  const nextWord=curWord?wordSpanAt(p,curWord[1]):null;
   let out='';
   for(let i=0;i<p.length;i++){
     const ch=p[i];let cls='pending';
     if(i<buffer.length)cls=buffer[i]===ch?'ok':'bad';
     else if(i===buffer.length)cls='cur';
+    else if(curWord&&i>=curWord[0]&&i<curWord[1])cls='cur-word-char';
+    else if(nextWord&&i>=nextWord[0]&&i<nextWord[1])cls='next-word-char';
     out+='<span class="'+cls+'">'+esc(ch)+'</span>';
   }
   passageEl.innerHTML=out;
+  updateKbHighlight(p);
+}
+function updateKbHighlight(p){
+  document.querySelectorAll('#kb .key.active,#kb .key.active-shift').forEach(k=>k.classList.remove('active','active-shift'));
+  if(!p||mode.value==='free')return;
+  const nc=p[buffer.length];
+  if(nc===undefined)return;
+  for(const code in KEYMAP){
+    if(KEYMAP[code].n===nc){const el=document.querySelector('#kb .key[data-code="'+code+'"]');if(el)el.classList.add('active');return}
+  }
+  for(const code in KEYMAP){
+    if(KEYMAP[code].s===nc){const el=document.querySelector('#kb .key[data-code="'+code+'"]');if(el)el.classList.add('active-shift');return}
+  }
 }
 function render(){
   practice.className='practice layout-'+layout.value+(mode.value==='free'?' free':'');
@@ -124,5 +149,5 @@ doc.addEventListener('keydown',e=>{
   }
 });
 setInterval(tick,1000);
-const rows=[['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash'],['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'],['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']];document.getElementById('kb').innerHTML=rows.map(r=>'<div class=row>'+r.map(c=>'<span class=key>'+KEYMAP[c].n+'<b>'+KEYMAP[c].s+'</b></span>').join('')+'</div>').join('');document.getElementById('kbOn').onchange=e=>document.getElementById('kb').classList.toggle('open',e.target.checked);
+const rows=[['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash'],['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'],['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']];document.getElementById('kb').innerHTML=rows.map(r=>'<div class=row>'+r.map(c=>'<span class="key" data-code="'+c+'">'+KEYMAP[c].n+'<b>'+KEYMAP[c].s+'</b></span>').join('')+'</div>').join('');document.getElementById('kbOn').onchange=e=>document.getElementById('kb').classList.toggle('open',e.target.checked);
 </script></body></html>
