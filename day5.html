@@ -360,9 +360,8 @@ class RemingtonEngine{
         this.buffer = this.buffer.slice(0, -1);
         added = VOWEL_MATRA_TO_FULL[vowelCombo];
       } else {
-        // A matra cannot be attached to an already-complete independent vowel.
-        // Ignore it instead of producing broken combinations such as "आै".
-        if(INDEPENDENT_VOWELS.has(this.buffer.slice(-1))) return '';
+        // Keep typing responsive: do not swallow a key after an independent vowel.
+        // Normalise known vowel combinations, then continue with normal matra handling.
         for(const half in HALF_TO_FULL){
           if(this.buffer.endsWith(half)){
             this.buffer = this.buffer.slice(0, -half.length) + HALF_TO_FULL[half];
