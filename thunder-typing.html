@@ -1,4 +1,3 @@
-
 <!doctype html><html lang="hi"><head><meta charset="utf-8">
   <meta name="description" content="Learn the Remington GAIL Hindi keyboard, take CPCT/SSC-style typing tests with live WPM and accuracy, and master the layout with Falling Letters, Key Match and Matra Order games.">
 <meta name="theme-color" content="#573AFC">
@@ -22,25 +21,65 @@
 <div class="settings" id="settings"><label>Passage</label><select id="mode"><option value="free">Free typing</option><option value="normal-easy">No Shift · Easy</option><option value="normal-hard">No Shift · Hard</option><option value="shift-easy">Shift + Normal · Easy</option><option value="shift-hard">Shift + Normal · Hard</option><option value="word-normal">Word Practice · No Shift</option><option value="word-shift">Word Practice · With Shift</option><optgroup label="Practice Passages"><option value="passage-1">Passage 1 · शिक्षा</option><option value="passage-2">Passage 2 · लोकतंत्र</option><option value="passage-3">Passage 3 · मौलिक अधिकार</option><option value="passage-4">Passage 4 · नरेंद्र मोदी</option></optgroup></select><div class="wordrow" id="wordRow" style="display:none"><label>Word Count</label><div style="display:flex;align-items:center;gap:10px"><input type="range" id="wordCount" min="5" max="50" step="1" value="15" style="flex:1"><span id="wordCountVal" style="font-weight:800;color:var(--p);min-width:28px;text-align:right">15</span></div><button class="btn" id="shuffleBtn" style="width:100%;margin-top:10px">🔀 New Words</button></div><label>Time Limit</label><select id="timeLimit"><option value="0">No limit</option><option value="60000">1 minute</option><option value="300000">5 minutes</option><option value="600000">10 minutes</option><option value="900000">15 minutes</option><option value="1200000">20 minutes</option></select><label>Position</label><select id="layout"><option value="left">Passage left / typing right</option><option value="right">Typing left / passage right</option><option value="top">Passage top / typing bottom</option><option value="bottom">Typing top / passage bottom</option></select><label class="check"><input type="checkbox" id="kbOn"> Open keyboard helper</label><label class="check"><input type="checkbox" id="examMode"> Exam Mode — no backspace, real Net WPM scoring</label></div>
 <main class="practice layout-left" id="practice"><section class="card passage"><div class="label">PASSAGE</div><div class="passage-text" id="passage"></div></section><section class="card typebox"><div class="label">YOUR TYPING</div><textarea id="doc" autofocus spellcheck="false" placeholder="Free typing — start here…"></textarea></section></main><div class="kb" id="kb"></div><div class="err-backdrop" id="errBackdrop"></div><div class="settings errpanel" id="errPanel"><div class="label" id="errTitle">MISTAKE REVIEW</div><div id="resultStats" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px"></div><p id="errSummary" class="errsummary"></p><div id="errList" class="errlist"></div><button class="btn primary" id="resumeBtn">Resume Typing</button><div id="resultBtns" style="display:none;gap:8px;margin-top:14px"><button class="btn primary" id="retryBtn" style="flex:1;margin-top:0">↺ Retry Same</button><button class="btn primary" id="newWordsBtn" style="flex:1;margin-top:0">🔀 New Words</button></div></div>
 <script>
-const KEYMAP={Backquote:{n:'़',s:'द्य'},Digit1:{n:'१',s:'।'},Digit2:{n:'२',s:'/'},Digit3:{n:'३',s:':'},Digit4:{n:'४',s:'?'},Digit5:{n:'५',s:'-'},Digit6:{n:'६',s:'‘'},Digit7:{n:'७',s:'’'},Digit8:{n:'८',s:'द्व'},Digit9:{n:'९',s:'त्र'},Digit0:{n:'०',s:'ऋ'},Minus:{n:'·',s:'्'},Equal:{n:'ृ',s:'ॄ'},KeyQ:{n:'ु',s:'फ'},KeyW:{n:'ू',s:'ॅ'},KeyE:{n:'म',s:'म्'},KeyR:{n:'त',s:'त्'},KeyT:{n:'ज',s:'ज्'},KeyY:{n:'ल',s:'ल्'},KeyU:{n:'न',s:'न्'},KeyI:{n:'प',s:'प्'},KeyO:{n:'व',s:'व्'},KeyP:{n:'च',s:'च्'},BracketLeft:{n:'ख्',s:'क्ष्'},BracketRight:{n:',',s:'ौ'},Backslash:{n:'ो',s:'द्ध'},KeyA:{n:'ं',s:'ॉ'},KeyS:{n:'े',s:'ै'},KeyD:{n:'क',s:'क्'},KeyF:{n:'ि',s:'थ्'},KeyG:{n:'ह',s:'ळ'},KeyH:{n:'ी',s:'भ्'},KeyJ:{n:'र',s:'श्र'},KeyK:{n:'ा',s:'ज्ञ'},KeyL:{n:'स',s:'स्'},Semicolon:{n:'य',s:'रू'},Quote:{n:'श्',s:'ष्'},KeyZ:{n:'्र',s:'र्'},KeyX:{n:'ग',s:'ग्'},KeyC:{n:'ब',s:'ब्'},KeyV:{n:'अ',s:'ट'},KeyB:{n:'इ',s:'ठ'},KeyN:{n:'द',s:'छ'},KeyM:{n:'उ',s:'ड'},Comma:{n:'ए',s:'ढ'},Period:{n:'ण्',s:'झ'},Slash:{n:'ध्',s:'घ'},Space:{n:' ',s:' '}};
-const HALF={'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','श्':'श','ष्':'ष','भ्':'भ','थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'};
-const MAT=new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ','े','ै','ु','ू']);
-const IV=new Set(['अ','आ','इ','ई','उ','ऊ','ए','ऐ','ओ','औ','ऋ']);
-// Remington GAIL typewriter-style independent-vowel compositions.
-// The reference uses key sequences, not raw Unicode order. Keep the result as
-// normal Unicode so sequences such as अ+ा, ए+े, इ+ी and इ+र् do not remain as
-// broken strings like "अा", "एे", "इी" or "इर्".
-const VOWEL_COMPOSE={
-  'अा':'आ','अि':'इ','अी':'ई','अु':'उ','अू':'ऊ','अृ':'ऋ',
-  'इी':'ई','इर्':'ई','उू':'ऊ','अे':'ए','अै':'ऐ','एे':'ऐ','अो':'ओ','अौ':'औ'
+const KEYMAP={
+  Backquote:{n:'़',s:'द्य'},Digit1:{n:'१',s:'।'},Digit2:{n:'२',s:'/'},Digit3:{n:'३',s:':'},Digit4:{n:'४',s:'?'},Digit5:{n:'५',s:'-'},Digit6:{n:'६',s:'‘'},Digit7:{n:'७',s:'’'},Digit8:{n:'८',s:'द्व'},Digit9:{n:'९',s:'त्र'},Digit0:{n:'०',s:'ऋ'},
+  Minus:{n:'·',s:'्'},Equal:{n:'ृ',s:'ॄ'},
+  KeyQ:{n:'ु',s:'फ'},KeyW:{n:'ू',s:'ॅ'},KeyE:{n:'म',s:'म्'},KeyR:{n:'त',s:'त्'},KeyT:{n:'ज',s:'ज्'},KeyY:{n:'ल',s:'ल्'},KeyU:{n:'न',s:'न्'},KeyI:{n:'प',s:'प्'},KeyO:{n:'व',s:'व्'},KeyP:{n:'च',s:'च्'},BracketLeft:{n:'ख्',s:'क्ष्'},BracketRight:{n:',',s:'ौ'},Backslash:{n:'ो',s:'द्ध'},
+  KeyA:{n:'ं',s:'ॉ'},KeyS:{n:'े',s:'ै'},KeyD:{n:'क',s:'क्'},KeyF:{n:'ि',s:'थ्'},KeyG:{n:'ह',s:'ळ'},KeyH:{n:'ी',s:'भ्'},KeyJ:{n:'र',s:'श्र'},KeyK:{n:'ा',s:'ज्ञ'},KeyL:{n:'स',s:'स्'},Semicolon:{n:'य',s:'रू'},Quote:{n:'श्',s:'ष्'},
+  KeyZ:{n:'्र',s:'र्'},KeyX:{n:'ग',s:'ग्'},KeyC:{n:'ब',s:'ब्'},KeyV:{n:'अ',s:'ट'},KeyB:{n:'इ',s:'ठ'},KeyN:{n:'द',s:'छ'},KeyM:{n:'उ',s:'ड'},Comma:{n:'ए',s:'ढ'},Period:{n:'ण्',s:'झ'},Slash:{n:'ध्',s:'घ'},Space:{n:' ',s:' '}
 };
+
+// Remington GAIL / Hindi Indic Input 3 composition behavior.
+// TypingWale documents the GAIL convention as typewriter-style input,
+// especially the special treatment of ि; the legacy Hindi Indic Input 3
+// rules add the vowel, matra, poonch, rakar and reph combinations below.
+const HALF={'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','श्':'श','ष्':'ष','भ्':'भ','थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'};
+const MAT=new Set(['ा','ि','ी','ु','ू','ृ','ॄ','ॅ','े','ै','ॉ','ो','ौ','ं','ः','ँ','़']);
+const VIR='्';
+const IV=new Set(['अ','आ','इ','ई','उ','ऊ','ऋ','ए','ऐ','ओ','औ','ऑ','ऍ']);
+
+// Base/matra combinations explicitly documented for Hindi Indic Input 3 /
+// Remington GAIL. These are legacy visual constructions, not generic Sanskrit sandhi.
+const COMPOSE={
+  'अ+ा':'आ',
+  'अ+ि':'इ',
+  'अ+ी':'ई',
+  'अ+ु':'उ',
+  'अ+ू':'ऊ',
+  'अ+े':'ए',
+  'ए+ॅ':'ऍ',
+  'ए+े':'ऐ',
+  'आ+े':'ओ',
+  'आ+ै':'औ',
+  'आ+ॉ':'ऑ',
+  'उ+ु':'ऊ',
+  'इ+र्':'ई',
+  'ई+र्':'ई',
+  'ऑ+र्':'ऑ',
+  'ऍ+र्':'ऍ'
+};
+const MATRA_COMPOSE={
+  'ा+े':'ो',
+  'ा+ै':'ौ',
+  'ा+ॉ':'ॉ',
+  'ॅ+ं':'ँ'
+};
+
 let buffer='',pendingI=false,start=0;
 function graphemes(str){
   if(!str)return[];
-  try{if(typeof Intl!=='undefined'&&Intl.Segmenter){return[...new Intl.Segmenter('hi',{granularity:'grapheme'}).segment(str)].map(s=>s.segment)}}catch(e){}
-  const combining=/[\u0900-\u0903\u093a-\u094f\u0951-\u0957\u0962\u0963]/;
+  try{
+    if(typeof Intl!=='undefined'&&Intl.Segmenter){
+      return[...new Intl.Segmenter('hi',{granularity:'grapheme'}).segment(str)].map(s=>s.segment);
+    }
+  }catch(e){}
+  const combining=/[\u0900-\u0903\u0907-\u0938\u093e-\u094f\u0951-\u0957\u0962\u0963\u093c]/;
   const out=[];let i=0;
-  while(i<str.length){let g=str[i];i++;while(i<str.length&&combining.test(str[i])){g+=str[i];i++}out.push(g)}
+  while(i<str.length){
+    let g=str[i++];
+    while(i<str.length&&combining.test(str[i]))g+=str[i++];
+    out.push(g);
+  }
   return out;
 }
 function clusterize(word){
@@ -51,62 +90,116 @@ function clusterize(word){
 function editDistance(a,b){
   const m=a.length,n=b.length,dp=[];
   for(let i=0;i<=m;i++){dp.push([]);for(let j=0;j<=n;j++){
-    if(i===0)dp[i][j]=j;else if(j===0)dp[i][j]=i;
+    if(i===0)dp[i][j]=j;
+    else if(j===0)dp[i][j]=i;
     else dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j-1],dp[i-1][j],dp[i][j-1]);
   }}
   return dp[m][n];
 }
-// Real-exam style word grading: an exact match is no mistake, a totally missing/garbled word
-// is a "full" mistake, and a word that's just one grapheme off (a slipped matra, a missed half-letter)
-// is a "half" mistake — matching how SSC/CPCT-style Net WPM formulas grade errors.
 function classifyMistake(target,typed){
   if(typed===target)return'none';
   if(!typed)return'full';
   return editDistance(graphemes(target),graphemes(typed))<=1?'half':'full';
 }
-function appendEngineChar(ch){
-  // Matras after an independent vowel can represent the next independent vowel
-  // in the Remington typewriter sequence (for example ए + े = ऐ).
-  if(MAT.has(ch)){
-    const gs=graphemes(buffer);
-    const last=gs[gs.length-1]||'';
-    const composed=VOWEL_COMPOSE[last+ch];
-    if(composed){gs[gs.length-1]=composed;buffer=gs.join('');return;}
+
+function lastClusterInfo(){
+  const gs=graphemes(buffer);
+  return {gs,last:gs[gs.length-1]||'',index:gs.length-1};
+}
+function replaceLastCluster(text){
+  const {gs,index}=lastClusterInfo();
+  if(index<0){buffer=text;return;}
+  gs[index]=text;buffer=gs.join('');
+}
+function applyMatra(ch){
+  const {gs,index,last}=lastClusterInfo();
+  if(index<0){buffer+=ch;return;}
+
+  // Special independent-vowel legacy constructions.
+  const direct=COMPOSE[last+'+'+ch];
+  if(direct){gs[index]=direct;buffer=gs.join('');return;}
+
+  // Matra-on-matra construction, e.g. ा+े -> ो and ॅ+ं -> ँ.
+  const marks=[...last];
+  if(marks.length>=2){
+    const base=marks.slice(0,-1).join(''),prev=marks[marks.length-1];
+    const mc=MATRA_COMPOSE[prev+'+'+ch];
+    if(mc){gs[index]=base+mc;buffer=gs.join('');return;}
   }
+
+  // A half consonant followed by a dependent vowel sign becomes the full
+  // consonant carrying that vowel sign. Keep the explicit halant when another
+  // consonant/reph/rakar is subsequently entered.
+  if(last.endsWith(VIR) && ch!=='ं' && ch!=='ः' && ch!=='ँ' && ch!=='़'){
+    gs[index]=last.slice(0,-VIR.length)+ch;buffer=gs.join('');return;
+  }
+
   buffer+=ch;
 }
-// Remington GAIL Unicode engine. KeyboardEvent.code owns physical key mapping;
-// composition below mirrors typewriter key sequences and emits normalized Unicode.
+function appendEngineChar(ch){
+  if(MAT.has(ch)){applyMatra(ch);return;}
+  if(ch===VIR){buffer+=ch;return;}
+  buffer+=ch;
+}
+
 function press(code,shift){
-  const ch=(KEYMAP[code]||{})[shift?'s':'n'];
+  const entry=KEYMAP[code];
+  if(!entry)return;
+  const ch=entry[shift?'s':'n'];
   if(ch===undefined)return;
 
-  // ि is pressed before the following base letter in GAIL.
+  // GAIL visual/typewriter rule: F (ि) is pressed before the consonant/conjunct.
+  // We keep the internal text in canonical Unicode order for matching/rendering.
   if(ch==='ि'){
-    if(pendingI){appendEngineChar('ि');pendingI=false;}
-    else pendingI=true;
+    if(pendingI){
+      pendingI=false;
+      applyMatra('ि');
+    }else{
+      // GAIL's trained/visual order is F-before-consonant, but accepting F
+      // after an already-entered consonant keeps the engine robust for users
+      // switching from Unicode/phonetic practice without changing F-before-C.
+      const prev=lastClusterInfo().last;
+      if(prev && !IV.has(prev) && !prev.endsWith(VIR)) applyMatra('ि');
+      else if(prev && prev.endsWith(VIR)) applyMatra('ि');
+      else pendingI=true;
+    }
     return;
   }
 
   if(pendingI){
-    // A following independent vowel also uses the typewriter vowel composition.
-    if(IV.has(ch)){
-      const composed=VOWEL_COMPOSE[ch+'ि'];
-      buffer+=composed||ch+'ि';
-    }else if(ch.endsWith('्')){
-      // Preserve explicit half letters; do not strip their virama.
+    if(ch===' '){
+      // A stray preposed-i before a space is emitted as-is rather than lost.
+      buffer+='ि ';
+    }else if(ch.endsWith(VIR)){
+      // e.g. ि + म् — canonical storage is म् + ि.
+      buffer+=ch+'ि';
+    }else if(IV.has(ch)){
+      // Independent vowels do not take a dependent i-matra; retain the
+      // explicitly typed visual mark after the vowel so the error is visible.
       buffer+=ch+'ि';
     }else{
-      // Canonical Unicode order is consonant + ि even though the physical key
-      // order was ि then consonant.
       buffer+=ch+'ि';
     }
     pendingI=false;
     return;
   }
 
+  // Poonch compositions from Hindi Indic Input 3:
+  // उ+ु=ऊ, प+ु=फ, र+ु=रु.
+  const last=lastClusterInfo().last;
+  if(ch==='ु' && last==='उ'){replaceLastCluster('ऊ');return;}
+  if(ch==='ु' && last==='प'){replaceLastCluster('फ');return;}
+  if(ch==='ु' && last==='र'){replaceLastCluster('रु');return;}
+
+  // Reph exception: इ + र् = ई. Also cover the common legacy input form where
+  // the user builds a vowel before the shifted-Z reph key.
+  if(ch==='र्' && last==='इ'){replaceLastCluster('ई');return;}
+
+  // Rakar is a combining conjunct mark and is intentionally not collapsed.
+  // Reph is also kept unless it triggers the special इ->ई legacy rule.
   appendEngineChar(ch);
 }
+
 const PASS={"normal-easy": "एक नगर में राजा रहा। राजा बहुत दयालु एवं वीर था। एक समय शत्रु ने नगर पर वार किया। राजा ने अपनी सेना बुलाई। सब जन युद्ध पर गए। राजा ने साहस से वार किया और शत्रु दल को हरा दिया। युद्ध के बाद नगर में शांति आई। सब लोग बहुत खुश हुए। राजा ने सब जन को मान दिया। नदी के तट पर मेला लगा। लोग उपवन में गए। वहाँ कमल के फूल खिले। पवन शीतल बही। सब जन ने मिलकर राजा का जयकार किया। राजा ने भी सबको अपना आशीष दिया। इस तरह पूरा नगर सुख और चैन से रहने लगा।", "normal-hard": "प्राचीन समय में एक प्रतापी नृप रहा। उसका नाम जयपाल था। वह परम वीर, दयालु एवं नीति-निपुण नरपति था। एक दिन दुष्ट शत्रु दल ने अचानक नगर सीमा पर भीषण वार किया। तब प्रतापी राजा ने अपनी विशाल चतुरंगिणी सेना को रणभूमि में उतरने की आज्ञा दी। शूरवीर सैनिक शस्त्र लेकर युद्ध में कूद पड़े। भीषण रण हुआ। बाणों की वर्षा हुई। राजा ने अद्भुत पराक्रम दिखाया और शत्रु दल का मान मर्दन कर दिया। अंत में राजा ने पूर्ण विजय पायी। विजय के उपरांत नगर में अपार हर्ष छा गया। सब जन ने राजा का जयघोष किया। पावन नदी के तट पर स्थित उपवन में विशाल उत्सव रखा गया। वहाँ रंग-बिरंगे कमल खिले थे और सुगंधित शीतल पवन बह रही थी। विद्वानों ने प्रभु का ध्यान किया। जन-जन के प्राण में नया उल्लास और नया जोश भर गया। राजा ने समस्त प्रजा को अभयदान दिया। इस प्रकार धर्म और न्याय की स्थापना से सम्पूर्ण राज्य में सुख, शांति और समृद्धि का विस्तार हुआ।", "shift-easy": "ऋषि-मुनियों द्वारा प्रतिपादित ज्ञान तथा अध्यात्म की श्रेष्ठ परंपरा हमारे समाज को सदैव सही दिशा देती रही है। इस पावन भूमि पर अनेक शूरवीरों, विद्वानों और तपस्वियों ने त्याग, निष्ठा तथा सत्य की रक्षा हेतु अपना सर्वस्व समर्पित किया। मानव जीवन में विद्या, धैर्य और क्षमा का अद्भुत महत्व है। कठिन परिस्थितियों के बीच भी दृढ़ संकल्प और अदम्य साहस से व्यक्ति बड़े से बड़े लक्ष्य को प्राप्त कर सकता है। समय का सदुपयोग, निरंतर परिश्रम तथा कर्तव्यपरायणता ही प्रत्येक कार्य में सफलता के मूलमंत्र हैं। समाज में परस्पर प्रेम, बंधुत्व, दया तथा सहयोग की भावना ही देश को उन्नति के उच्च शिखर तक पहुंचाती है।", "shift-hard": "प्राचीन काल से ही हमारे राष्ट्र में ज्ञान-विज्ञान, कला, साहित्य और दर्शन का अद्वितीय विकास हुआ है। ऋग्वेद जैसे प्राचीन ग्रंथों से लेकर आधुनिक युग तक भारतीय मेधा ने संपूर्ण विश्व को ज्ञान का नया आलोक प्रदान किया। किसी भी सभ्य समाज की आधारशिला उसके नागरिकों के नैतिक आचरण, दृढ़ चरित्र, श्रम और सत्यनिष्ठा पर निर्भर करती है। आज के तकनीकी युग में भी प्राचीन संस्कारों, शुद्ध चिंतन और मानवीय दृष्टिकोण का महत्व कम नहीं हुआ है। मनुष्य जब कठिन मार्ग पर चलते हुए धैर्य खोए बिना निरंतर अभ्यास करता है, तब असंभव प्रतीत होने वाले कार्य भी सहज बन जाते हैं। शिक्षा का वास्तविक उद्देश्य केवल पुस्तकीय ज्ञान अर्जित करना नहीं, अपितु व्यक्ति के विवेक, संयम और बौद्धिक क्षमता का सर्वांगीण विकास करना है। समाज के सभी वर्गों के उत्थान, पर्यावरण के संरक्षण, जल संचयन तथा सामाजिक समरसता की स्थापना में प्रत्येक नागरिक की सक्रिय सहभागिता अनिवार्य है। जब हम अपने अधिकारों के साथ-साथ राष्ट्रीय कर्तव्यों का निष्ठापूर्वक पालन करेंगे, तभी राष्ट्र सशक्त, समृद्ध और आत्मनिर्भर बन सकेगा।", "passage-1": "किसी भी इंसान की प्रथम पाठशाला उसका परिवार होता है और मां को ही पहली गुरु कहा गया है। शिक्षा वो औजार है जिसकी सहायता से बडी से बडी कठिनाइयों का सामना कर सकते है। वह शिक्षा ही होती है जिससे हमें सही गलत का भेद पता चलता है। शिक्षा पर अनेकों निबंध लिखे गयें हैं। आगे भी लिखे जायेंगे। इसकी अहमियत का अंदाजा इसी बात से लगाया जा सकता है। किंतु शिक्षा जरुर मिलनी चाहिए। शिक्षा पाना हर प्राणी का अधिकार है। शिक्षा एक अहम उपकरण है। जो हर किसी के जीवन में बहुत उपयोगी है। शिक्षा वह है जो हमें धरती पर बाकी जीवित प्राणियों से अलग करती है। यह इंसान को धरती का सबसे चतुर प्राणी बनाती है। यह इंसानों को मजबूत बनाती है और उनके जीवन की चुनौतियों का कुशलता से सामना करने के लिए तैयार करती है। शिक्षा से ही हम अपने सपनों को पूरा कर सकते हैं। जीवन को नयी दशा और दिशा दे सकते हैं। बिना शिक्षा के हम कुछ भी मुकाम हासिल नहीं कर सकते। आजकल जीवनयापन करने के लिये हर किसी को शिक्षा की जरुरत है। जिसके लिए आपका शिक्षित होना बेहद जरूरी है। आज की पीढी का बिना पढे लिखे भला नहीं हो सकता। शिक्षा से ही रोजगार के अवसर पैदा होते है। आज वही देश सबसे ताकतवर की श्रेणी में आता है। जिसके पास ज्ञान की पावर है। अब वो दिन गये जब तलवार और बंदूकों से लडाईयां लडी जाती थी। केवल शिक्षा की वजह से आज हमने सभी कामों में विकास कर लिया है। हमारा देश प्राचीनकाल से ही शिक्षा का केंद्र रहा है। भारत में शिक्षा का अपना अलग इतिहास रहा है। ऐसा माना जाता है कि प्राचीन काल में संत और महान शिक्षा मौखिक रूप से दिया करते थे और एक पीढी से दूसरी पीढी तक जानकारी को प्रेषित किया जाता था। इससे लिखित लिटरेचर के प्रसार में भी मदद मिली थी। मंदिरों और सामुदायिक केंद्रों ने शिक्षालयों की भूमिका बनाई। बाद में शिक्षा की गुरुकुल प्रणाली वजुद में आई। शिक्षा समाज में एक अहम भूमिका निभाती है। शिक्षा ही हमारे ज्ञान को बढाती है। आधुनिकीकरण सामाजिक बदलाव की एक प्रक्रिया है। यह मानदंडों और संरचनाओं को शामिल करने वाली बदलाव की श्रेणी है। एक समाज में शैक्षिक प्रणाली का अहम काम तहजीब को विरासत में नई पीढियों तक पहुंचाने का होता है। लेकिन एक बदलते समाज में इसका रुप पीढी दर पीढी बदलते रहता हैं और ऐसे समाज में शैक्षणिक इंतेजाम को न केवल विरासत के रुप में लेना चाहिए। युवा को उनमें बदलाव के समायोजन के लिए तैयार करने में मदद भी करनी चाहिए और यही अनागत में होने वाली संभावनाओं की आधारशिला रखता है। इस प्रकार शिक्षा आधुनिकीकरण का एक अहम हाथियार हो सकती है। शिक्षा की अहमियत को इस बात से महसूस किया जा सकता है कि सभी आधुनिक समाज शिक्षा के समग्र विकास पर जोर देते हैं और प्राचीन दिनों में शिक्षा एक विशेष समूह के लिए केंद्रित थी। लेकिन शिक्षा के आधुनिकीकरण के साथ अब हर किसी के पास अपनी जाति एवं समुदाय एवं विषयक तंगी के बावजूद शिक्षा हासिल करने की सुविधा है। शिक्षा समाज में एक अहम भूमिका निभाती है। युवा को उनमें बदलाव के समायोजन के लिए तैयार करने में भी मदद करनी चाहिए और यही आने वाले समय में होने वाली संभावनाओं की आधारशिला रखता है।", "passage-2": "लोकतंत्र एक ऐसी प्रणाली है जिसमें लोगों को आजादी और मानवाधिकार दिये जाते है। वैसे तो दुनियाभर में राजशाही तथा तानाशाही जैसे तमाम तरह की शासन प्रणालियां है। लेकिन लोकतंत्र को इन सभी से उपरी लेवल का माना गया है। ऐसा केवल इसलिए है कि लोकतंत्र में जनता के पास चुनाव के जरिये अपनी सरकार खुद चुनने की ताकत होती है। एक लोकतांत्रिक देश में चुनाव प्रबंध काफी अहम होता है। इसी के जरिये जनता अपने देश की सरकार का चुनाव करती है। चुनाव लोकतंत्र को सुचारु रुप से चलाने के लिए बहुत ही जरूरी है। एक लोकतांत्रिक देश के हर नागरिक का यह काम है कि वह चुनाव में मतदान करके लोकतंत्र की रक्षा का जरूरी काम करें। हमें कभी भी यह नही सोचना चाहिए कि यदि मैं वोट नही दूंगा या दूंगी। लेकिन लोगों को यह बात समझनी चाहिए कि कई बार चुनावों में एक ही वोट के जरिये हार जीत का फैसला होता है। इस तरह से लोकतंत्र में चुनाव प्रक्रिया एक आम नागरिक को भी विशेष अधिकार प्रदान करती है। चुनाव में मतदान करके वह शासन के संचालन में भागीदार बन सकता है। किसी भी लोकतांत्रिक देश में होने वाले चुनाव उस देश के नागरिकों को यह पावर प्रदान करते है कि चुनाव प्रक्रिया के जरिये नागरिक या फिर विफल शासकों और सरकारों का तखता पलट करते हुए उनको मंत्री से बाहर कर सकते है। कोई भी नागरिक जो महसूस करता है कि वह पात्र है लेकिन उसका नाम सूची में नहीं है तो वह एक परचा भर सकता है और अपना नाम मतदाता सूची में शामिल करवा सकता है। चुनाव के दौरान अपने मत का जागरुक रुप से प्रयोग करना ही चुनाव का सही प्रतीक है। जब भी नए चुनाव होने वाले होते हैं। चुनाव आयोग उस आशय की अधिसूचना जारी करता है। इसके बाद की अलग अलग सरकारों को किसी भी ऐसे काम को करने से मना किया जाता है जो आगे चलकर उनकी चुनावी संभावनाओं के अनुकूल हो। लोकतंत्र की सफलता के लिए यह काफी जरूरी है कि राजनीतिक शासकीय पदों पर ईमानदार छवि के लोग चुनकर जायें और जो कि केवल जनता के वोटों की ताकत के जरिये ही संभव है। इसलिए हमें हमेशा इस बात का प्रयास करना चाहिए कि हमें अपने वोट का सही उपयोग करना चाहिए। जब शासकीय पदों पर सही लोग चुनकर जायेंगे तभी किसी भी देश का विकास संभव हो पायेगा और ऐसा होने पर ही चुनाव का असली मतलब सही हो पायेगा। चुनाव लोकतंत्र का एक बहुत ही अहम भाग है और इसके बिना लोकतंत्र का सुचारु रुप से काम करना संभव नही है। हमें इस बात को समझना होगा कि चुनाव वह अवसर होता है। जब हमें अपने मतदान का सही उपयोग करना चाहिए। किसी भी लोकतांत्रिक देश में चुनाव और राजनीति एक दूसरे के पूरक का काम करते है और लोकतंत्र के सुचारु रूप से काम के लिए यह जरूरी भी है ताकि अधिक से अधिक साफ सुथरे तथा ईमानदरी छवि के लोग राजनीति का भाग बन सकें। भारत में कोई भी इंसान दो तरीकों से चुनाव लड सकता है। किसी दल का दावेदार बनकर उसके चुनाव चिंह पर जिसे बोल चाल की भाषा में टिकट के नाम से भी जाना जाता है और दूसरा तरीका पक्षराहित दावेदार के तौर पर है। दोनो ही तरीकों में दावेदार को नामांकन पत्र भरना जरूरी होता है।", "passage-3": "मौलिक अधिकार भारतीय संविधान का अंग हैं। सभी नागरिकों के बुनियादी मानवाधिकारों को मौलिक अधिकारों के रूप में परिभाषित किया गया है। संविधान में यह कहा गया है कि किसी भी इंसान के लिंग और जाति और समुदाय या पंथ या जनम की जगह की दशा के आधार पर भेदभाव ना करके उन को ये अधिकार दिए जाते हैं। ये सटीक प्रतिबंधों के अधीन अदालतों ने लागू किए हैं। इन को नागरिक संविधान के रूप में भारत के संविधान ने गारंटी दी जाती है। जिसके अनुसार सभी लोग भारतीय नागरिकों के रूप में सदभाव और शांति से अपना जीवन यापन कर सकते हैं। भारत का संविधान अपने नागरिकों को मौलिक अधिकार की गारंटी देता है और नागरिकों के पास भाषण को जाहिर करने का अधिकार हो सकता है लेकिन इन अधिकारों से जुडे कुछ प्रतिबंध और अपवाद भी हैं। एक नागरिक पूरी तरह से मौलिक अधिकारों का प्रयोग नहीं कर सकता है। लेकिन कुछ संवैधानिक प्रतिबंध के साथ वही नागरिक अपने अधिकारों का आनंद उठा सकता है। भारत का संविधान इन अधिकारों को प्रयोग में लाने पर कुछ सीमाएं लागू करता है ताकि नैतिकता बरकरार रहे। संविधान हमेशा इंसान के हितों के साथ साथ सांप्रदायिक हितों की भी रक्षा करता है। उदाहरण के लिए समुदाय का अधिकार और नैतिकता और शारीरिक हित में प्रदेशों के जरिये सीमाओं के अधीन है। हमारे संविधान ने देश को उचित सीमाएं लागू करने के लिए अधिकार दिया है। इसलिए यह समुदाय के हित के लिए जरूरी है। हमारा संविधान इंसान की आजादी और सामाजिक नियंत्रण के बीच संतुलन को रोकने और एक कलयाणकारी प्रदेश को बनाए रखने का प्रयास करता है जहां सांप्रदायिक हित इंसानों के हितों पर जोर देता है। सभा करने की आजादी भी प्रदेश के जरिये लगायी जाने वाली उचित सीमाओं के अधीन है और सभी जन के आदेशों के हित में होनी चाहिए। प्रेस की आजादी और जो वयकत की आजादी में शामिल है को भी उचित सीमाओं के अधीन किया जाता है और सरकार प्रेस की आजादी पर देश के बेहतर हित में या अदालत की अवमानना और मानहानि या पीडन से बचने के लिए प्रतिबंध लगा सकती है। जब बंगलादेश की आजादी की लडाई बंद हो चुका था और देश उस समय भी अतिक्रमण से उबरने की कोशिश कर रहा था। उस समय के दौरान शिवसेना और असम गण परिषद जैसे जगह और क्षेत्रीय दलों में अधिक असंतोष पैदा हो रहा था। फिर भी इससे इनकार नहीं किया जा सकता है कि भारत सरकार ने इन सबसे निपटने में आईपीसी के लागू करने के बारे में अधिक प्रतिक्रिया दिखाई। समान अवसर प्रदान करने के लिए और सरकार की सेवाओं में अनुसूचित जाति और अनुसूचित जनजाति और बाकी पिछडे लोगों के सिवाय सैनिकों की विधवाएं और शारीरिक रूप से विकलांग इंसान को कोई आरक्षण नहीं होगा। इसमें भाषण को वयकत और बोलने की आजादी और यूनियन और सहयोगी बनने की आजादी तथा भारत में कहीं भी यात्रा करने की आजादी और भारत के किसी भी भाग में रहने और बसने की आजादी और किसी पेशे का चयन करने की आजादी शामिल है। इस अधिकार के तहत यह भी कहा गया है कि भारत के किसी भी नागरिक को देश के किसी भी भाग में जमीन खरीदने और बेचने और बनाए रखने का पूरा अधिकार है। अंत में कहा गया है कि भारत के सभी नागरिकों के लिए आजादी होगी।", "passage-4": "भारत के प्रधानमंत्री श्री मोदी जी का पूरा नाम नरेंद्र दामोदर दास मोदी है। मोदी जी को भारतीय जनता दल में तीन बार गुजरात के चुनावों में जीत हासिल हुई थी। गुजरात के मंत्री रहते हुए उनकी छवि एक सफल और ईमानदार और कठोर प्रशासक की बनी। जिसके चलते बाद के चुनाव में भाजपा ने उनको प्रधानमंत्री पद का दावेदार घोषित कर चुनाव लडा। और भाजपा के इस चुनाव ने मोदी को प्रभावी इंसान के रूप में उभारा। मोदी के करिशमाई भाषण शैली और विकास चुनाव घोषणा पत्र के चलते उनको जनता का पूरा साथ मिला और पहली बार भाजपा पूरी बहुमत के साथ जीतकर शासन में आई। मोदी अपने समय के प्रभावी नेता है और साथ ही सुशिक्षित भी हैं। मोदी जी ने राजनीति विज्ञान में एमए की उपाधि ली है। आज मोदी जी को भारत के इतिहास का सफल शिखर पुरुष माना जाता है। लेकिन उनका जीवन हमेशा इतना ही आसान नहीं रहा है। मोदी का बचपन बहुत कठिन था। बचपन में उन को रेलवे पर चाय बेचने के काम में अपने पिता का हाथ बंटाना पडता था और साथ ही शिक्षा भी ग्रहण करने जाना पडता था। बडे होने के बाद उन को सब कुछ खुद ही करना पडा। आगे चल कर वे आर एस एस के सफलतम प्रचारक बने। फिर तो मोदी जी ने सक्रीय राजनीति की राह पकडी और अलग अलग प्रदेशो के प्रभारी रहते हुए प्रशासन के गुण सीखे। फिर गुजरात के मंत्री बनने के बाद मोदी जी ने सफलता के नए आयाम पा लिये और आज उनकी गिनती भारत के सबसे सफल मंत्रियों में होती है। जिनके शासनकाल में विकास की नयी नयी गाथाएं लिखी गई है। उनके जरिये गुजरात में किये गए विकास के कामों के चलते ही वह मशहुर हुए थे और उसी के चलते भाजपा ने पहली बार पूरी बहुमत से सरकार बनाई थी। उनके प्रधानमंत्री बनने के बाद से भारत की साख दुनिया जगत में चारों ओर तेजी से फैली है और भारत की छवि तेजी से विकास की ओर उठी है। आशा है भारत उनके रहनुमाई में ऐसे ही बढोतरी के पथ पर बढता रहेगा। सबसे पहले वे गुजरात प्रदेश के मंत्री रहे। फिर उनके काम के कारण गुजरात की जनता ने लगातार उनको मंत्री चुना। गुजरात कालेज से राजनीति विज्ञान में डिग्री लेने के बाद से वह विकास पुरूष के नाम से जाने जाते हैं और आज के समय में देश के सबसे लोकप्रिय नेता बन गये हैं। मोदी जी का जनम मेहशाना जिला में बडनगर गांव में हुआ। वे पूरी तरह से शाकाहारी हैं। एक बेहतर आयोजक के रूप में काम करने के बाद उनको भारतीय जनता दल ने संगठन का प्रतिनिधि मनोनीत किया। मोदी जी अपनी किशोर आयु में अपने भाई के साथ एक चाय की दुकान चला चुके थे। मोदी ने अपनी शिक्षा बडनगर में पूरी की। अपने माता पिता की कुल छह संतानों में तीसरे पुत्र मोदी ने बचपन में रेलवे पर चाय बेचने में अपने पिता का भी हाथ बटाया। बडनगर के ही एक टीचर के अनुसार मोदी हालांकि एक औसत श्रेणी का छात्र था लेकिन वाद विवाद और नाटक प्रतियोगिताओं में उसकी बेहद रूचि थी। छोटी आयु में मोदी जी की सगाई जशोदाबेन चमनसाल के साथ कर दी गई। जब उनका विवाह हुआ तब वे किशोर ही थे। मोदी जी के जीवनी लेखकों के अनुसार उन दोनों की शादी जरूर हुई।"};
 const WORDS_NORMAL=["कमल","जल","राजा","सूरज","पुस्तक","देश","भारत","गगन","पवन","चमन","नगर","जीवन","सुंदर","संगीत","मंत्र","यंत्र","एकता","इतिहास","उदय","अमर","कलम","हंस","रंग","गुलाब","चोर","योग","दवा","सुख","दुख","नाम","काम","रात","दिन","पानी","घर","समय","बात","लोग","फल","मन","रूप","कृपा","कौशल","पैसा","मित्र"];
 const WORDS_SHIFT=["ध्यान","मुख्य","श्याम","ख्याल","पुण्य","सत्य","जन्म","स्थान","ज्ञान","मित्र","श्रम","क्षमा","द्वार","बुद्धि","धर्म","प्रकट","प्रेम","पुष्प","निश्चय","सप्ताह","ख्याति","अरण्य","लावण्य","ध्येय","श्लोक","पुण्य","संगीत","कृपा","कौशल","डॉक्टर","रूप","ऋषि","सुंदर","इतिहास","गणेश"];
