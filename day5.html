@@ -169,11 +169,18 @@ textarea#doc::placeholder{color:var(--muted-soft); font-family:var(--font-ui); f
 .kb-key .kb-shift{position:absolute; top:3px; left:0; right:0; text-align:center; font-family:var(--font-dev); font-size:10px; color:var(--muted-soft); line-height:1;}
 .kb-key.wide{width:64px;}
 .kb-key.space{width:220px;}
-.kb-key.active{background:var(--primary); border-color:var(--primary); transform:translateY(-2px);}
-.kb-key.active .kb-main{color:#fff;}
-.kb-key.active .kb-shift{color:rgba(255,255,255,0.75);}
-.kb-key.shift-active{background:var(--primary-focus); border-color:var(--primary-focus);}
-.kb-key.shift-active .kb-main{color:#fff;}
+/* Home-row index-finger anchor keys (F and J) — always tinted blue so the
+   fingers can find home position at a glance, independent of what's next. */
+.kb-key.kb-index{background:#2563eb; border-color:#2563eb;}
+.kb-key.kb-index .kb-main{color:#fff;}
+.kb-key.kb-index .kb-shift{color:rgba(255,255,255,0.75);}
+/* Next key to press: yellow when typed as-is, red when it needs Shift. */
+.kb-key.next-noshift{background:#eab308; border-color:#eab308; transform:translateY(-2px);}
+.kb-key.next-noshift .kb-main{color:#1f1300;}
+.kb-key.next-noshift .kb-shift{color:rgba(31,19,0,0.65);}
+.kb-key.next-shift{background:#dc2626; border-color:#dc2626; transform:translateY(-2px);}
+.kb-key.next-shift .kb-main{color:#fff;}
+.kb-key.next-shift .kb-shift{color:rgba(255,255,255,0.75);}
 .kb-hint-row{font-size:11px; color:var(--muted-soft); text-align:center;}
 
 @media(max-width:640px){
@@ -999,7 +1006,7 @@ function buildMiniKeyboard(){
     row.forEach(code=>{
       const map = KEYMAP[code];
       const k = document.createElement('div');
-      k.className = 'kb-key';
+      k.className = 'kb-key' + ((code==='KeyF'||code==='KeyJ') ? ' kb-index' : '');
       k.dataset.code = code;
       k.innerHTML = '<span class="kb-shift">'+map.s+'</span><span class="kb-main">'+map.n+'</span>';
       rowEl.appendChild(k);
@@ -1125,15 +1132,15 @@ function findNextKey(baseEngine, target){
 
 function refreshMiniKeyboardHighlight(){
   if(!kbVisible || !kbBuilt) return;
-  document.querySelectorAll('.kb-key.active').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.kb-key.next-shift, .kb-key.next-noshift').forEach(el=>el.classList.remove('next-shift','next-noshift'));
   const shL = document.getElementById('kb-shift-left'), shR = document.getElementById('kb-shift-right');
-  shL.classList.remove('shift-active'); shR.classList.remove('shift-active');
   if(!lastKbState || !lastKbState.engine || !lastKbState.target) return;
   const next = findNextKey(lastKbState.engine, lastKbState.target);
   if(!next) return;
+  const cls = next.shift ? 'next-shift' : 'next-noshift';
   const keyEl = document.querySelector('.kb-key[data-code="'+next.code+'"]');
-  if(keyEl) keyEl.classList.add('active');
-  if(next.shift){ shL.classList.add('shift-active'); shR.classList.add('shift-active'); }
+  if(keyEl) keyEl.classList.add(cls);
+  if(next.shift){ shL.classList.add('next-shift'); shR.classList.add('next-shift'); }
 }
 /* Call with (engine, target) whenever a lesson/paragraph/doc buffer changes.
    Pass target=null (e.g. free typing) to just show the layout with no highlight. */
