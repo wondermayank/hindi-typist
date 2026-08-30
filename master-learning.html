@@ -449,60 +449,246 @@ const KEYMAP = {
   Digit8:{n:'८',s:'द्व'}, Digit9:{n:'९',s:'त्र'}, Digit0:{n:'०',s:'ऋ'}, Minus:{n:'·',s:'्'}, Equal:{n:'ृ',s:'ॄ'},
   KeyQ:{n:'ु',s:'फ'}, KeyW:{n:'ू',s:'ॅ'}, KeyE:{n:'म',s:'म्'}, KeyR:{n:'त',s:'त्'}, KeyT:{n:'ज',s:'ज्'},
   KeyY:{n:'ल',s:'ल्'}, KeyU:{n:'न',s:'न्'}, KeyI:{n:'प',s:'प्'}, KeyO:{n:'व',s:'व्'}, KeyP:{n:'च',s:'च्'},
-  BracketLeft:{n:'ख्',s:'क्ष्'}, BracketRight:{n:',',s:'द्व'}, Backslash:{n:'द्ब',s:'द्ध'},
+  BracketLeft:{n:'ख्',s:'क्ष्'}, BracketRight:{n:',',s:'ौ'}, Backslash:{n:'द्ब',s:'द्ध'},
   KeyA:{n:'ं',s:'ॉ'}, KeyS:{n:'े',s:'ै'}, KeyD:{n:'क',s:'क्'}, KeyF:{n:'ि',s:'थ्'}, KeyG:{n:'ह',s:'ळ'},
-  KeyH:{n:'ी',s:'भ्'}, KeyJ:{n:'र',s:'श्र'}, KeyK:{n:'ा',s:'ज्ञ'}, KeyL:{n:'स',s:'स्'}, Semicolon:{n:'य',s:'रू'}, Quote:{n:'श्',s:'ष्'},
-  KeyZ:{n:'्र',s:'र्'}, KeyX:{n:'ग',s:'ग्'}, KeyC:{n:'ब',s:'ब्'}, KeyV:{n:'अ',s:'ट'}, KeyB:{n:'इ',s:'ठ'},
-  KeyN:{n:'द',s:'छ'}, KeyM:{n:'उ',s:'ड'}, Comma:{n:'ए',s:'ढ'}, Period:{n:'ण्',s:'झ'}, Slash:{n:'ध्',s:'घ'},
-  Space:{n:' ',s:' '}
+  KeyH:{n:'ी',s:'भ्'}, KeyJ:{n:'र',s:'श्र'}, KeyK:{n:'ा',s:'ज्ञ'}, KeyL:{n:'स',s:'स्'},
+  Semicolon:{n:'य',s:'रू'}, Quote:{n:'श्',s:'ष्'}, KeyZ:{n:'्र',s:'र्'}, KeyX:{n:'ग',s:'ग्'},
+  KeyC:{n:'ब',s:'ब्'}, KeyV:{n:'अ',s:'ट'}, KeyB:{n:'इ',s:'ठ'}, KeyN:{n:'द',s:'छ'},
+  KeyM:{n:'उ',s:'ड'}, Comma:{n:'ए',s:'ढ'}, Period:{n:'ण्',s:'झ'}, Slash:{n:'ध्',s:'घ'}, Space:{n:' ',s:' '}
 };
-const HALF_TO_FULL = {'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य','ष्':'ष','श्':'श','भ्':'भ','थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'};
-const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ','े','ै']);
-const I_MATRA = 'ि';
-// independent vowel (अ/इ/उ) immediately followed by its own matra merges into
-// the single independent-vowel character, e.g. अ + ा -> आ, not अा.
-const VOWEL_MATRA_TO_FULL = {'अा':'आ','इी':'ई','उू':'ऊ','अो':'ओ','अौ':'औ'};
+
+const HALF_TO_FULL={
+  'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ',
+  'क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य','ष्':'ष','श्':'श','भ्':'भ',
+  'थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'
+};
+const MATRA_SET=new Set(['ि','ी','ृ','ॅ','ॆ','े','ै','ॉ','ॊ','ो','ौ','ा','ु','ू','ॄ','ः']);
+const I_MATRA='ि';
+
+/*
+ * Legacy Remington GAIL / Hindi Indic Input behavior:
+ *  - ि is physically typed before its consonant/conjunct.
+ *  - इ + Shift+Z(र्) => ई (legacy exception).
+ *  - ए + ॅ => ऍ, ए + े => ऐ.
+ *  - अ + ा => आ; आ + े => ओ; आ + ै => औ; आ + ॉ => ऑ.
+ *  - उ + ु => ऊ; प + ु => फ.
+ *  - ा + े => ो; ा + ै => ौ; ॅ + ं => ँ.
+ *
+ * These are composition rules, not direct character substitutions, so the
+ * engine always evaluates buffer + newly pressed output.
+ */
+const COMPOSE_RULES=[
+  ['इर्','ई'],
+  ['एॅ','ऍ'],
+  ['एे','ऐ'],
+  ['आे','ओ'],
+  ['आै','औ'],
+  ['आॉ','ऑ'],
+  ['अा','आ'],
+  ['उु','ऊ'],
+  ['पु','फ'],
+  ['ाे','ो'],
+  ['ाै','ौ'],
+  ['ॅं','ँ']
+];
+
+function replaceSuffix(str,lhs,rhs){
+  return str.endsWith(lhs) ? str.slice(0,-lhs.length)+rhs : str;
+}
+function normalizeHindi(s){ return String(s||'').normalize('NFC'); }
+function graphemeArray(s){
+  const str=String(s||'');
+  try{
+    if(typeof Intl!=='undefined'&&Intl.Segmenter){
+      return [...new Intl.Segmenter('hi',{granularity:'grapheme'}).segment(str)].map(x=>x.segment);
+    }
+  }catch(e){}
+  return Array.from(str);
+}
 
 class RemingtonEngine{
-  constructor(){ this.buffer=''; this.pendingI=false; }
-  press(code, shift){
-    const map = KEYMAP[code];
+  constructor(){ this.buffer=''; this.pendingI=false; this.history=[]; }
+  snapshot(){ return {buffer:this.buffer,pendingI:this.pendingI}; }
+  restore(s){ this.buffer=s.buffer; this.pendingI=!!s.pendingI; }
+
+  press(code,shift){
+    const map=KEYMAP[code];
     if(!map) return '';
-    let ch = shift ? map.s : map.n;
-    if(ch === I_MATRA){ this.pendingI = true; return ''; }
-    let added = '';
-    if(this.pendingI){
-      let base = ch;
-      if(HALF_TO_FULL[base]) base = HALF_TO_FULL[base];
-      added = base + I_MATRA;
-      this.pendingI = false;
-    } else if(MATRA_SET.has(ch) || ch===':'){
-      const vowelCombo = this.buffer.slice(-1) + ch;
-      if(VOWEL_MATRA_TO_FULL[vowelCombo]){
-        // अ/इ/उ immediately followed by its own matra -> single independent vowel
-        this.buffer = this.buffer.slice(0, -1);
-        added = VOWEL_MATRA_TO_FULL[vowelCombo];
-      } else {
-        for(const half in HALF_TO_FULL){
-          if(this.buffer.endsWith(half)){
-            this.buffer = this.buffer.slice(0, -half.length) + HALF_TO_FULL[half];
-            break;
-          }
-        }
-        added = ch;
-      }
-    } else {
-      added = ch;
+    const ch=shift?map.s:map.n;
+    this.history.push(this.snapshot());
+
+    // GAIL visual order: press F(ि) first, then the consonant/base.
+    if(ch===I_MATRA){
+      this.pendingI=true;
+      return '';
     }
-    this.buffer += added;
-    return added;
+
+    if(this.pendingI){
+      this.pendingI=false;
+      const base=HALF_TO_FULL[ch]||ch;
+      const output=base+I_MATRA;
+      this.buffer+=output;
+      return output;
+    }
+
+    const candidate=this.buffer+ch;
+    for(const [lhs,rhs] of COMPOSE_RULES){
+      if(candidate.endsWith(lhs)){
+        this.buffer=replaceSuffix(candidate,lhs,rhs);
+        return rhs;
+      }
+    }
+
+    // Generic half-form + matra: e.g. क् + ा => का.
+    if(MATRA_SET.has(ch)||ch===':'){
+      const halves=Object.keys(HALF_TO_FULL).sort((a,b)=>b.length-a.length);
+      for(const half of halves){
+        if(this.buffer.endsWith(half)){
+          this.buffer=replaceSuffix(this.buffer,half,HALF_TO_FULL[half]);
+          break;
+        }
+      }
+    }
+
+    this.buffer+=ch;
+    return ch;
   }
+
   backspace(){
+    if(this.history.length){
+      this.restore(this.history.pop());
+      return;
+    }
     if(this.pendingI){ this.pendingI=false; return; }
-    this.buffer = this.buffer.slice(0, -1);
+    this.buffer=this.buffer.replace(/.$/u,'');
   }
-  newline(){ this.pendingI=false; this.buffer += '\n'; }
-  clone(){ const e = new RemingtonEngine(); e.buffer=this.buffer; e.pendingI=this.pendingI; return e; }
+
+  newline(){
+    this.history.push(this.snapshot());
+    this.pendingI=false;
+    this.buffer+='\n';
+  }
+
+  clone(){
+    const e=new RemingtonEngine();
+    e.buffer=this.buffer;
+    e.pendingI=this.pendingI;
+    e.history=this.history.map(x=>({buffer:x.buffer,pendingI:x.pendingI}));
+    return e;
+  }
+}
+
+function isPrefixOrExact(target,value){
+  const t=normalizeHindi(target),v=normalizeHindi(value);
+  if(!v) return false;
+  return t===v || t.startsWith(v);
+}
+
+/* Search the exact physical key sequence for a target prefix.
+ * This lets the coach invert compositions such as:
+ *   कि => F then D
+ *   ई => B then Shift+Z
+ */
+function findExactSequence(baseEngine,target,maxDepth=5){
+  if(!target) return null;
+  const initial=baseEngine.clone(), targetN=normalizeHindi(target);
+  if(!initial.pendingI && normalizeHindi(initial.buffer)===targetN) return [];
+
+  const keys=[];
+  for(const code of Object.keys(KEYMAP)){
+    keys.push({code,shift:false});
+    if(KEYMAP[code].s!==undefined) keys.push({code,shift:true});
+  }
+
+  const queue=[{engine:initial,seq:[]}];
+  const seen=new Set([JSON.stringify(initial.snapshot())]);
+  let qi=0;
+
+  while(qi<queue.length){
+    const node=queue[qi++];
+    if(node.seq.length>=maxDepth) continue;
+    for(const key of keys){
+      const next=node.engine.clone();
+      next.press(key.code,key.shift);
+      const seq=node.seq.concat(key);
+      const state=next.snapshot();
+
+      if(!state.pendingI && normalizeHindi(state.buffer)===targetN) return seq;
+
+      const sig=JSON.stringify(state);
+      if(!seen.has(sig)){
+        seen.add(sig);
+        queue.push({engine:next,seq});
+      }
+    }
+  }
+  return null;
+}
+
+/* Fallback for ordinary prefix progress when the exact short composition
+ * is not found. A pending-i state is never treated as a finished prefix.
+ */
+function findProgressingSequence(baseEngine,target,maxDepth=4){
+  if(!target) return null;
+  const initial=baseEngine.clone(), targetN=normalizeHindi(target);
+  if(!initial.pendingI && initial.buffer && normalizeHindi(initial.buffer)===targetN) return [];
+
+  const keys=[];
+  for(const code of Object.keys(KEYMAP)){
+    keys.push({code,shift:false});
+    if(KEYMAP[code].s!==undefined) keys.push({code,shift:true});
+  }
+
+  const queue=[{engine:initial,seq:[]}];
+  const seen=new Set([JSON.stringify(initial.snapshot())]);
+  let qi=0;
+  while(qi<queue.length){
+    const node=queue[qi++];
+    if(node.seq.length>=maxDepth) continue;
+    for(const key of keys){
+      const next=node.engine.clone();
+      next.press(key.code,key.shift);
+      const seq=node.seq.concat(key);
+      const state=next.snapshot();
+
+      if(state.buffer && !state.pendingI && isPrefixOrExact(targetN,state.buffer)) return seq;
+
+      const sig=JSON.stringify(state);
+      if(!seen.has(sig)){
+        seen.add(sig);
+        queue.push({engine:next,seq});
+      }
+    }
+  }
+  return null;
+}
+
+function findNextGailSequence(baseEngine,target){
+  const tg=graphemeArray(target);
+  const bg=graphemeArray(baseEngine.buffer);
+  const done=bg.length;
+  if(done>=tg.length) return baseEngine.pendingI ? null : [];
+
+  const wanted=tg.slice(0,done+1).join('');
+  const exact=findExactSequence(baseEngine,wanted,5);
+  if(exact) return exact;
+
+  return findProgressingSequence(baseEngine,target,4);
+}
+
+function findNextKey(baseEngine,target){
+  const seq=findNextGailSequence(baseEngine,target);
+  return seq&&seq.length ? seq[0] : null;
+}
+
+function isValidTypedState(target,nb,pendingI=false){
+  if(nb && !pendingI && normalizeHindi(target)===normalizeHindi(nb)) return true;
+  if(nb && !pendingI && isPrefixOrExact(target,nb)) return true;
+
+  const temp=new RemingtonEngine();
+  temp.buffer=String(nb||'');
+  temp.pendingI=!!pendingI;
+  return !!findProgressingSequence(temp,target,3);
 }
 
 /* ============================================================================
@@ -533,9 +719,6 @@ const ROW_KEYS = {
 };
 ROW_KEYS.all=[...ROW_KEYS.home,...ROW_KEYS.upper,...ROW_KEYS.lower,...ROW_KEYS.numbers];
 const LEFT_HAND=new Set(['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyA','KeyS','KeyD','KeyF','KeyG','KeyZ','KeyX','KeyC','KeyV','KeyB','Digit1','Digit2','Digit3','Digit4','Digit5']);
-function mulberry32(seed){return function(){seed|=0;seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^(seed>>>15),1|seed);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
-function hashSeed(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=(h<<13)|(h>>>19);}return(h^(h>>>16))>>>0;}
-function genWordList(seedKey,codes,shiftProb,minUnits,maxUnits,count,alternateHands){const rng=mulberry32(hashSeed(seedKey)),out=new Set();let guard=0,lastHand=null;while(out.size<count&&guard<count*80){guard++;const e=new RemingtonEngine();const units=minUnits+Math.floor(rng()*(maxUnits-minUnits+1));for(let u=0;u<units;u++){let pool=codes;if(alternateHands){const o=codes.filter(c=>(LEFT_HAND.has(c)?'L':'R')!==lastHand);if(o.length)pool=o;}const c=pool[Math.floor(rng()*pool.length)],sh=rng()<shiftProb;e.press(c,sh);lastHand=LEFT_HAND.has(c)?'L':'R';}if(e.buffer.length>=1&&e.buffer.length<=12)out.add(e.buffer);}return Array.from(out).slice(0,count);}
 const FINAL_PARAGRAPHS=["नियमित अभ्यास से टाइपिंग में गति और सटीकता दोनों बढ़ती हैं। हर दिन सही उंगली से सही कुंजी दबाएं और धीरे धीरे पूरा कीबोर्ड याद करें।","पहले सही टाइप करें, फिर तेज टाइप करें। हाथ को कीबोर्ड पर स्थिर रखें और स्क्रीन को अधिक देखें।","अभ्यास की हर छोटी जीत आपको मास्टर टाइपिस्ट बनने के करीब ले जाती है। धैर्य रखें और रोज़ अभ्यास करें।","होम, टॉप, बॉटम और नंबर रो का संतुलित अभ्यास आपको पूरे कीबोर्ड पर नियंत्रण देता है।","आज का लक्ष्य केवल अंक नहीं है। सही तकनीक, सही उंगली और लगातार अभ्यास से सौ प्रतिशत महारत बनती है।"];
 const REPS_PER_WORD=5, WORDS_PER_PART=45, PASS_WPM=18, FINAL_PASS_WPM=25;
 const W1=['यह','यहां','यहीं','कहा','सही','रही','हार','सार','यार','राह','हरा','है','हैं','कैसा','कैसे'];
@@ -776,7 +959,8 @@ function updateLessonUI(){
   const target = currentTarget();
   const typed = session.trial.buffer;
   const tw = document.getElementById('target-word');
-  tw.innerHTML = '<span class="typed">'+escapeHtml(typed)+'</span>'+escapeHtml(target.slice(typed.length));
+  const tg=graphemeArray(target), ug=graphemeArray(typed);
+  tw.innerHTML='<span class="typed">'+escapeHtml(typed)+'</span>'+escapeHtml(tg.slice(ug.length).join(''));
   const dots = document.getElementById('rep-dots');
   dots.innerHTML = '';
   for(let i=0;i<REPS_PER_WORD;i++){
@@ -803,28 +987,38 @@ function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function lessonKeydown(e){
   if(document.getElementById('view-lesson').classList.contains('hidden')) return;
   if(e.metaKey || e.ctrlKey || e.altKey) return;
-  if(e.code === 'Backspace'){ e.preventDefault(); session.trial.backspace(); updateLessonUI(); return; }
+
+  if(e.code==='Backspace'){
+    e.preventDefault();
+    session.trial.backspace();
+    updateLessonUI();
+    return;
+  }
   if(!KEYMAP[e.code]) return;
   e.preventDefault();
-  const target = currentTarget();
-  const before = { buffer:session.trial.buffer, pendingI:session.trial.pendingI };
-  session.trial.press(e.code, e.shiftKey);
-  const nb = session.trial.buffer;
-  if(isValidTypedState(target, nb)){
-    if(nb.length > before.buffer.length) session.correctChars++;
+
+  const target=currentTarget();
+  const before=session.trial.snapshot();
+  session.trial.press(e.code,e.shiftKey);
+  const nb=session.trial.buffer;
+
+  if(isValidTypedState(target,nb,session.trial.pendingI)){
+    session.correctChars++;
     updateLessonUI();
-    if(nb === target){
-      setTimeout(()=>completeRep(), 120);
+    if(!session.trial.pendingI && normalizeHindi(nb)===normalizeHindi(target)){
+      setTimeout(()=>completeRep(),120);
     }
-  } else {
-    session.trial.buffer = before.buffer; session.trial.pendingI = before.pendingI;
+  }else{
+    session.trial.restore(before);
+    if(session.trial.history.length) session.trial.history.pop();
     session.mistakes++;
-    const tw = document.getElementById('target-word');
+    const tw=document.getElementById('target-word');
     tw.classList.add('err');
-    setTimeout(()=>tw.classList.remove('err'), 180);
+    setTimeout(()=>tw.classList.remove('err'),180);
     updateLessonUI();
   }
 }
+
 function completeRep(){
   const reps = progress.days[session.day.id].parts[session.part.key].reps;
   reps[session.idx] = (reps[session.idx]||0) + 1;
@@ -955,7 +1149,8 @@ function updateParaUI(){
   const target = currentPara();
   const typed = paraSession.trial.buffer;
   const box = document.getElementById('para-box');
-  box.innerHTML = '<span class="ok">'+escapeHtml(typed)+'</span><span class="cur">'+escapeHtml(target.slice(typed.length,typed.length+1))+'</span>'+escapeHtml(target.slice(typed.length+1));
+  const tg=graphemeArray(target), ug=graphemeArray(typed), next=ug.length;
+  box.innerHTML='<span class="ok">'+escapeHtml(typed)+'</span><span class="cur">'+escapeHtml(tg[next]||'')+'</span>'+escapeHtml(tg.slice(next+1).join(''));
   const mins = Math.max((performance.now()-paraSession.startTime)/60000, 1/6000);
   const wpm = Math.round((paraSession.correctChars/5)/mins);
   document.getElementById('para-wpm').textContent = wpm;
@@ -968,24 +1163,36 @@ function updateParaUI(){
 function paraKeydown(e){
   if(document.getElementById('view-paragraph').classList.contains('hidden')) return;
   if(e.metaKey || e.ctrlKey || e.altKey) return;
-  if(e.code === 'Backspace'){ e.preventDefault(); paraSession.trial.backspace(); updateParaUI(); return; }
-  if(e.code === 'Enter'){ e.preventDefault(); return; }
+
+  if(e.code==='Backspace'){
+    e.preventDefault();
+    paraSession.trial.backspace();
+    updateParaUI();
+    return;
+  }
+  if(e.code==='Enter'){ e.preventDefault(); return; }
   if(!KEYMAP[e.code]) return;
   e.preventDefault();
-  const target = currentPara();
-  const before = { buffer:paraSession.trial.buffer, pendingI:paraSession.trial.pendingI };
-  paraSession.trial.press(e.code, e.shiftKey);
-  const nb = paraSession.trial.buffer;
-  if(isValidTypedState(target, nb)){
-    if(nb.length > before.buffer.length) paraSession.correctChars++;
+
+  const target=currentPara();
+  const before=paraSession.trial.snapshot();
+  paraSession.trial.press(e.code,e.shiftKey);
+  const nb=paraSession.trial.buffer;
+
+  if(isValidTypedState(target,nb,paraSession.trial.pendingI)){
+    paraSession.correctChars++;
     updateParaUI();
-    if(nb === target){ setTimeout(()=>completePara(), 150); }
-  } else {
-    paraSession.trial.buffer = before.buffer; paraSession.trial.pendingI = before.pendingI;
+    if(!paraSession.trial.pendingI && normalizeHindi(nb)===normalizeHindi(target)){
+      setTimeout(()=>completePara(),150);
+    }
+  }else{
+    paraSession.trial.restore(before);
+    if(paraSession.trial.history.length) paraSession.trial.history.pop();
     paraSession.mistakes++;
     updateParaUI();
   }
 }
+
 function completePara(){
   progress.final.paras[paraSession.idx] = { wpm: paraSession.lastWpm||0 };
   saveProgress();
@@ -1086,102 +1293,41 @@ function buildMiniKeyboard(){
 
 /* Reverse lookup: output character -> the key that produces it. First
    occurrence wins for the rare chars mapped from two different keys. */
-const CHAR_TO_KEY = {};
+const CHAR_TO_KEY={};
 Object.keys(KEYMAP).forEach(code=>{
-  const map = KEYMAP[code];
-  if(map.n && !(map.n in CHAR_TO_KEY)) CHAR_TO_KEY[map.n] = {code, shift:false};
-  if(map.s && !(map.s in CHAR_TO_KEY)) CHAR_TO_KEY[map.s] = {code, shift:true};
+  const map=KEYMAP[code];
+  if(map.n!==undefined && !(map.n in CHAR_TO_KEY)) CHAR_TO_KEY[map.n]={code,shift:false};
+  if(map.s!==undefined && !(map.s in CHAR_TO_KEY)) CHAR_TO_KEY[map.s]={code,shift:true};
 });
-
-/* Builds the exact key-press sequence that reproduces `target`, respecting
-   the one Remington quirk that reorders input: the ि matra is pressed
-   BEFORE the consonant it visually precedes, so whenever the string has
-   [consonant][ि] back to back, those two output characters come from a
-   two-key unit typed in the opposite order (ि-key first, then the
-   consonant key, which is what actually appends both chars at once). */
-const FULL_TO_HALF = {};
-Object.keys(HALF_TO_FULL).forEach(half=>{ FULL_TO_HALF[HALF_TO_FULL[half]] = half; });
+const keySequenceCache=new Map();
 
 function buildKeySequence(target){
-  const seq = [], beforeBuf = [];
-  const probe = new RemingtonEngine(); // reused so buffer states come from the real engine, not hand math
-  let i = 0;
-  while(i < target.length){
-    if(target[i+1] === I_MATRA){
-      const kI = CHAR_TO_KEY[I_MATRA], kBase = CHAR_TO_KEY[target[i]];
-      if(!kI || !kBase) return null;
-      beforeBuf.push(probe.buffer); seq.push(kI); probe.press(kI.code, kI.shift);
-      beforeBuf.push(probe.buffer); seq.push(kBase); probe.press(kBase.code, kBase.shift);
-      i += 2; continue;
-    }
-    /* Greedy longest literal match against every KEYMAP output (these can
-       be multi-codepoint clusters, e.g. ख् = ख+्) — tried BEFORE the
-       substitution fallback below, since most consonants are directly
-       typable and only some conjuncts genuinely have no direct key. */
-    let matchedLen = 0;
-    for(let len=4; len>=1; len--){
-      const piece = target.slice(i, i+len);
-      if(piece.length===len && CHAR_TO_KEY[piece]){ matchedLen = len; break; }
-    }
-    if(matchedLen){
-      const k = CHAR_TO_KEY[target.slice(i, i+matchedLen)];
-      beforeBuf.push(probe.buffer); seq.push(k); probe.press(k.code, k.shift);
-      i += matchedLen; continue;
-    }
-    /* No direct key produces this literal substring — conjunct (क्ष, ष,
-       भ, etc.) immediately followed by a matra: typed as the half-form
-       key, then the matra key, and the engine substitutes half->full. */
-    let subMatched = false;
-    for(const full in FULL_TO_HALF){
-      if(!target.startsWith(full, i)) continue;
-      const after = target[i+full.length];
-      if(!after || !(MATRA_SET.has(after) || after===':')) continue;
-      const half = FULL_TO_HALF[full];
-      const kHalf = CHAR_TO_KEY[half], kMatra = CHAR_TO_KEY[after];
-      if(!kHalf || !kMatra) continue;
-      beforeBuf.push(probe.buffer); seq.push(kHalf); probe.press(kHalf.code, kHalf.shift);
-      beforeBuf.push(probe.buffer); seq.push(kMatra); probe.press(kMatra.code, kMatra.shift);
-      i += full.length + 1; subMatched = true; break;
-    }
-    if(subMatched) continue;
-    return null;
-  }
-  if(probe.buffer !== target) return null; // don't show a highlight unless the plan is verified correct
-  return {seq, beforeBuf};
-}
-const keySequenceCache = new Map();
-function getKeySequence(target){
-  if(!keySequenceCache.has(target)) keySequenceCache.set(target, buildKeySequence(target));
-  return keySequenceCache.get(target);
-}
-/* A live typed buffer `nb` can be "on track" for `target` without being a
-   literal string prefix of it: composing a letter like श/ष/भ/थ/ख/ण/ध/क्ष
-   (which have no direct full-form key) always passes through a half-form
-   state (e.g. "श्") that only resolves to the target's plain "श" once the
-   following matra key is pressed. A naive target.startsWith(nb) rejects
-   that in-progress half-form as a mistake before the user can finish the
-   letter. Fall back to the verified keystroke plan (same one the on-screen
-   keyboard hint uses) to recognise those valid intermediate states too. */
-function isValidTypedState(target, nb){
-  if(target.startsWith(nb)) return true;
-  if(nb === target) return true;
-  const built = getKeySequence(target);
-  return !!built && built.beforeBuf.includes(nb);
-}
-/* Matches by the exact intermediate buffer snapshot (not a startsWith
-   prefix check) — a half-form conjunct mid-composition, e.g. "कभ्"
-   on the way to "कभी", is a valid live state but is NOT itself a
-   prefix of the final word, so prefix matching would wrongly reject it. */
-function findNextKey(baseEngine, target){
   if(!target) return null;
-  const built = getKeySequence(target);
-  if(!built) return null;
-  const buf = baseEngine.buffer;
-  const candidates = [];
-  for(let k=0;k<built.seq.length;k++){ if(built.beforeBuf[k]===buf) candidates.push(k); }
-  if(!candidates.length) return null;
-  const idx = baseEngine.pendingI ? candidates[candidates.length-1] : candidates[0];
-  return built.seq[idx];
+  const tg=graphemeArray(target);
+  const probe=new RemingtonEngine();
+  const seq=[],beforeBuf=[];
+  const maxSteps=Math.max(32,tg.length*10);
+
+  for(let step=0;step<maxSteps;step++){
+    if(!probe.pendingI && normalizeHindi(probe.buffer)===normalizeHindi(target)){
+      return {seq,beforeBuf};
+    }
+
+    const next=findNextGailSequence(probe,target);
+    if(!next || !next.length) return null;
+
+    for(const k of next){
+      beforeBuf.push(probe.buffer);
+      probe.press(k.code,k.shift);
+      seq.push(k);
+    }
+  }
+  return null;
+}
+
+function getKeySequence(target){
+  if(!keySequenceCache.has(target)) keySequenceCache.set(target,buildKeySequence(target));
+  return keySequenceCache.get(target);
 }
 
 function refreshMiniKeyboardHighlight(){
