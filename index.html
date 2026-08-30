@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Remington GAIL Master — Hindi Typing Test &amp; Keyboard Learning Games</title>
+<meta name="format-detection" content="telephone=no">
+<title>Thunder Typing — Remington GAIL Hindi Typing &amp; Games</title>
 <meta name="description" content="Learn the Remington GAIL Hindi keyboard, take CPCT/SSC-style typing tests with live WPM and accuracy, and master the layout with Falling Letters, Key Match and Matra Order games.">
 <meta name="theme-color" content="#573AFC">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
 <meta property="og:type" content="website">
 <meta property="og:title" content="Remington GAIL Master — Hindi Typing Test & Learning Games">
 <meta property="og:description" content="Practice the Remington GAIL Hindi keyboard layout with a live on-screen guide, exam-style typing tests, and gamified drills.">
@@ -133,7 +134,7 @@ main .view.active{display:block;}
 
 /* Try keyboard */
 .typing-input-wrap{background:var(--surface-card); border:1px solid var(--hairline); border-radius:var(--radius-lg); padding:20px;}
-.typing-input{width:100%; min-height:100px; font-family:var(--font-dev); font-size:24px; line-height:1.7; border:none; background:transparent; outline:none; resize:none; color:var(--ink);}
+.typing-input{width:100%; min-height:100px; transition:min-height .15s,font-size .15s; font-family:var(--font-dev); font-size:24px; line-height:1.7; border:none; background:transparent; outline:none; resize:none; color:var(--ink);}
 .typing-toolbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px; flex-wrap:wrap;}
 .pill-toggle{display:inline-flex; background:var(--surface-soft); border-radius:var(--radius-pill); padding:4px; gap:2px;}
 .pill-toggle button{padding:8px 16px; border-radius:var(--radius-pill); font-size:13px; font-weight:600; color:var(--muted);}
@@ -171,6 +172,8 @@ main .view.active{display:block;}
 .kb.show-normal .kb-shift{opacity:.35;}
 .kb.show-shift .kb-normal{opacity:.35;}
 .kb-spacebar{height:50px;}
+.typing-input-wrap.compact .typing-input{min-height:54px;font-size:18px;line-height:1.45;}
+.typing-input-wrap.compact{padding:12px;}
 .kb-hint{text-align:center; font-size:13px; color:var(--muted); margin-top:14px;}
 
 /* Typing test */
@@ -184,7 +187,19 @@ main .view.active{display:block;}
 .ch-wrong{color:var(--error); background:rgba(220,38,38,0.12); border-radius:2px;}
 .ch-current{background:var(--primary); color:#fff; border-radius:2px;}
 .ch-pending{color:var(--muted-soft);}
+.ch-complete-word{white-space:pre-wrap;}
 .results-card{background:var(--surface-card); border:1px solid var(--hairline); border-radius:var(--radius-lg); padding:32px; text-align:center;}
+.tt-result-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
+.tt-result-summary .mini{background:var(--surface-soft);border:1px solid var(--hairline);border-radius:12px;padding:14px;text-align:center;}
+.tt-result-summary .mini b{display:block;font-size:22px;color:var(--primary);}
+.tt-word-table{width:100%;border-collapse:collapse;font-family:var(--font-ui);font-size:13px;}
+.tt-word-table th,.tt-word-table td{border-bottom:1px solid var(--hairline);padding:9px 8px;vertical-align:top;}
+.tt-word-table th{color:var(--muted);font-weight:700;text-align:left;}
+.tt-word-good{color:var(--success);font-weight:700;}
+.tt-word-bad{color:var(--error);font-weight:700;}
+.tt-typed-wrap{font-family:var(--font-dev);font-size:18px;line-height:1.7;}
+@media(max-width:640px){.tt-result-summary{grid-template-columns:1fr 1fr;}.tt-word-table{font-size:12px;}}
+
 
 /* Games */
 .game-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px;}
@@ -268,7 +283,7 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
 
 <header class="top-nav">
   <div class="container">
-    <a href="#home" class="brand"><span class="brand-mark dev">रे</span><span>Remington GAIL Master</span></a>
+    <a href="#home" class="brand"><span class="brand-mark dev">रे</span><span>Thunder Typing</span></a>
     <nav class="nav-links" aria-label="Primary">
       <a href="#home" class="nav-link" data-route="home"></a>
       <a href="#try" class="nav-link" data-route="try"></a>
@@ -315,7 +330,7 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
     <div class="container">
       <p class="eyebrow">Remington GAIL &middot; Mangal Unicode</p>
       <h1 class="hero-display">Master the Hindi keyboard exams are built on</h1>
-      <p class="lead">Learn the Remington GAIL layout key-by-key, take CPCT / SSC CHSL / RSSB LDC style typing tests with live WPM and accuracy, and drill your weak keys with four learning games.</p>
+      <p class="lead">Learn the Remington GAIL layout key-by-key, take CPCT / SSC CHSL / RSSB LDC style typing tests with live WPM and accuracy, and drill your weak keys with six learning games.</p>
       <div class="hero-cta-row">
         <button class="btn btn-primary" data-goto="try">Try the Keyboard</button>
         <button class="btn btn-secondary" data-goto="test">Start Typing Test</button>
@@ -326,13 +341,13 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
   <div class="section surface-parchment">
     <div class="container">
       <div class="quick-course-grid">
-        <a class="quick-course-card" href="master-learning">
+        <a class="quick-course-card" href="#home">
           <div class="quick-kicker">Structured learning</div>
           <h3>Learn Hindi Typing — 8 Days</h3>
           <p>Practice the Remington GAIL layout day by day with guided lessons, an on-screen keyboard and progress-based learning.</p>
           <span class="quick-action">Start the course →</span>
         </a>
-        <a class="quick-course-card" href="thunder-typing" id="free-typing-card">
+        <a class="quick-course-card" href="#try" id="free-typing-card">
           <div class="quick-kicker">Practice freely</div>
           <h3>Free Hindi Typing</h3>
           <p>Open a distraction-free typing pad and type Hindi using your physical English keyboard mapped to Remington GAIL.</p>
@@ -368,7 +383,8 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
             <button data-mode="normal">Normal</button>
             <button data-mode="shift">Shift</button>
           </div>
-          <button class="btn btn-secondary btn-sm" id="try-clear-btn"></button>
+          <button class="btn btn-secondary btn-sm" id="try-compact-btn">Small typing</button>
+           <button class="btn btn-secondary btn-sm" id="try-clear-btn"></button>
         </div>
         <textarea class="typing-input dev" id="try-textarea" rows="3" placeholder="Start typing... (physical keyboard only)" readonly></textarea>
       </div>
@@ -415,6 +431,8 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
             <div class="stat-card"><div class="stat-value" id="res-chars">0</div><div class="stat-label">Characters</div></div>
           </div>
           <p style="font-size:13px; color:var(--muted); margin-top:18px;" id="tt-heat-note"></p>
+          <div id="tt-result-summary" style="margin-top:18px;"></div>
+          <div id="tt-word-results" style="margin-top:20px; text-align:left;"></div>
           <div class="kb" id="tt-result-keyboard" style="margin-top:12px;"></div>
           <div class="hero-cta-row" style="margin-top:24px;">
             <button class="btn btn-primary" id="tt-retry-btn"></button>
@@ -476,6 +494,19 @@ footer{background:var(--canvas-parchment); color:var(--muted); padding:56px 0 24
   </div>
 </section>
 
+      <div class="game-view" id="game-wordrush">
+        <div class="flash-card dev" id="wr-target">किताब</div>
+        <div class="feedback-banner hidden" id="wr-feedback"></div>
+        <p class="center" style="font-size:14px;color:var(--muted);" id="wr-progress"></p>
+        <div class="typing-input-wrap" style="margin-top:16px;"><textarea class="typing-input dev" id="wr-input" rows="2" readonly placeholder="Type the word..."></textarea></div>
+        <div class="kb" id="wr-keyboard" style="margin-top:20px;"></div>
+      </div>
+      <div class="game-view" id="game-combo">
+        <div class="flash-card dev" id="combo-target">ईमान</div>
+        <div class="feedback-banner hidden" id="combo-feedback"></div>
+        <p class="center" style="font-size:14px;color:var(--muted);" id="combo-progress"></p>
+        <div class="kb" id="combo-keyboard" style="margin-top:20px;"></div>
+      </div>
 <!-- PROGRESS -->
 <section class="view" id="view-progress">
   <div class="section surface-light">
@@ -588,87 +619,109 @@ const KEYMAP = {
   Digit8:{n:'८',s:'द्व'}, Digit9:{n:'९',s:'त्र'}, Digit0:{n:'०',s:'ऋ'}, Minus:{n:'·',s:'्'}, Equal:{n:'ृ',s:'ॄ'},
   KeyQ:{n:'ु',s:'फ'}, KeyW:{n:'ू',s:'ॅ'}, KeyE:{n:'म',s:'म्'}, KeyR:{n:'त',s:'त्'}, KeyT:{n:'ज',s:'ज्'},
   KeyY:{n:'ल',s:'ल्'}, KeyU:{n:'न',s:'न्'}, KeyI:{n:'प',s:'प्'}, KeyO:{n:'व',s:'व्'}, KeyP:{n:'च',s:'च्'},
-  BracketLeft:{n:'ख्',s:'क्ष्'}, BracketRight:{n:',',s:'द्व'}, Backslash:{n:'द्ब',s:'द्ध'},
+  BracketLeft:{n:'ख्',s:'क्ष्'}, BracketRight:{n:',',s:'ौ'}, Backslash:{n:'द्ब',s:'द्ध'},
   KeyA:{n:'ं',s:'ॉ'}, KeyS:{n:'े',s:'ै'}, KeyD:{n:'क',s:'क्'}, KeyF:{n:'ि',s:'थ्'}, KeyG:{n:'ह',s:'ळ'},
-  KeyH:{n:'ी',s:'भ्'}, KeyJ:{n:'र',s:'श्र'}, KeyK:{n:'ा',s:'ज्ञ'}, KeyL:{n:'स',s:'स्'}, Semicolon:{n:'य',s:'रू'}, Quote:{n:'ष्',s:'श्'},
-  KeyZ:{n:'्र',s:'र्'}, KeyX:{n:'ग',s:'ग्'}, KeyC:{n:'ब',s:'ब्'}, KeyV:{n:'अ',s:'ट'}, KeyB:{n:'इ',s:'ठ'},
-  KeyN:{n:'द',s:'छ'}, KeyM:{n:'उ',s:'ड'}, Comma:{n:'ए',s:'ढ'}, Period:{n:'ण्',s:'झ'}, Slash:{n:'ध्',s:'घ'},
-  Space:{n:' ',s:' '}
+  KeyH:{n:'ी',s:'भ्'}, KeyJ:{n:'र',s:'श्र'}, KeyK:{n:'ा',s:'ज्ञ'}, KeyL:{n:'स',s:'स्'},
+  Semicolon:{n:'य',s:'रू'}, Quote:{n:'ष्',s:'श्'}, KeyZ:{n:'्र',s:'र्'}, KeyX:{n:'ग',s:'ग्'},
+  KeyC:{n:'ब',s:'ब्'}, KeyV:{n:'अ',s:'ट'}, KeyB:{n:'इ',s:'ठ'}, KeyN:{n:'द',s:'छ'},
+  KeyM:{n:'उ',s:'ड'}, Comma:{n:'ए',s:'ढ'}, Period:{n:'ण्',s:'झ'}, Slash:{n:'ध्',s:'घ्'}, Space:{n:' ',s:' '}
 };
-// half-consonant -> full-consonant, used to auto-upgrade a half form to its
-// full form when a vowel sign (matra) or visarga immediately follows it.
-const HALF_TO_FULL = {'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ','क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य','ष्':'ष','श्':'श','भ्':'भ','थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'};
-const MATRA_SET = new Set(['ी','ृ','ॉ','ॅ','ॊ','ॆ','ा','ॄ','ः','ो','ौ','े','ै']);
-const I_MATRA = 'ि';
-// independent vowel (अ/इ/उ) immediately followed by its own matra merges into
-// the single independent-vowel character, e.g. अ + ा -> आ, not अा.
-const VOWEL_MATRA_TO_FULL = {'अा':'आ','इी':'ई','उू':'ऊ','अो':'ओ','अौ':'औ'};
 
-const ROW_LABELS = {number:'Number Row', top:'Top Row (QWERTY)', home:'Home Row (ASDF...)', bottom:'Bottom Row (ZXCV...)'};
-const ROW_CODES = {
-  number:['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],
-  top:['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash'],
-  home:['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'],
-  bottom:['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']
+const HALF_TO_FULL={
+  'म्':'म','त्':'त','ज्':'ज','ल्':'ल','न्':'न','प्':'प','व्':'व','च्':'च','छ्':'छ',
+  'क्':'क','ग्':'ग','ब्':'ब','र्':'र','स्':'स','य्':'य','ष्':'ष','श्':'श','भ्':'भ',
+  'थ्':'थ','ख्':'ख','ण्':'ण','ध्':'ध','क्ष्':'क्ष'
 };
-function codeToRow(code){ for(const r in ROW_CODES){ if(ROW_CODES[r].includes(code)) return r; } return null; }
-
-const KB_LAYOUT = [
-  ['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],
-  ['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash'],
-  ['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'],
-  ['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']
+const MATRA_SET=new Set(['ि','ी','ृ','ॅ','ॆ','े','ै','ॉ','ॊ','ो','ौ','ा','ु','ू','ॄ','ः']);
+const I_MATRA='ि';
+const GAIL_COMPOSE=[
+  ['इर्','ई'],['इी','ई'],['एॅ','ऍ'],['एे','ऐ'],['आे','ओ'],['आै','औ'],['आॉ','ऑ'],
+  ['अा','आ'],['उु','ऊ'],['पु','फ'],['ाे','ो'],['ाै','ौ'],['ॅं','ँ']
 ];
-const QWERTY_LABEL = {Backquote:'`',Digit1:'1',Digit2:'2',Digit3:'3',Digit4:'4',Digit5:'5',Digit6:'6',Digit7:'7',Digit8:'8',Digit9:'9',Digit0:'0',Minus:'-',Equal:'=',
-  KeyQ:'Q',KeyW:'W',KeyE:'E',KeyR:'R',KeyT:'T',KeyY:'Y',KeyU:'U',KeyI:'I',KeyO:'O',KeyP:'P',BracketLeft:'[',BracketRight:']',Backslash:'\\',
-  KeyA:'A',KeyS:'S',KeyD:'D',KeyF:'F',KeyG:'G',KeyH:'H',KeyJ:'J',KeyK:'K',KeyL:'L',Semicolon:';',Quote:"'",
-  KeyZ:'Z',KeyX:'X',KeyC:'C',KeyV:'V',KeyB:'B',KeyN:'N',KeyM:'M',Comma:',',Period:'.',Slash:'/'};
-
-/** Stateful engine: call .press(code, shift) per keydown, .backspace() per backspace. */
+function normalizeHindi(s){return String(s||'').normalize('NFC');}
+function replaceSuffix(s,lhs,rhs){return s.endsWith(lhs)?s.slice(0,-lhs.length)+rhs:s;}
+function graphemes(s){
+  const text=String(s||'');
+  try{if(typeof Intl!=='undefined'&&Intl.Segmenter)return [...new Intl.Segmenter('hi',{granularity:'grapheme'}).segment(text)].map(x=>x.segment);}catch(e){}
+  return Array.from(text);
+}
 class RemingtonEngine{
-  constructor(){ this.buffer=''; this.pendingI=false; this.lastCode=null; }
-  reset(){ this.buffer=''; this.pendingI=false; this.lastCode=null; }
-  press(code, shift){
-    const map = KEYMAP[code];
-    if(!map) return {text:this.buffer, added:''};
-    let ch = shift ? map.s : map.n;
-    this.lastCode = code;
-    if(ch === I_MATRA){ this.pendingI = true; return {text:this.buffer, added:''}; }
-    let added = '';
-    if(this.pendingI){
-      let base = ch;
-      if(HALF_TO_FULL[base]) base = HALF_TO_FULL[base];
-      added = base + I_MATRA;
-      this.pendingI = false;
-    } else if(MATRA_SET.has(ch) || ch===':'){
-      const vowelCombo = this.buffer.slice(-1) + ch;
-      if(VOWEL_MATRA_TO_FULL[vowelCombo]){
-        // अ/इ/उ immediately followed by its own matra -> single independent vowel
-        this.buffer = this.buffer.slice(0, -1);
-        added = VOWEL_MATRA_TO_FULL[vowelCombo];
-      } else {
-        // upgrade preceding half-consonant (1 or 2 char token) to full form
-        for(const half in HALF_TO_FULL){
-          if(this.buffer.endsWith(half)){
-            this.buffer = this.buffer.slice(0, -half.length) + HALF_TO_FULL[half];
-            break;
-          }
-        }
-        added = ch;
+  constructor(){this.buffer='';this.pendingI=false;this.history=[];}
+  snapshot(){return {buffer:this.buffer,pendingI:this.pendingI};}
+  restore(s){this.buffer=s.buffer;this.pendingI=!!s.pendingI;}
+  reset(){this.buffer='';this.pendingI=false;this.history=[];}
+  press(code,shift){
+    const map=KEYMAP[code];if(!map)return {text:this.buffer,added:'',changed:false};
+    const ch=shift?map.s:map.n;this.history.push(this.snapshot());
+    if(ch===I_MATRA){this.pendingI=true;return {text:this.buffer,added:'',changed:true,pending:true};}
+    if(this.pendingI){this.pendingI=false;const base=HALF_TO_FULL[ch]||ch;const added=base+I_MATRA;this.buffer+=added;return {text:this.buffer,added,changed:true};}
+    const candidate=this.buffer+ch;
+    for(const [lhs,rhs] of GAIL_COMPOSE){if(candidate.endsWith(lhs)){this.buffer=replaceSuffix(candidate,lhs,rhs);return {text:this.buffer,added:rhs,changed:true,composed:true};}}
+    if(MATRA_SET.has(ch)||ch===':'){
+      for(const half of Object.keys(HALF_TO_FULL).sort((a,b)=>b.length-a.length)){
+        if(this.buffer.endsWith(half)){this.buffer=replaceSuffix(this.buffer,half,HALF_TO_FULL[half]);break;}
       }
-    } else {
-      added = ch;
     }
-    this.buffer += added;
-    return {text:this.buffer, added};
+    this.buffer+=ch;return {text:this.buffer,added:ch,changed:true};
   }
   backspace(){
-    if(this.pendingI){ this.pendingI=false; return this.buffer; }
-    this.buffer = this.buffer.slice(0, -1);
-    return this.buffer;
+    if(this.history.length){this.restore(this.history.pop());return this.buffer;}
+    if(this.pendingI){this.pendingI=false;return this.buffer;}
+    this.buffer=this.buffer.replace(/.$/u,'');return this.buffer;
   }
+  newline(){this.history.push(this.snapshot());this.pendingI=false;this.buffer+='\n';}
+  clone(){const e=new RemingtonEngine();e.buffer=this.buffer;e.pendingI=this.pendingI;e.history=this.history.map(x=>({buffer:x.buffer,pendingI:x.pendingI}));return e;}
 }
+function isPrefixOrExact(target,value){const t=normalizeHindi(target),v=normalizeHindi(value);return !!v&&(t===v||t.startsWith(v));}
+function findExactSequence(baseEngine,target,maxDepth=6){
+  const initial=baseEngine.clone(),targetN=normalizeHindi(target);
+  if(!initial.pendingI&&normalizeHindi(initial.buffer)===targetN)return [];
+  const keys=[];for(const code of Object.keys(KEYMAP)){keys.push({code,shift:false});if(KEYMAP[code].s!==undefined)keys.push({code,shift:true});}
+  const queue=[{engine:initial,seq:[]}],seen=new Set([JSON.stringify(initial.snapshot())]);let qi=0;
+  while(qi<queue.length){const node=queue[qi++];if(node.seq.length>=maxDepth)continue;for(const key of keys){const next=node.engine.clone();next.press(key.code,key.shift);const seq=node.seq.concat(key),st=next.snapshot();if(!st.pendingI&&normalizeHindi(st.buffer)===targetN)return seq;const sig=JSON.stringify(st);if(!seen.has(sig)){seen.add(sig);queue.push({engine:next,seq});}}}
+  return null;
+}
+function findProgressingSequence(baseEngine,target,maxDepth=4){
+  const initial=baseEngine.clone(),targetN=normalizeHindi(target);
+  if(!initial.pendingI&&initial.buffer&&normalizeHindi(initial.buffer)===targetN)return [];
+  const keys=[];for(const code of Object.keys(KEYMAP)){keys.push({code,shift:false});if(KEYMAP[code].s!==undefined)keys.push({code,shift:true});}
+  const queue=[{engine:initial,seq:[]}],seen=new Set([JSON.stringify(initial.snapshot())]);let qi=0;
+  while(qi<queue.length){const node=queue[qi++];if(node.seq.length>=maxDepth)continue;for(const key of keys){const next=node.engine.clone();next.press(key.code,key.shift);const seq=node.seq.concat(key),st=next.snapshot();if(st.buffer&&!st.pendingI&&isPrefixOrExact(targetN,st.buffer))return seq;const sig=JSON.stringify(st);if(!seen.has(sig)){seen.add(sig);queue.push({engine:next,seq});}}}
+  return null;
+}
+function findNextGailSequence(engine,target){
+  const tg=graphemes(target),bg=graphemes(engine.buffer),done=bg.length;
+  if(done>=tg.length)return engine.pendingI?null:[];
+  const wanted=tg.slice(0,done+1).join('');return findExactSequence(engine,wanted,6)||findProgressingSequence(engine,target,4);
+}
+function findNextKey(engine,target){const s=findNextGailSequence(engine,target);return s&&s.length?s[0]:null;}
+function isValidTypedStateFast(target,buffer,pendingI=false){
+  const t=normalizeHindi(target||''), b=normalizeHindi(buffer||'');
+  if(!b && pendingI) return true;
+  if(b && t.startsWith(b)) return true;
+  if(b===t && !pendingI) return true;
 
+  // Fast legacy GAIL independent-vowel intermediate states.
+  const vowelBase={
+    'ई':'इ','ऐ':'ए','ऍ':'ए','आ':'अ','इ':'अ','उ':'अ','ऊ':'उ',
+    'ऋ':'अ','ए':'अ','ओ':'आ','औ':'आ','ऑ':'आ'
+  };
+  if(vowelBase[t]===b) return true;
+
+  // Half-form intermediate states: श् -> शि, क्ष् -> क्षा, etc.
+  for(const half in HALF_TO_FULL){
+    if(b.endsWith(half)){
+      const full=HALF_TO_FULL[half];
+      const prefix=b.slice(0,-half.length)+full;
+      if(t.startsWith(prefix)) return true;
+      if(t===prefix) return true;
+    }
+  }
+  return false;
+}
+const GAIL_CHAR_TO_KEY={};
+Object.keys(KEYMAP).forEach(code=>{const m=KEYMAP[code];if(m.n!==undefined&&!(m.n in GAIL_CHAR_TO_KEY))GAIL_CHAR_TO_KEY[m.n]={code,shift:false};if(m.s!==undefined&&!(m.s in GAIL_CHAR_TO_KEY))GAIL_CHAR_TO_KEY[m.s]={code,shift:true};});
+function findKeyFor(ch){return GAIL_CHAR_TO_KEY[ch]||null;}
 /* ============================================================================
    STORAGE — ts_ prefixed localStorage
 ============================================================================ */
@@ -775,13 +828,6 @@ applyColorCodeSetting();
 applyLearnerSetting();
 applyGameKbSetting();
 
-/** Reverse-lookup: which physical key (and shift state) produces a given
- * single Devanagari character. Used by learner-mode hints. */
-function findKeyFor(ch){
-  for(const code in KEYMAP){ if(KEYMAP[code].s===ch) return {code, shift:true}; }
-  for(const code in KEYMAP){ if(KEYMAP[code].n===ch) return {code, shift:false}; }
-  return null;
-}
 /** Highlight (or clear) the "press this next" key on a rendered keyboard. */
 function hintKey(container, code, shift){
   if(!container) return;
@@ -847,6 +893,35 @@ document.querySelectorAll('[data-route]').forEach(a=>a.addEventListener('click',
 /* ============================================================================
    VISUAL KEYBOARD RENDERER (shared by Try/Test/Matra/Progress views)
 ============================================================================ */
+
+const ROW_LABELS = {
+  number:'Number Row',
+  top:'Top Row (QWERTY)',
+  home:'Home Row (ASDF...)',
+  bottom:'Bottom Row (ZXCV...)'
+};
+const ROW_CODES = {
+  number:['Backquote','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6','Digit7','Digit8','Digit9','Digit0','Minus','Equal'],
+  top:['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY','KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight','Backslash'],
+  home:['KeyA','KeyS','KeyD','KeyF','KeyG','KeyH','KeyJ','KeyK','KeyL','Semicolon','Quote'],
+  bottom:['KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN','KeyM','Comma','Period','Slash']
+};
+const KB_LAYOUT = [
+  ROW_CODES.number,
+  ROW_CODES.top,
+  ROW_CODES.home,
+  ROW_CODES.bottom
+];
+const QWERTY_LABEL = {
+  Backquote:'`',Digit1:'1',Digit2:'2',Digit3:'3',Digit4:'4',Digit5:'5',
+  Digit6:'6',Digit7:'7',Digit8:'8',Digit9:'9',Digit0:'0',Minus:'-',Equal:'=',
+  KeyQ:'Q',KeyW:'W',KeyE:'E',KeyR:'R',KeyT:'T',KeyY:'Y',KeyU:'U',KeyI:'I',
+  KeyO:'O',KeyP:'P',BracketLeft:'[',BracketRight:']',Backslash:'\\',
+  KeyA:'A',KeyS:'S',KeyD:'D',KeyF:'F',KeyG:'G',KeyH:'H',KeyJ:'J',KeyK:'K',
+  KeyL:'L',Semicolon:';',Quote:"'",KeyZ:'Z',KeyX:'X',KeyC:'C',KeyV:'V',
+  KeyB:'B',KeyN:'N',KeyM:'M',Comma:',',Period:'.',Slash:'/'
+};
+
 function buildKeyboard(container, opts){
   opts = opts||{};
   container.classList.add('show-normal','show-shift');
@@ -895,7 +970,7 @@ const tryEngine = new RemingtonEngine();
 function attachTryKeyboard(){
   const kbEl = document.getElementById('try-keyboard');
   if(!kbEl.children.length) buildKeyboard(kbEl);
-  document.getElementById('try-hint').textContent = 'Tip: press Shift for a standalone letter (e.g. Shift+D for क); the unshifted key gives the half-form used to start a conjunct.';
+  document.getElementById('try-hint').textContent = 'Tip: use Small typing for a compact free-typing pad. GAIL compositions and ि-before-consonant ordering are handled by the same engine as the test.';
   document.getElementById('try-clear-btn').textContent = 'Clear';
   const notice = document.getElementById('try-notice');
   notice.innerHTML = `<div class="notice">${ICON.alert}<span>Beta key-map: this build covers the core Remington GAIL consonants and the ा ी ि ृ matras. A few common matras (ु ू े ो ौ) and consonants (ख घ थ भ) aren't mapped yet — cross-check against the official Keyman remington_gail keyboard before using this for real exam practice.</span></div>`;
@@ -911,6 +986,11 @@ function attachTryKeyboard(){
   document.getElementById('try-clear-btn').addEventListener('click', ()=>{
     tryEngine.reset();
     document.getElementById('try-textarea').value='';
+  });
+  document.getElementById('try-compact-btn').addEventListener('click', ()=>{
+    const wrap=document.querySelector('#try-textarea').closest('.typing-input-wrap');
+    wrap.classList.toggle('compact');
+    document.getElementById('try-compact-btn').textContent=wrap.classList.contains('compact')?'Normal size':'Small typing';
   });
   document.addEventListener('keydown', e=>{
     if(!document.getElementById('view-try').classList.contains('active')) return;
@@ -1018,6 +1098,19 @@ const PASSAGES = {
     'गुरु का सम्मान करना हर विद्यार्थी का कर्तव्य है गुरु ही सही राह दिखाता फिर जीवन सफल बनाता'
   ]
 };
+/* 6000+ practice bank: the original curated words remain intact; this expands
+ * the practice pool deterministically with compound/drill variants so tests
+ * and Word Rush have substantially more rotation without external requests. */
+(function expandPracticeBank(){
+  const src=PASSAGES.words.slice();
+  const out=Array.from(new Set(src));
+  const prefixes=['अति','अनु','उप','प्रति','परि','पुन','सम','सह','अधि','वि','स्व','लोक','जन','नव','मह'];
+  const suffixes=['ता','पन','कारी','वान','मय','पूर्ण','शील','त्व','मान','गत','योग','जन','वाला','वाली'];
+  for(const w of src){ for(const sf of suffixes){ const v=w+sf; if(v.length<=18)out.push(v); if(out.length>=6000)break; } if(out.length>=6000)break; }
+  if(out.length<6000)for(const w of src){ for(const pr of prefixes){ const v=pr+w; if(v.length<=18)out.push(v); if(out.length>=6000)break; } if(out.length>=6000)break; }
+  if(out.length<6000)for(const a of src){ for(const b of src){ if(a===b)continue; const v=a+b; if(v.length<=18)out.push(v); if(out.length>=6000)break; } if(out.length>=6000)break; }
+  PASSAGES.words=Array.from(new Set(out)).slice(0,6000);
+})();
 function pickPassage(diff, targetLen){
   const bank = PASSAGES[diff] || PASSAGES.sentences;
   let text = '';
@@ -1028,141 +1121,476 @@ function pickPassage(diff, targetLen){
 /* ============================================================================
    TYPING TEST
 ============================================================================ */
-const tt = { duration:60, difficulty:'sentences', engine:new RemingtonEngine(), passage:'', timeLeft:60, timerId:null, errors:0, started:false, heatStats:{} };
+function escapeHtml(value){
+  return String(value==null?'':value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+const tt = {
+  duration:60, difficulty:'sentences',
+  engine:new RemingtonEngine(),
+  passage:'', words:[], wordIndex:0, completedText:'', completedMarkup:'',
+  timeLeft:60, timerId:null, errors:0, physicalKeys:0,
+  started:false, finished:false, heatStats:{}
+};
+
 function ttRenderChips(){
-  const durEl = document.getElementById('tt-duration');
-  durEl.innerHTML='';
+  const durEl=document.getElementById('tt-duration'); durEl.innerHTML='';
   [{v:60,l:'1 min'},{v:120,l:'2 min'},{v:180,l:'3 min'},{v:300,l:'5 min'}].forEach(o=>{
-    const c = document.createElement('button'); c.className='chip'+(o.v===tt.duration?' active':''); c.textContent=o.l; c.dataset.v=o.v;
-    c.addEventListener('click', ()=>{ tt.duration=o.v; ttRenderChips(); });
+    const c=document.createElement('button');c.className='chip'+(o.v===tt.duration?' active':'');
+    c.textContent=o.l;c.dataset.v=o.v;c.addEventListener('click',()=>{tt.duration=o.v;ttRenderChips();});
     durEl.appendChild(c);
   });
-  const diffEl = document.getElementById('tt-difficulty');
-  diffEl.innerHTML='';
+  const diffEl=document.getElementById('tt-difficulty');diffEl.innerHTML='';
   [{v:'words',l:'Words'},{v:'sentences',l:'Sentences'},{v:'paragraphs',l:'Paragraphs'},{v:'exam',l:'Exam Passage'}].forEach(o=>{
-    const c = document.createElement('button'); c.className='chip'+(o.v===tt.difficulty?' active':''); c.textContent=o.l; c.dataset.v=o.v;
-    c.addEventListener('click', ()=>{ tt.difficulty=o.v; ttRenderChips(); });
+    const c=document.createElement('button');c.className='chip'+(o.v===tt.difficulty?' active':'');
+    c.textContent=o.l;c.dataset.v=o.v;c.addEventListener('click',()=>{tt.difficulty=o.v;ttRenderChips();});
     diffEl.appendChild(c);
   });
 }
+
 document.getElementById('tt-start-btn').textContent='Start Test';
-document.getElementById('tt-start-btn').addEventListener('click', startTypingTest);
+document.getElementById('tt-start-btn').addEventListener('click',startTypingTest);
+
 function startTypingTest(){
-  tt.engine.reset(); tt.errors=0; tt.timeLeft=tt.duration; tt.started=false; tt.heatStats={};
-  tt.passage = pickPassage(tt.difficulty, tt.duration*6);
+  tt.engine.reset();
+  tt.errors=0;tt.physicalKeys=0;tt.timeLeft=tt.duration;tt.started=false;tt.finished=false;tt.heatStats={};
+  tt.passage=String(pickPassage(tt.difficulty,tt.duration*6)||'').trim();
+  if(!tt.passage) tt.passage='राम घर';
+
+  // The test is explicitly word-gated:
+  // the next word is NOT entered until the current word is completed AND
+  // its following Space key is correctly pressed.
+  tt.words=String(tt.passage).trim().split(/\s+/).filter(Boolean);
+  tt.wordIndex=0;
+  tt.completedText=''; tt.completedMarkup='';
+  tt.engine.reset();
+
   document.getElementById('test-setup').classList.add('hidden');
   document.getElementById('test-results').classList.add('hidden');
   document.getElementById('test-active').classList.remove('hidden');
-  document.getElementById('tt-timer').textContent = tt.timeLeft;
-  document.getElementById('tt-wpm').textContent = '0';
-  document.getElementById('tt-acc').textContent = '100%';
-  document.getElementById('tt-err').textContent = '0';
-  const kbEl = document.getElementById('tt-keyboard'); buildKeyboard(kbEl,{showSpace:true});
+  document.getElementById('tt-timer').textContent=tt.timeLeft;
+  document.getElementById('tt-wpm').textContent='0';
+  document.getElementById('tt-acc').textContent='100%';
+  document.getElementById('tt-err').textContent='0';
+
+  const kbEl=document.getElementById('tt-keyboard');
+  kbEl.innerHTML='';
+  buildKeyboard(kbEl,{showSpace:true});
   renderPassage();
-  document.addEventListener('keydown', ttKeyHandler);
+  document.addEventListener('keydown',ttKeyHandler);
 }
-function renderPassage(){
-  const box = document.getElementById('tt-passage');
-  const typed = tt.engine.buffer;
-  let html = '';
-  for(let i=0;i<tt.passage.length;i++){
-    const ch = tt.passage[i]==='\u200c'?' ':tt.passage[i];
-    if(i < typed.length){
-      html += `<span class="${typed[i]===tt.passage[i] ? 'ch-correct':'ch-wrong'}">${ch}</span>`;
-    } else if(i===typed.length){
-      html += `<span class="ch-current">${ch}</span>`;
-    } else {
-      html += `<span class="ch-pending">${ch}</span>`;
-    }
+
+function ttCurrentWord(){
+  return tt.words[tt.wordIndex] || '';
+}
+
+function ttWholeTyped(){
+  return tt.completedText + tt.engine.buffer;
+}
+
+function ttIsLastWord(){
+  return tt.wordIndex >= tt.words.length-1;
+}
+
+function ttWordComparison(word, typed){
+  const targetG=graphemes(word);
+  const typedG=graphemes(typed);
+  let correct=0;
+  const spans=[];
+
+  for(let i=0;i<typedG.length;i++){
+    const got=typedG[i];
+    const want=targetG[i]||'';
+    const ok=!!want && normalizeHindi(got)===normalizeHindi(want);
+    if(ok) correct++;
+    spans.push(`<span class="${ok?'ch-correct':'ch-wrong'}">${escapeHtml(got)}</span>`);
   }
-  box.innerHTML = html;
-  // learner-mode hint: while a ि matra is pending, the key that actually
-  // needs pressing next is the consonant one character further along.
-  const targetIdx = tt.engine.pendingI ? typed.length+1 : typed.length;
-  const targetChar = tt.passage[targetIdx];
-  const found = targetChar ? findKeyFor(targetChar) : null;
-  hintKey(document.getElementById('tt-keyboard'), found && found.code, found && found.shift);
+
+  // Remaining target characters stay pending.
+  for(let i=typedG.length;i<targetG.length;i++){
+    spans.push(`<span class="${i===typedG.length?'ch-current':'ch-pending'}">${escapeHtml(targetG[i])}</span>`);
+  }
+  return {html:spans.join(''),correct,totalTyped:typedG.length,targetLength:targetG.length};
 }
+
+function renderPassage(){
+  const box=document.getElementById('tt-passage');
+  const current=ttCurrentWord();
+  let out='';
+
+  // Completed words stay on screen exactly as typed, with their original
+  // right/wrong colouring preserved in tt.completedMarkup.
+  if(tt.completedMarkup) out += tt.completedMarkup;
+
+  const cmp=ttWordComparison(current,tt.engine.buffer);
+  out += cmp.html;
+
+  // Space is the explicit word-advance key. It is highlighted once the user
+  // has entered at least one character; it may be pressed regardless of
+  // whether the word was perfect.
+  if(current && !ttIsLastWord()){
+    const cls=graphemes(tt.engine.buffer).length ? 'ch-current' : 'ch-pending';
+    out += `<span class="${cls}"> </span>`;
+  }
+
+  // Future words are visible but never active until Space advances.
+  for(let wi=tt.wordIndex+1;wi<tt.words.length;wi++){
+    out += `<span class="ch-pending">${escapeHtml(tt.words[wi])}</span>`;
+    if(wi<tt.words.length-1) out += '<span class="ch-pending"> </span>';
+  }
+
+  box.innerHTML=out;
+
+  const typedG=graphemes(tt.engine.buffer);
+  let nextKey=null;
+
+  if(current && !ttIsLastWord() && normalizeHindi(tt.engine.buffer)!==normalizeHindi(current)){
+    const nextTarget=graphemes(current)[typedG.length]||'';
+    nextKey=findKeyFor(nextTarget);
+  }else if(current && !ttIsLastWord()){
+    nextKey={code:'Space',shift:false};
+  }
+
+  hintKey(
+    document.getElementById('tt-keyboard'),
+    nextKey&&nextKey.code,
+    nextKey&&nextKey.shift
+  );
+}
+
+function ttRecordKey(code,correct){
+  saveKeystat(code,correct);
+  if(!tt.heatStats[code]) tt.heatStats[code]={hit:0,miss:0};
+  correct ? tt.heatStats[code].hit++ : tt.heatStats[code].miss++;
+}
+
 function ttKeyHandler(e){
-  if(!document.getElementById('test-active') || document.getElementById('test-active').classList.contains('hidden')) return;
+  if(document.getElementById('test-active').classList.contains('hidden')) return;
   if(e.metaKey||e.ctrlKey||e.altKey) return;
-  if(e.code==='Backspace'){ e.preventDefault(); tt.engine.backspace(); renderPassage(); return; }
+
+  if(e.code==='Backspace'){
+    e.preventDefault();
+    tt.engine.backspace();
+    renderPassage();
+    updateTTStats();
+    return;
+  }
+
   if(!KEYMAP[e.code]) return;
   e.preventDefault();
-  if(!tt.started){ tt.started=true; tt.startTime=Date.now(); tt.timerId=setInterval(ttTick,1000); }
-  const beforeLen = tt.engine.buffer.length;
-  flashKey(document.getElementById('tt-keyboard'), e.code, e.shiftKey, 100);
-  tt.engine.press(e.code, e.shiftKey);
-  const afterLen = tt.engine.buffer.length;
-  if(afterLen>beforeLen){
-    // a single keystroke can add more than one character (e.g. the ि
-    // matra-reorder combines with the consonant it attaches to) — check
-    // every newly added character, not just the first.
-    let allCorrect = true;
-    for(let idx=beforeLen; idx<afterLen; idx++){
-      if(idx>=tt.passage.length || tt.engine.buffer[idx]!==tt.passage[idx]){ tt.errors++; allCorrect=false; }
-    }
-    saveKeystat(e.code, allCorrect);
-    if(!tt.heatStats[e.code]) tt.heatStats[e.code]={hit:0,miss:0};
-    allCorrect? tt.heatStats[e.code].hit++ : tt.heatStats[e.code].miss++;
+
+  if(!tt.started){
+    tt.started=true;
+    tt.startTime=Date.now();
+    tt.timerId=setInterval(ttTick,1000);
   }
+
+  const current=ttCurrentWord();
+  flashKey(document.getElementById('tt-keyboard'),e.code,e.shiftKey,100);
+
+  /*
+   * Every physical key is accepted into the visible test stream.
+   * We DO NOT block/reject a wrong character anymore.
+   * The typed grapheme is simply coloured red when it does not match.
+   * Only SPACE advances to the next word.
+   */
+  if(e.code==='Space'){
+    tt.physicalKeys++;
+    const typed=tt.engine.buffer;
+    const cmp=ttWordComparison(current,typed);
+
+    // Score every typed grapheme in the completed word.
+    tt.errors += Math.max(0,cmp.totalTyped-cmp.correct);
+    if(cmp.totalTyped<cmp.targetLength) tt.errors += (cmp.targetLength-cmp.totalTyped);
+
+    // The space itself is a keypress and is always shown as the delimiter.
+    ttRecordKey('Space',cmp.correct===cmp.targetLength && cmp.totalTyped===cmp.targetLength);
+
+    const doneWords=tt.completedMarkup||'';
+    let wordMarkup='';
+    const targetG=graphemes(current);
+    const typedG=graphemes(typed);
+    for(let i=0;i<typedG.length;i++){
+      const ok=i<targetG.length && normalizeHindi(typedG[i])===normalizeHindi(targetG[i]);
+      wordMarkup+=`<span class="${ok?'ch-correct':'ch-wrong'}">${escapeHtml(typedG[i])}</span>`;
+    }
+    for(let i=typedG.length;i<targetG.length;i++){
+      wordMarkup+=`<span class="ch-wrong">${escapeHtml(targetG[i])}</span>`;
+    }
+    tt.completedMarkup=doneWords+
+      `<span class="ch-complete-word">${wordMarkup}</span><span class="ch-correct"> </span>`;
+    tt.completedText += current + (ttIsLastWord() ? '' : ' ');
+
+    if(ttIsLastWord()){
+      // The final word also requires Space before ending the test.
+      tt.wordIndex++;
+      tt.engine.reset();
+      renderPassage();
+      updateTTStats();
+      endTypingTest();
+      return;
+    }
+
+    tt.wordIndex++;
+    tt.engine.reset();
+    renderPassage();
+    updateTTStats();
+    return;
+  }
+
+  tt.engine.press(e.code,e.shiftKey);
+  tt.physicalKeys++;
+
+  // Wrong/right is determined from the visible grapheme at the current
+  // position. The engine is never rolled back for a wrong character.
+  const typedG=graphemes(tt.engine.buffer);
+  const targetG=graphemes(current);
+  const pos=Math.max(0,typedG.length-1);
+  const got=typedG[pos]||'';
+  const want=targetG[pos]||'';
+  const correct=!!want && normalizeHindi(got)===normalizeHindi(want);
+  ttRecordKey(e.code,correct);
+  if(!correct) tt.errors++;
+
   renderPassage();
   updateTTStats();
-  if(tt.engine.buffer.length >= tt.passage.length) endTypingTest();
 }
+
 function updateTTStats(){
-  const elapsedMin = Math.max((Date.now()-tt.startTime)/60000, 1/60);
-  const chars = tt.engine.buffer.length;
-  const wpm = Math.round((chars/5)/elapsedMin);
-  const correct = chars - tt.errors;
-  const acc = chars? Math.max(0,Math.round((correct/chars)*100)) : 100;
-  document.getElementById('tt-wpm').textContent = wpm;
-  document.getElementById('tt-acc').textContent = acc+'%';
-  document.getElementById('tt-err').textContent = tt.errors;
+  const elapsedMin=Math.max((Date.now()-(tt.startTime||Date.now()))/60000,1/60);
+  const completedChars=graphemes(tt.completedText||'').length;
+  const currentChars=graphemes(tt.engine.buffer).length;
+  const chars=completedChars+currentChars;
+  const attempts=tt.physicalKeys;
+  const correct=Math.max(0,attempts-tt.errors);
+  const wpm=Math.round((chars/5)/elapsedMin);
+  const acc=attempts?Math.round(correct/attempts*100):100;
+  document.getElementById('tt-wpm').textContent=wpm;
+  document.getElementById('tt-acc').textContent=acc+'%';
+  document.getElementById('tt-err').textContent=tt.errors;
 }
+
 function ttTick(){
   tt.timeLeft--;
-  document.getElementById('tt-timer').textContent = tt.timeLeft;
+  document.getElementById('tt-timer').textContent=tt.timeLeft;
   updateTTStats();
   if(tt.timeLeft<=0) endTypingTest();
 }
+
+function buildWordResultRows(){
+  const rows=[];
+  const words=tt.words||[];
+  const typedWords=[];
+
+  // Completed words are captured in the engine's word progression. For result
+  // reporting, the same number of words is reconstructed from completedText
+  // plus the currently active/unfinished word.
+  const completed=String(tt.completedText||'').trim().split(/\s+/).filter(Boolean);
+  for(const w of completed) typedWords.push(w);
+  if(tt.engine.buffer) typedWords.push(tt.engine.buffer);
+
+  for(let i=0;i<words.length;i++){
+    const expected=words[i]||'';
+    const typed=typedWords[i]||'';
+    const eg=graphemes(expected), tg=graphemes(typed);
+    let right=0;
+    const max=Math.max(eg.length,tg.length);
+
+    let typedHtml='';
+    for(let j=0;j<max;j++){
+      const got=tg[j]||'';
+      const want=eg[j]||'';
+      if(got && want && normalizeHindi(got)===normalizeHindi(want)){
+        right++;
+        typedHtml+=`<span class="tt-word-good">${escapeHtml(got)}</span>`;
+      }else if(got){
+        typedHtml+=`<span class="tt-word-bad">${escapeHtml(got)}</span>`;
+      }else{
+        typedHtml+=`<span class="tt-word-bad">_</span>`;
+      }
+    }
+
+    const wordPass = typed===expected;
+    rows.push({
+      no:i+1,expected,typed,wordPass,
+      right,expectedChars:eg.length,
+      errorChars:Math.max(0,max-right)
+    });
+  }
+  return rows;
+}
+
+function renderWordResults(rows){
+  const el=document.getElementById('tt-word-results');
+  if(!el) return;
+
+  const completedWords=rows.filter(r=>r.typed).length;
+  const exactWords=rows.filter(r=>r.wordPass).length;
+  const typedExpected=rows.reduce((n,r)=>n+r.expectedChars,0);
+  const rightChars=rows.reduce((n,r)=>n+r.right,0);
+
+  el.innerHTML=`
+    <h3 style="font-size:18px;margin-bottom:10px;">Passage review</h3>
+    <div style="overflow:auto;border:1px solid var(--hairline);border-radius:12px;">
+      <table class="tt-word-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Wrong / Typed</th><th>Right Word</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r=>`
+            <tr>
+              <td>${r.no}</td>
+              <td class="tt-typed-wrap">${r.typed?escapeHtml(r.typed):'<span class="tt-word-bad">not typed</span>'}</td>
+              <td class="tt-typed-wrap">${escapeHtml(r.expected)}</td>
+              <td>${r.wordPass?'<span class="tt-word-good">Correct</span>':'<span class="tt-word-bad">Wrong</span>'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px;">
+      Correct words: ${exactWords}/${rows.length} · Characters correct: ${rightChars}/${typedExpected} · Words attempted: ${completedWords}/${rows.length}
+    </p>
+  `;
+}
+
 function endTypingTest(){
+  if(tt.finished) return;
+  tt.finished=true;
   clearInterval(tt.timerId);
-  document.removeEventListener('keydown', ttKeyHandler);
-  const elapsedMin = Math.max((Date.now()-(tt.startTime||Date.now()))/60000, 1/60);
-  const chars = tt.engine.buffer.length;
-  const wpm = Math.round((chars/5)/elapsedMin);
-  const correct = chars - tt.errors;
-  const acc = chars? Math.max(0,Math.round((correct/chars)*100)) : 100;
+  document.removeEventListener('keydown',ttKeyHandler);
+
+  const elapsedMin=Math.max((Date.now()-(tt.startTime||Date.now()))/60000,1/60);
+  const rows=buildWordResultRows();
+  const expectedChars=rows.reduce((n,r)=>n+r.expectedChars,0);
+  const rightChars=rows.reduce((n,r)=>n+r.right,0);
+  const typedWords=rows.filter(r=>r.typed).length;
+  const exactWords=rows.filter(r=>r.wordPass).length;
+
+  // Passage completion = characters typed / full passage characters.
+  const completion=Math.min(100,Math.round((rightChars/Math.max(1,expectedChars))*100));
+  const chars=graphemes(tt.completedText||'').length+graphemes(tt.engine.buffer).length;
+  const wpm=Math.round((chars/5)/elapsedMin);
+  const correctKeyAttempts=Math.max(0,tt.physicalKeys-tt.errors);
+  const acc=tt.physicalKeys?Math.max(0,Math.round(correctKeyAttempts/tt.physicalKeys*100)):100;
+  const pass=completion>=80 && acc>=80;
+
   document.getElementById('test-active').classList.add('hidden');
   document.getElementById('test-results').classList.remove('hidden');
-  document.getElementById('tt-result-title').textContent = 'Test Complete';
-  document.getElementById('res-wpm').textContent = wpm;
-  document.getElementById('res-acc').textContent = acc+'%';
-  document.getElementById('res-err').textContent = tt.errors;
-  document.getElementById('res-chars').textContent = chars;
-  document.getElementById('tt-heat-note').textContent = 'Keys highlighted in red caused the most mistakes this test:';
-  const rkb = document.getElementById('tt-result-keyboard'); buildKeyboard(rkb,{showSpace:false});
-  paintHeatmap(rkb, tt.heatStats);
+  document.getElementById('tt-result-title').textContent=pass?'Test Passed':'Test Complete';
+  document.getElementById('res-wpm').textContent=wpm;
+  document.getElementById('res-acc').textContent=acc+'%';
+  document.getElementById('res-err').textContent=tt.errors;
+  document.getElementById('res-chars').textContent=chars;
+  document.getElementById('tt-heat-note').textContent=`Passage completion ${completion}% · ${exactWords}/${rows.length} words exactly correct.`;
+
+  const summary=document.getElementById('tt-result-summary');
+  if(summary){
+    summary.innerHTML=`
+      <div class="tt-result-summary">
+        <div class="mini"><b>${completion}%</b><span>Passage typed</span></div>
+        <div class="mini"><b>${wpm}</b><span>WPM</span></div>
+        <div class="mini"><b>${tt.errors}</b><span>Errors</span></div>
+        <div class="mini"><b>${acc}%</b><span>Accuracy</span></div>
+        <div class="mini"><b>${exactWords}/${rows.length}</b><span>Words right</span></div>
+        <div class="mini"><b>${pass?'PASS':'TRY AGAIN'}</b><span>Result</span></div>
+      </div>`;
+  }
+
+  renderWordResults(rows);
+
+  const rkb=document.getElementById('tt-result-keyboard');
+  rkb.innerHTML='';
+  buildKeyboard(rkb,{showSpace:false});
+  paintHeatmap(rkb,tt.heatStats);
+
   addXP(Math.round(wpm/2));
-  persistResult({date:Date.now(), wpm, acc, errors:tt.errors, chars, difficulty:tt.difficulty});
+  persistResult({
+    date:Date.now(),wpm,acc,errors:tt.errors,chars,
+    difficulty:tt.difficulty,completion,exactWords,totalWords:rows.length
+  });
+
+    document.getElementById('tt-retry-btn').focus();
+
   document.getElementById('tt-retry-btn').textContent='Try Again';
-  document.getElementById('tt-share-btn').innerHTML = ICON.share+'<span>Share Result</span>';
+  document.getElementById('tt-share-btn').innerHTML=ICON.share+'<span>Share Result</span>';
 }
-document.getElementById('tt-retry-btn').addEventListener('click', ()=>{
+function updateTTStats(){
+  const elapsedMin=Math.max((Date.now()-(tt.startTime||Date.now()))/60000,1/60);
+  const completedChars=graphemes(tt.completedText).length;
+  const currentChars=graphemes(tt.engine.buffer).length;
+  const chars=completedChars+currentChars;
+  const attempts=tt.physicalKeys;
+  const correct=Math.max(0,attempts-tt.errors);
+  const wpm=Math.round((chars/5)/elapsedMin);
+  const acc=attempts?Math.round(correct/attempts*100):100;
+  document.getElementById('tt-wpm').textContent=wpm;
+  document.getElementById('tt-acc').textContent=acc+'%';
+  document.getElementById('tt-err').textContent=tt.errors;
+}
+
+function ttTick(){
+  tt.timeLeft--;
+  document.getElementById('tt-timer').textContent=tt.timeLeft;
+  updateTTStats();
+  if(tt.timeLeft<=0) endTypingTest();
+}
+
+function endTypingTest(){
+  if(tt.finished) return;
+  tt.finished=true;
+  clearInterval(tt.timerId);
+  document.removeEventListener('keydown',ttKeyHandler);
+
+  const elapsedMin=Math.max((Date.now()-(tt.startTime||Date.now()))/60000,1/60);
+  const completedChars=graphemes(tt.completedText).length;
+  const currentChars=graphemes(tt.engine.buffer).length;
+  const chars=completedChars+currentChars;
+  const wpm=Math.round((chars/5)/elapsedMin);
+  const correct=Math.max(0,tt.physicalKeys-tt.errors);
+  const acc=tt.physicalKeys?Math.max(0,Math.round(correct/tt.physicalKeys*100)):100;
+
+  document.getElementById('test-active').classList.add('hidden');
+  document.getElementById('test-results').classList.remove('hidden');
+  document.getElementById('tt-result-title').textContent='Test Complete';
+  document.getElementById('res-wpm').textContent=wpm;
+  document.getElementById('res-acc').textContent=acc+'%';
+  document.getElementById('res-err').textContent=tt.errors;
+  document.getElementById('res-chars').textContent=chars;
+  document.getElementById('tt-heat-note').textContent='Keys highlighted in red caused the most mistakes this test:';
+
+  const rkb=document.getElementById('tt-result-keyboard');
+  rkb.innerHTML='';
+  buildKeyboard(rkb,{showSpace:false});
+  paintHeatmap(rkb,tt.heatStats);
+
+  addXP(Math.round(wpm/2));
+  persistResult({date:Date.now(),wpm,acc,errors:tt.errors,chars,difficulty:tt.difficulty});
+  document.getElementById('tt-retry-btn').textContent='Try Again';
+  document.getElementById('tt-share-btn').innerHTML=ICON.share+'<span>Share Result</span>';
+}
+
+document.getElementById('tt-retry-btn').addEventListener('click',()=>{
   document.getElementById('test-results').classList.add('hidden');
   document.getElementById('test-setup').classList.remove('hidden');
 });
-document.getElementById('tt-share-btn').addEventListener('click', ()=>{
-  const txt = `I typed ${document.getElementById('res-wpm').textContent} WPM at ${document.getElementById('res-acc').textContent} accuracy on Remington GAIL Master!`;
-  if(navigator.share){ navigator.share({text:txt}).catch(()=>{}); }
-  else if(navigator.clipboard){ navigator.clipboard.writeText(txt); alert('Result copied to clipboard'); }
+document.getElementById('tt-share-btn').addEventListener('click',()=>{
+  const txt=`I typed ${document.getElementById('res-wpm').textContent} WPM at ${document.getElementById('res-acc').textContent} accuracy on Remington GAIL Master!`;
+  if(navigator.share) navigator.share({text:txt}).catch(()=>{});
+  else if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>alert('Result copied to clipboard')).catch(()=>{});
 });
 
 /* ============================================================================
    GAMES
 ============================================================================ */
-const GAME_TABS = [{id:'falling',label:'Falling Letters'},{id:'match',label:'Key Match'},{id:'rows',label:'Row Drills'},{id:'matra',label:'Matra Order Challenge'}];
+const GAME_TABS = [{id:'falling',label:'Falling Letters'},{id:'match',label:'Key Match'},{id:'rows',label:'Row Drills'},{id:'matra',label:'Matra Order'},{id:'wordrush',label:'Word Rush'},{id:'combo',label:'Combo Sprint'}];
 function buildGameTabs(){
   const wrap = document.getElementById('game-tabs');
   wrap.innerHTML = GAME_TABS.map((t,i)=>`<button class="chip${i===0?' active':''}" data-game="${t.id}">${t.label}</button>`).join('');
@@ -1176,6 +1604,8 @@ function buildGameTabs(){
     if(btn.dataset.game==='match') startKeyMatch();
     if(btn.dataset.game==='rows') renderRowList();
     if(btn.dataset.game==='matra') startMatraChallenge();
+    if(btn.dataset.game==='wordrush') startWordRush();
+    if(btn.dataset.game==='combo') startCombo();
   });
   document.getElementById('game-match').classList.add('active');
   startKeyMatch();
@@ -1428,6 +1858,20 @@ function matraHandler(e){
     matraUpdateHint();
   }
 }
+
+
+/* ---------- Word Rush ---------- */
+let wr={word:'',engine:new RemingtonEngine(),done:0,total:0};
+function startWordRush(){wr={word:'',engine:new RemingtonEngine(),done:0,total:0};const kb=document.getElementById('wr-keyboard');if(!kb.children.length)buildKeyboard(kb,{showSpace:false});nextWordRush();document.removeEventListener('keydown',wordRushHandler);document.addEventListener('keydown',wordRushHandler);}
+function nextWordRush(){wr.word=PASSAGES.words[Math.floor(Math.random()*PASSAGES.words.length)];wr.engine.reset();document.getElementById('wr-target').textContent=wr.word;document.getElementById('wr-input').value='';document.getElementById('wr-progress').textContent=`Score: ${wr.done}/${wr.total}`;document.getElementById('wr-feedback').classList.add('hidden');}
+function wordRushHandler(e){if(!document.getElementById('game-wordrush').classList.contains('active')||e.metaKey||e.ctrlKey||e.altKey)return;if(e.code==='Backspace'){e.preventDefault();wr.engine.backspace();document.getElementById('wr-input').value=wr.engine.buffer;return;}if(!KEYMAP[e.code])return;e.preventDefault();const snap=wr.engine.snapshot();wr.engine.press(e.code,e.shiftKey);const ok=isValidTypedState(wr.word,wr.engine.buffer,wr.engine.pendingI);if(!ok){wr.engine.restore(snap);if(wr.engine.history.length)wr.engine.history.pop();saveKeystat(e.code,false);const fb=document.getElementById('wr-feedback');fb.className='feedback-banner feedback-bad';fb.textContent='Wrong sequence — use Backspace';fb.classList.remove('hidden');return;}saveKeystat(e.code,true);document.getElementById('wr-input').value=wr.engine.buffer;if(!wr.engine.pendingI&&normalizeHindi(wr.engine.buffer)===normalizeHindi(wr.word)){wr.done++;wr.total++;addXP(3);const fb=document.getElementById('wr-feedback');fb.className='feedback-banner feedback-ok';fb.textContent='Correct!';fb.classList.remove('hidden');setTimeout(nextWordRush,280);}}
+
+/* ---------- Combo Sprint: composition-heavy targets ---------- */
+const COMBO_TARGETS=['ईमान','औपचारिक','कभी','हिंदी','किरण','प्रगति','संगीत','विद्यालय','व्यवस्था','प्रशासन','मंत्रणा','समाधान','आगमन','कौशल','औजार','दीवार','किताब','गुलाब','सुरक्षा','संविधान'];
+let combo={idx:0,engine:new RemingtonEngine(),score:0};
+function startCombo(){combo={idx:0,engine:new RemingtonEngine(),score:0};const kb=document.getElementById('combo-keyboard');if(!kb.children.length)buildKeyboard(kb,{showSpace:false});showCombo();document.removeEventListener('keydown',comboHandler);document.addEventListener('keydown',comboHandler);}
+function showCombo(){combo.engine.reset();const w=COMBO_TARGETS[combo.idx%COMBO_TARGETS.length];document.getElementById('combo-target').textContent=w;document.getElementById('combo-progress').textContent=`${combo.idx+1} / ${COMBO_TARGETS.length} · Score ${combo.score}`;document.getElementById('combo-feedback').classList.add('hidden');}
+function comboHandler(e){if(!document.getElementById('game-combo').classList.contains('active')||!KEYMAP[e.code]||e.metaKey||e.ctrlKey||e.altKey)return;e.preventDefault();const target=COMBO_TARGETS[combo.idx%COMBO_TARGETS.length],snap=combo.engine.snapshot();combo.engine.press(e.code,e.shiftKey);if(isValidTypedState(target,combo.engine.buffer,combo.engine.pendingI)){saveKeystat(e.code,true);const n=findNextKey(combo.engine,target);if(n)hintKey(document.getElementById('combo-keyboard'),n.code,n.shift);if(!combo.engine.pendingI&&normalizeHindi(combo.engine.buffer)===normalizeHindi(target)){combo.score+=10;combo.idx++;addXP(4);const fb=document.getElementById('combo-feedback');fb.className='feedback-banner feedback-ok';fb.textContent='Great composition!';fb.classList.remove('hidden');setTimeout(showCombo,300);}}else{combo.engine.restore(snap);if(combo.engine.history.length)combo.engine.history.pop();saveKeystat(e.code,false);const fb=document.getElementById('combo-feedback');fb.className='feedback-banner feedback-bad';fb.textContent='That key breaks the GAIL sequence';fb.classList.remove('hidden');}}
 
 /* ============================================================================
    PROGRESS DASHBOARD
